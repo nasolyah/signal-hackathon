@@ -12,7 +12,8 @@
     "seed": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/seed.ts",
     "patterns": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/patterns.ts",
     "eval": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/eval.ts",
-    "reembed": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/reembed.ts"
+    "reembed": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/reembed.ts",
+    "demo:reset": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/demo-reset.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

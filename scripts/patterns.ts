@@ -15,6 +15,7 @@ type Row = {
   shift: string;
   incident_type: string;
   summary: string;
+  redacted_text: string;
   seed_pattern: string | null;
   vec: number[];
 };
@@ -24,7 +25,7 @@ const MIN_CLUSTER = 5;
 async function load(): Promise<Row[]> {
   const { data, error } = await db()
     .from("incidents")
-    .select("id, hospital_id, shift, incident_type, summary, seed_pattern, embedding")
+    .select("id, hospital_id, shift, incident_type, summary, redacted_text, seed_pattern, embedding")
     .not("embedding", "is", null);
   if (error) throw new Error(error.message);
   return (data ?? []).map((r) => {
@@ -83,12 +84,13 @@ function describe(rows: Row[], group: number[]): string {
 const Naming = z.object({ title: z.string().min(5), description: z.string().min(10) });
 
 async function name(rows: Row[], group: number[]) {
-  const summaries = group.map((i) => `- ${rows[i].summary}`).join("\n");
+  // Summaries generalize («препарат»); the de-identified texts keep the specifics («инсулин», «ампулы»).
+  const cases = group.map((i) => `- ${rows[i].summary}\n  Текст: ${rows[i].redacted_text.slice(0, 400)}`).join("\n");
   const res = await generate(env.modelSmart(), {
-    contents: `Сводки обезличенных инцидентов одного кластера:\n${summaries}`,
+    contents: `Обезличенные инциденты одного кластера:\n${cases}`,
     config: {
       systemInstruction:
-        "Ты аналитик безопасности пациентов. Назови общую закономерность этих случаев. title — короткое название по-русски (до 70 символов), про системную причину, без обвинения людей, например «Путаница инсулинов короткого и длительного действия». description — 1–2 нейтральных предложения о том, что объединяет случаи и какой системный фактор повторяется. Не выдумывай фактов, не упоминай больницы и числа.",
+        "Ты аналитик безопасности пациентов. Назови общую закономерность этих случаев. title — короткое конкретное название по-русски (до 70 символов): если в большинстве текстов один и тот же препарат, предмет или место (инсулины, ампулы, коридор, фамилии), назови его прямо, например «Путаница инсулинов короткого и длительного действия». Без обвинения людей. description — 1–2 нейтральных предложения о том, что объединяет случаи и какой системный фактор повторяется. Не выдумывай фактов, не упоминай больницы, имена и числа.",
       responseMimeType: "application/json",
       responseJsonSchema: {
         type: "object",
