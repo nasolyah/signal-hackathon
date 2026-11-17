@@ -1,0 +1,108 @@
+import "server-only";
+import { db } from "@/lib/db";
+import type { Harm, HospitalCode, IncidentType, Shift } from "@/lib/taxonomy";
+
+// Read model for /dashboard (SPEC §2.2). Everything here is de-identified data only.
+// Privacy rule 4: no department breakdown here (groups of < 5 could identify people).
+
+export type Filters = { hospital?: HospitalCode; type?: IncidentType; harm?: Harm };
+
+export type PatternCard = {
+  id: string;
+  title: string;
+  description: string | null;
+  incidentCount: number;
+  hospitalCount: number;
+  nightShare: number;
+  topFactors: string[];
+  status: string;
+};
+
+export type FeedRow = {
+  id: string;
+  date: string;
+  hospital: HospitalCode;
+  type: IncidentType;
+  harm: Harm;
+  nearMiss: boolean;
+  status: string;
+  shift: Shift;
+};
+
+type IncidentLite = {
+  id: string;
+  hospital_id: HospitalCode;
+  incident_type: IncidentType;
+  harm: Harm;
+  near_miss: boolean;
+  status: string;
+  shift: Shift;
+  incident_date: string;
+};
+
+async function incidents(f: Filters): Promise<IncidentLite[]> {
+  let q = db()
+    .from("incidents")
+    .select("id, hospital_id, incident_type, harm, near_miss, status, shift, incident_date")
+    .order("incident_date", { ascending: false })
+    .order("id");
+  if (f.hospital) q = q.eq("hospital_id", f.hospital);
+  if (f.type) q = q.eq("incident_type", f.type);
+  if (f.harm) q = q.eq("harm", f.harm);
+  const { data, error } = await q;
+  if (error) throw new Error("DASHBOARD_QUERY_FAILED");
+  return (data ?? []) as IncidentLite[];
+}
+
+export async function patternCards(): Promise<PatternCard[]> {
+  const { data, error } = await db()
+    .from("patterns")
+    .select("id, title, description, incident_count, hospital_count, night_share, top_factors, status")
+    .order("incident_count", { ascending: false });
+  if (error) throw new Error("PATTERNS_QUERY_FAILED");
+  return (data ?? []).map((p) => ({
+    id: p.id,
+    title: p.title,
+    description: p.description,
+    incidentCount: p.incident_count,
+    hospitalCount: p.hospital_count,
+    nightShare: Number(p.night_share),
+    topFactors: p.top_factors ?? [],
+    status: p.status,
+  }));
+}
+
+export async function dashboardData(f: Filters = {}) {
+  const [rows, patterns] = await Promise.all([incidents(f), patternCards()]);
+  const total = rows.length;
+  const count = <K extends string>(key: (r: IncidentLite) => K) => {
+    const m = new Map<K, number>();
+    for (const r of rows) m.set(key(r), (m.get(key(r)) ?? 0) + 1);
+    return [...m.entries()].sort((a, b) => b[1] - a[1]);
+  };
+
+  return {
+    kpi: {
+      total,
+      nearMissShare: total ? rows.filter((r) => r.near_miss).length / total : 0,
+      severeOrDeath: rows.filter((r) => r.harm === "severe" || r.harm === "death").length,
+      openPatterns: patterns.filter((p) => p.status !== "closed").length,
+    },
+    patterns,
+    byType: count((r) => r.incident_type),
+    byHospital: count((r) => r.hospital_id),
+    byShift: { day: rows.filter((r) => r.shift === "day").length, night: rows.filter((r) => r.shift === "night").length },
+    feed: rows.slice(0, 60).map<FeedRow>((r) => ({
+      id: r.id,
+      date: r.incident_date,
+      hospital: r.hospital_id,
+      type: r.incident_type,
+      harm: r.harm,
+      nearMiss: r.near_miss,
+      status: r.status,
+      shift: r.shift,
+    })),
+  };
+}
+
+export type DashboardData = Awaited<ReturnType<typeof dashboardData>>;
