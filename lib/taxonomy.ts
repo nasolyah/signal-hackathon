@@ -58,6 +58,18 @@ export const CAUSE_CATEGORIES = [
 
 export const HOSPITAL_CODES = ["A", "B", "C", "D", "E", "F"] as const;
 
+/** Departments seen in the seed dataset (data/README.md); used by the /report select. */
+export const DEPARTMENTS = [
+  "therapy",
+  "surgery",
+  "cardiology",
+  "endocrinology",
+  "traumatology",
+  "maternity",
+  "icu",
+] as const;
+export type Department = (typeof DEPARTMENTS)[number];
+
 export type IncidentType = (typeof INCIDENT_TYPES)[number];
 export type Stage = (typeof STAGES)[number];
 export type Harm = (typeof HARMS)[number];

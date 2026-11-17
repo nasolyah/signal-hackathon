@@ -18,6 +18,7 @@ export const AnalysisSchema = z.object({
   near_miss: z.boolean(),
   factors: z.array(z.enum(FACTORS)).min(1).max(3),
   summary: z.string().min(1),
+  shift_in_text: z.enum(["day", "night", "unknown"]),
 });
 
 export type Analysis = z.infer<typeof AnalysisSchema>;
@@ -45,6 +46,11 @@ const RESPONSE_SCHEMA = {
       minItems: 1,
       maxItems: 3,
     },
+    shift_in_text: {
+      type: "string",
+      enum: ["day", "night", "unknown"],
+      description: "When the event happened, only if the text says so (ночью, вечером, tunda, утром, днём…); otherwise unknown.",
+    },
     summary: {
       type: "string",
       description: "One neutral sentence in Russian, no names: what happened and the likely system factor.",
@@ -59,6 +65,7 @@ const RESPONSE_SCHEMA = {
     "near_miss",
     "factors",
     "summary",
+    "shift_in_text",
   ],
 } as const;
 
@@ -79,6 +86,7 @@ The text may be in Russian, Uzbek (Latin or Cyrillic) or mixed. Always answer in
    - near_miss = true if the error was caught BEFORE it reached the patient.
    - factors: 1–3 contributing system factors from the fixed list.
 3. summary: one neutral Russian sentence, no names, no blame, naming the likely system factor.
+4. shift_in_text: night if the event happened at night or late evening (ночью, вечером после 20:00, tunda, kechasi), day if in the daytime; unknown if the text does not say.
 Do not invent facts that are not in the report.`;
 
 export type AnalyzeResult = Analysis & {
@@ -120,13 +128,11 @@ export async function analyzeReport(rawText: string): Promise<AnalyzeResult> {
     return "";
   });
 
-  const aiAdded = safetyNet + Math.max(
-    analysis.redaction_count,
-    countPlaceholders(analysis.redacted_text) - countPlaceholders(pre.text),
-    0,
-  );
+  // The number the reporter sees must match the red boxes they see: count placeholders
+  // in the kept text (regex + AI ones), plus generalized identifiers, never the AI's own tally.
+  const visible = Math.max(countPlaceholders(analysis.redacted_text), pre.count);
 
-  return { ...analysis, total_redactions: pre.count + aiAdded };
+  return { ...analysis, total_redactions: visible + safetyNet };
 }
 
 /** Step 2: embedding text = summary | type | factors (SPEC §4). */

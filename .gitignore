@@ -45,3 +45,8 @@ next-env.d.ts
 
 # kit archives (large, not source)
 *.zip
+
+# impeccable working files (screenshots, comps)
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/build/

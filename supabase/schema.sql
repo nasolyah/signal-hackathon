@@ -54,8 +54,10 @@ create table if not exists incidents (
   expected_harm text,
   expected_near_miss boolean,
   seed_pattern text,                           -- 'P1' | 'P2' | 'P3' | null
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default date_trunc('day', now())  -- day only: exact time could identify the reporter
 );
+-- Projects created before this line existed: make the default day-only as well.
+alter table incidents alter column created_at set default date_trunc('day', now());
 
 create index if not exists incidents_hospital_idx on incidents(hospital_id);
 create index if not exists incidents_pattern_idx on incidents(pattern_id);
