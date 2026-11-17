@@ -6,7 +6,7 @@ import type { LiveCounts } from "@/lib/dashboard";
 import { t } from "@/lib/i18n";
 import { pollCounts } from "./actions";
 
-const POLL_MS = 4000;
+const POLL_MS = 2000;
 const LiveContext = createContext<LiveCounts | null>(null);
 
 /**
@@ -77,11 +77,11 @@ export function LiveNumber({
   }
 
   return (
-    <span className={`relative inline-flex overflow-hidden align-baseline ${className}`}>
+    <span className={`relative inline-flex align-baseline ${underline ? "pb-[0.14em]" : ""} ${className}`}>
       <span className="sr-only" aria-live="polite">
         {shown}
       </span>
-      <span aria-hidden className="relative inline-block">
+      <span aria-hidden className="relative inline-block overflow-hidden">
         {prev !== null && (
           <span
             key={`out-${bump}`}
@@ -101,7 +101,7 @@ export function LiveNumber({
         <span
           key={`ul-${bump}`}
           aria-hidden
-          className="absolute right-0 bottom-0 left-0 h-[3px] origin-left rounded-full bg-margin-red motion-safe:animate-[pencil-underline_700ms_cubic-bezier(0.22,1,0.36,1)_both]"
+          className="absolute right-0 bottom-0 left-0 h-[max(4px,0.08em)] origin-left rounded-full bg-margin-red motion-safe:animate-[pencil-underline_700ms_cubic-bezier(0.22,1,0.36,1)_both]"
         />
       )}
     </span>
@@ -124,10 +124,12 @@ export function LivePatternStats({
   id,
   initial,
   size = "lg",
+  bar = true,
 }: {
   id: string;
   initial: { count: number; hospitals: number; night: number };
   size?: "lg" | "sm";
+  bar?: boolean;
 }) {
   const live = useLiveCounts()?.patterns[id] ?? initial;
   const nightPct = Math.round(live.night * 100);
@@ -140,13 +142,15 @@ export function LivePatternStats({
         </span>
       </p>
       {/* Night share to scale: the whole bar is every case of the pattern */}
+      {bar && (
       <div
         className={`mt-1.5 flex w-full max-w-[22rem] overflow-hidden rounded-[2px] bg-rule ${size === "lg" ? "h-2" : "h-1.5"}`}
         role="img"
         aria-label={`${nightPct}% ${t.dashboard.night}`}
       >
-        <div className="h-full bg-ink transition-[width] duration-500 ease-out" style={{ width: `${nightPct}%` }} />
+        <div className="h-full bg-pen transition-[width] duration-500 ease-out" style={{ width: `${nightPct}%` }} />
       </div>
+      )}
     </div>
   );
 }

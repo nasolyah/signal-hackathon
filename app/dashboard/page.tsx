@@ -44,7 +44,7 @@ async function Dashboard({ searchParams }: Pick<PageProps<"/dashboard">, "search
         <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-rule px-5 py-3 text-sm lg:px-8">
           <p className="text-ink">
             <span className="font-semibold">{t.dashboard.title}</span> · {scope}
-            <span className="ml-3 text-ink-muted">{t.dashboard.synthetic}</span>
+            <span className="ml-3 inline-block whitespace-nowrap text-ink-muted">{t.dashboard.synthetic}</span>
           </p>
           <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2">
             <FilterSelect
@@ -67,12 +67,11 @@ async function Dashboard({ searchParams }: Pick<PageProps<"/dashboard">, "search
         {/* The spread: conclusions on the left page, the register on the right */}
         <div className="grid flex-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
           <section aria-labelledby="patterns-h" className="relative border-b border-rule lg:border-b-0">
-            <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 hidden w-10 bg-[linear-gradient(to_left,rgb(0_0_0/0.045),transparent)] lg:block" />
-            <div className="px-5 pt-6 pb-2 lg:px-8">
+            <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 hidden w-16 bg-[linear-gradient(to_left,rgb(0_0_0/0.09),transparent)] lg:block dark:bg-[linear-gradient(to_left,rgb(0_0_0/0.45),transparent)]" />
+            <div className="px-5 pt-6 pb-4 lg:px-8">
               <h2 id="patterns-h" className="text-[1.75rem] leading-tight font-semibold">
                 {t.dashboard.patterns}
               </h2>
-              <p className="mt-1 max-w-[46ch] text-sm text-ink-muted">{t.dashboard.patternsHint}</p>
             </div>
             {data.patterns.length === 0 ? (
               <p className="px-5 py-6 text-base text-ink-muted lg:px-8">{t.dashboard.patternsEmpty}</p>
@@ -85,8 +84,8 @@ async function Dashboard({ searchParams }: Pick<PageProps<"/dashboard">, "search
             )}
           </section>
 
-          <section aria-labelledby="register-h" className="relative min-w-0 lg:border-l lg:border-rule">
-            <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 hidden w-10 bg-[linear-gradient(to_right,rgb(0_0_0/0.035),transparent)] lg:block" />
+          <section aria-labelledby="register-h" className="relative min-w-0">
+            <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 hidden w-12 bg-[linear-gradient(to_right,rgb(0_0_0/0.07),transparent)] lg:block dark:bg-[linear-gradient(to_right,rgb(0_0_0/0.35),transparent)]" />
             <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3 px-5 pt-6 pb-4 lg:px-8">
               <h2 id="register-h" className="text-[1.75rem] leading-tight font-semibold">
                 {t.dashboard.register}
@@ -149,35 +148,44 @@ function Totals({ kpi, total }: { kpi: Awaited<ReturnType<typeof dashboardData>>
 
 function PatternEntry({ p, lead }: { p: PatternCard; lead: boolean }) {
   const initial = { count: p.incidentCount, hospitals: p.hospitalCount, night: p.nightShare };
+  const open = (
+    <Link
+      href={`/pattern/${p.id}`}
+      className="inline-flex items-center gap-1.5 font-medium text-pen underline decoration-1 underline-offset-4 hover:decoration-2 focus-visible:rounded-sm focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none"
+    >
+      {t.dashboard.open} <ArrowRight className="size-4" aria-hidden />
+    </Link>
+  );
+
+  if (!lead) {
+    // Compact entry: the counter, the title, the numbers. Details live on the pattern page.
+    return (
+      <li className="grid grid-cols-[4.5rem_minmax(0,1fr)] items-baseline gap-x-4 border-t border-rule px-5 py-3.5 lg:grid-cols-[5.5rem_minmax(0,1fr)] lg:px-8">
+        <div className="text-right">
+          <LivePatternCount id={p.id} initial={p.incidentCount} underline className="text-[2.25rem] leading-none font-semibold text-margin-red" />
+        </div>
+        <div className="min-w-0">
+          <h3 className="text-lg leading-snug font-semibold text-balance">{p.title}</h3>
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4">
+            <LivePatternStats id={p.id} initial={initial} size="sm" bar={false} />
+            <span className="text-sm">{open}</span>
+          </div>
+        </div>
+      </li>
+    );
+  }
+
   return (
     <li className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-x-4 border-t border-rule px-5 py-5 lg:grid-cols-[5.5rem_minmax(0,1fr)] lg:px-8">
       <div className="text-right">
-        <LivePatternCount
-          id={p.id}
-          initial={p.incidentCount}
-          underline
-          className={`leading-none font-semibold text-margin-red ${lead ? "text-[3.5rem]" : "text-[2.25rem]"}`}
-        />
+        <LivePatternCount id={p.id} initial={p.incidentCount} underline className="text-[3.5rem] leading-none font-semibold text-margin-red" />
       </div>
       <div className="min-w-0">
-        <h3 className={`leading-snug font-semibold text-balance ${lead ? "text-[1.75rem]" : "text-lg"}`}>{p.title}</h3>
-        <LivePatternStats id={p.id} initial={initial} size={lead ? "lg" : "sm"} />
-        <p className="mt-2 text-sm text-ink-muted">
-          {p.hospitals.map((h) => t.hospitals[h].region).join(" · ")}
-        </p>
-        {lead && p.description && <p className="mt-2 max-w-[52ch] text-base text-ink">{p.description}</p>}
-        {p.topFactors.length > 0 && (
-          <p className="mt-2 text-sm text-ink">
-            <span className="text-ink-muted">{t.dashboard.mostOften}: </span>
-            {p.topFactors.map((f) => t.factor[f as keyof typeof t.factor] ?? f).join(" · ")}
-          </p>
-        )}
-        <Link
-          href={`/pattern/${p.id}`}
-          className="mt-3 inline-flex items-center gap-1.5 text-base font-medium text-pen underline decoration-1 underline-offset-4 hover:decoration-2 focus-visible:rounded-sm focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none"
-        >
-          {t.dashboard.open} <ArrowRight className="size-4" aria-hidden />
-        </Link>
+        <h3 className="text-[1.75rem] leading-[1.15] font-semibold text-balance">{p.title}</h3>
+        <LivePatternStats id={p.id} initial={initial} size="lg" />
+        <p className="mt-2 text-sm text-ink-muted">{p.hospitals.map((h) => t.hospitals[h].region).join(" · ")}</p>
+        {p.description && <p className="mt-2 line-clamp-2 max-w-[52ch] text-base text-ink">{p.description}</p>}
+        <p className="mt-3 text-base">{open}</p>
       </div>
     </li>
   );
@@ -191,12 +199,12 @@ function Bars({ title, rows }: { title: string; rows: [string, number][] }) {
       <figcaption className="pb-2 text-xs text-ink-muted">{title}</figcaption>
       <ul className="flex flex-col gap-1.5">
         {rows.map(([label, n]) => (
-          <li key={label} className="grid grid-cols-[minmax(0,11rem)_minmax(0,1fr)_2.5rem] items-center gap-3 text-sm">
+          <li key={label} className="grid grid-cols-[minmax(0,15.5rem)_minmax(0,1fr)_2.5rem] items-center gap-3 text-sm">
             <span className="truncate text-ink" title={label}>
               {label}
             </span>
             <span className="h-2 overflow-hidden rounded-[2px] bg-rule/70">
-              <span className="block h-full bg-ink/75" style={{ width: `${(n / max) * 100}%` }} />
+              <span className="block h-full bg-chart-2" style={{ width: `${(n / max) * 100}%` }} />
             </span>
             <span className="text-right font-medium text-ink">{n}</span>
           </li>
@@ -212,8 +220,8 @@ function DayNight({ day, night }: { day: number; night: number }) {
     <figure>
       <figcaption className="pb-2 text-xs text-ink-muted">{t.dashboard.dayNight}</figcaption>
       <div className="flex h-2 overflow-hidden rounded-[2px]" role="img" aria-label={`${t.shift.day} ${day}, ${t.shift.night} ${night}`}>
-        <span className="block h-full bg-rule-strong" style={{ width: `${(day / total) * 100}%` }} />
-        <span className="block h-full bg-ink" style={{ width: `${(night / total) * 100}%` }} />
+        <span className="block h-full bg-chart-3" style={{ width: `${(day / total) * 100}%` }} />
+        <span className="block h-full bg-pen" style={{ width: `${(night / total) * 100}%` }} />
       </div>
       <p className="mt-1.5 flex justify-between text-sm text-ink">
         <span>
@@ -254,7 +262,7 @@ function Register({ rows, total }: { rows: Awaited<ReturnType<typeof dashboardDa
                 <td className="px-3 py-2">
                   <Link
                     href={`/incident/${r.id}`}
-                    className="text-ink underline decoration-rule-strong decoration-1 underline-offset-4 hover:decoration-pen focus-visible:rounded-sm focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none"
+                    className="text-pen underline decoration-pen/40 decoration-1 underline-offset-4 hover:decoration-pen focus-visible:rounded-sm focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none"
                   >
                     {t.incidentType[r.type]}
                   </Link>
