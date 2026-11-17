@@ -1,7 +1,7 @@
 import "server-only";
 import { z } from "zod";
 import { env, EMBEDDING_DIM } from "@/lib/env";
-import { gemini, withRetry } from "@/lib/ai/gemini";
+import { gemini, generate, withModelFallback } from "@/lib/ai/gemini";
 import { countPlaceholders, preScrub } from "@/lib/ai/scrub";
 import { FACTORS, HARMS, INCIDENT_TYPES, STAGES } from "@/lib/taxonomy";
 
@@ -66,11 +66,15 @@ const SYSTEM_INSTRUCTION = `You process anonymous patient-safety incident report
 The text may be in Russian, Uzbek (Latin or Cyrillic) or mixed. Always answer in Russian.
 
 1. De-identify. Replace every name of a patient with [ПАЦИЕНТ] and every name of a staff member with [СОТРУДНИК]
-   (full names, surnames, first names, initials, nicknames). Generalize indirect identifiers that point to one
-   person, e.g. "единственный анестезиолог ночной смены" → "анестезиолог". Keep placeholders already in the
+   (full names, surnames, first names, initials, nicknames) — ALSO when the name is only mentioned, e.g.
+   "две пациентки с фамилией Рахимова" → "две пациентки с одинаковой фамилией [ПАЦИЕНТ]".
+   Generalize indirect identifiers that point to one person: drop words like «единственный», «главный»,
+   «заведующий» next to a role, e.g. "единственный аллерголог больницы" → "аллерголог". Keep placeholders already in the
    text ([ПАЛАТА], [НОМЕР], [ДАТА]) as they are. Do not change the meaning, the drugs, doses, departments or sequence of events.
    redacted_text must be the full report, not a summary, in its original language.
 2. Classify by the WHO patient-safety taxonomy (ICPS) using ONLY the allowed enum values.
+   - incident_type: if the core failure is information not passed at a handover/transfer/shift change,
+     use communication_handover even when a drug was involved; use medication when the drug itself was mixed up or misdosed.
    - harm = what actually happened to the patient (none if the error did not reach the patient or caused no harm).
    - near_miss = true if the error was caught BEFORE it reached the patient.
    - factors: 1–3 contributing system factors from the fixed list.
@@ -86,8 +90,7 @@ export async function analyzeReport(rawText: string): Promise<AnalyzeResult> {
   const pre = preScrub(rawText);
 
   const run = async () => {
-    const res = await gemini().models.generateContent({
-      model: env.modelFast(),
+    const res = await generate(env.modelFast(), {
       contents: pre.text,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
@@ -103,13 +106,21 @@ export async function analyzeReport(rawText: string): Promise<AnalyzeResult> {
 
   let analysis: Analysis;
   try {
-    analysis = await withRetry(run);
+    // Fallback chain covers overload; one extra attempt covers an invalid JSON answer.
+    analysis = await run().catch(() => run());
   } catch {
     // Deliberately drop the original error: it may echo request content.
     throw new Error("ANALYSIS_FAILED");
   }
 
-  const aiAdded = Math.max(
+  // Deterministic safety net for the most common indirect identifier the model may keep.
+  let safetyNet = 0;
+  analysis.redacted_text = analysis.redacted_text.replace(/(?<![\p{L}])[Ее]динственн(?:ый|ая|ое|ые|ого|ой|ую)\s+/gu, () => {
+    safetyNet += 1;
+    return "";
+  });
+
+  const aiAdded = safetyNet + Math.max(
     analysis.redaction_count,
     countPlaceholders(analysis.redacted_text) - countPlaceholders(pre.text),
     0,
@@ -124,9 +135,9 @@ export function embeddingInput(a: Pick<Analysis, "summary" | "incident_type" | "
 }
 
 export async function embed(text: string): Promise<number[]> {
-  const res = await withRetry(() =>
+  const res = await withModelFallback(env.embedModel(), (model) =>
     gemini().models.embedContent({
-      model: env.embedModel(),
+      model,
       contents: text,
       config: { outputDimensionality: EMBEDDING_DIM, taskType: "SEMANTIC_SIMILARITY" },
     }),
