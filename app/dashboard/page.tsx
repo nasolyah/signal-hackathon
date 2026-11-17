@@ -44,7 +44,7 @@ async function Dashboard({ searchParams }: Pick<PageProps<"/dashboard">, "search
         <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-rule px-5 py-3 text-sm lg:px-8">
           <p className="text-ink">
             <span className="font-semibold">{t.dashboard.title}</span> · {scope}
-            <span className="ml-3 inline-block whitespace-nowrap text-ink-muted">{t.dashboard.synthetic}</span>
+            <span className="block whitespace-nowrap text-ink-muted sm:ml-3 sm:inline-block">{t.dashboard.synthetic}</span>
           </p>
           <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2">
             <FilterSelect
@@ -108,10 +108,10 @@ async function Dashboard({ searchParams }: Pick<PageProps<"/dashboard">, "search
               </div>
             </div>
 
-            <div className="grid gap-x-8 gap-y-6 border-y border-rule px-5 py-5 md:grid-cols-2 lg:px-8">
-              <Bars title={t.dashboard.byType} rows={data.byType.map(([k, n]) => [t.incidentType[k], n])} />
+            <div className="grid gap-x-8 gap-y-6 border-y border-rule px-5 py-5 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:px-8">
+              <Bars title={t.dashboard.byType} labelWidth="12rem" rows={data.byType.map(([k, n]) => [t.incidentType[k], n])} />
               <div className="flex flex-col gap-6">
-                <Bars title={t.dashboard.byHospital} rows={data.byHospital.map(([k, n]) => [`${t.hospitals[k].name} · ${t.hospitals[k].region}`, n])} />
+                <Bars title={t.dashboard.byHospital} labelWidth="6.5rem" rows={data.byHospital.map(([k, n]) => [t.hospitals[k].region, n])} />
                 <DayNight day={data.byShift.day} night={data.byShift.night} />
               </div>
             </div>
@@ -184,7 +184,12 @@ function PatternEntry({ p, lead }: { p: PatternCard; lead: boolean }) {
         <h3 className="text-[1.75rem] leading-[1.15] font-semibold text-balance">{p.title}</h3>
         <LivePatternStats id={p.id} initial={initial} size="lg" />
         <p className="mt-2 text-sm text-ink-muted">{p.hospitals.map((h) => t.hospitals[h].region).join(" · ")}</p>
-        {p.description && <p className="mt-2 line-clamp-2 max-w-[52ch] text-base text-ink">{p.description}</p>}
+        {p.topFactors.length > 0 && (
+          <p className="mt-2 line-clamp-2 text-base text-ink">
+            <span className="text-ink-muted">{t.dashboard.mostOften}: </span>
+            {p.topFactors.map((f) => t.factor[f as keyof typeof t.factor] ?? f).join(" · ")}
+          </p>
+        )}
         <p className="mt-3 text-base">{open}</p>
       </div>
     </li>
@@ -192,15 +197,15 @@ function PatternEntry({ p, lead }: { p: PatternCard; lead: boolean }) {
 }
 
 /** Horizontal bars drawn to scale (the longest = full width). Also readable as a list. */
-function Bars({ title, rows }: { title: string; rows: [string, number][] }) {
+function Bars({ title, rows, labelWidth }: { title: string; rows: [string, number][]; labelWidth: string }) {
   const max = Math.max(1, ...rows.map(([, n]) => n));
   return (
     <figure>
       <figcaption className="pb-2 text-xs text-ink-muted">{title}</figcaption>
       <ul className="flex flex-col gap-1.5">
         {rows.map(([label, n]) => (
-          <li key={label} className="grid grid-cols-[minmax(0,15.5rem)_minmax(0,1fr)_2.5rem] items-center gap-3 text-sm">
-            <span className="truncate text-ink" title={label}>
+          <li key={label} className="grid items-center gap-3 text-sm" style={{ gridTemplateColumns: `minmax(0,${labelWidth}) minmax(0,1fr) 2.5rem` }}>
+            <span className="leading-tight text-pretty text-ink">
               {label}
             </span>
             <span className="h-2 overflow-hidden rounded-[2px] bg-rule/70">

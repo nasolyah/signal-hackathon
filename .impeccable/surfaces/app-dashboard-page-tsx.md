@@ -19,7 +19,7 @@ STORY: The analyst reads the totals line, sees four patterns written on the left
 
 FIRST VIEWPORT: Laptop 1440×900. Running head «Журнал Минздрава · все больницы», hospital filter, «данные синтетические». Totals line as one ruled row of four columns. Left page (5/12): «Закономерности», the first entry large with a 3.5rem red counter, title, «случаев · больниц · % ночью» with night share as a to-scale bar, top factors, «Разобрать». Right page (7/12): filters, to-scale bars by type and hospital, day/night split, register rows.
 
-FORM: «Разворот журнала» (two-page spread); dealt lead (THE ROLL) of 3; surface seed key 8f613d4b — the roll printed «SURFACE CONCEPT SEED (key: 8f613d4b; mode: operate; source: api; approved pool: c3b204a1eed6 …)» and no separate SEED REFERENCE line (Impeccable v4.3.1). Signature interaction: when a new case joins a pattern, the old count slides up, the new one rises in, and a red-pencil underline draws once under it. Reduced motion: instant swap.
+FORM: «Разворот журнала» (two-page spread); dealt lead (THE ROLL) of 3; seed: none — the roll ran on Impeccable v4.3.1, which prints no SEED REFERENCE line, so there is no reference to record or corroborate. Signature interaction: when a new case joins a pattern, the old count slides up, the new one rises in, and a red-pencil underline draws once under it. Reduced motion: instant swap.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
 
