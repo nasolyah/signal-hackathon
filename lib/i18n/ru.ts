@@ -130,7 +130,7 @@ export const ru = {
     poor_lighting: "Плохое освещение",
     illegible_prescription: "Неразборчивое назначение",
     equipment_failure: "Сбой оборудования",
-    handover_failure: "Нарушение пересменки",
+    handover_failure: "Сбой при пересменке",
     communication: "Коммуникация",
     missing_protocol: "Нет протокола/чек-листа",
     training_gap: "Недостаток подготовки",

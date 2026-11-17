@@ -2,29 +2,32 @@ import Link from "next/link";
 import { t } from "@/lib/i18n";
 import type { HospitalCode } from "@/lib/taxonomy";
 
-/** The journal page itself: full-bleed on phones, a single sheet on a laptop. */
-export function JournalPage({ children }: { children: React.ReactNode }) {
+/** The journal page itself: full-bleed on phones, a single sheet on a laptop (wider for the result). */
+export function JournalPage({ children, wide = false }: { children: React.ReactNode; wide?: boolean }) {
   return (
-    <div className="flex min-h-dvh w-full flex-1 flex-col bg-page md:min-h-0 md:max-w-[40rem] md:flex-none md:rounded-[3px] md:shadow-[0_1px_2px_rgb(0_0_0/0.06),0_18px_40px_-16px_rgb(0_0_0/0.22)]">
+    <div
+      className={`flex min-h-dvh w-full flex-1 flex-col bg-page md:min-h-0 md:flex-none md:rounded-[3px] md:shadow-[0_1px_2px_rgb(0_0_0/0.06),0_18px_40px_-16px_rgb(0_0_0/0.22)] ${wide ? "md:max-w-[48rem]" : "md:max-w-[40rem]"}`}
+    >
       {children}
     </div>
   );
 }
 
-/** Printed head of the journal page: product name, and the hospital the QR code belongs to. */
+/** Printed running head of the journal page: «Журнал · Больница А · Ташкент», product mark on the right. */
 export function JournalHead({ hospital }: { hospital?: HospitalCode }) {
   const h = hospital ? t.hospitals[hospital] : null;
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-rule px-5 py-3 text-sm">
-      <span className="font-semibold tracking-tight">
-        {t.app.name}
-        <span className="font-normal text-ink-muted"> · {t.report.journal}</span>
+    <div className="flex items-baseline justify-between gap-3 border-b border-rule px-5 py-3 text-sm">
+      <span className="text-ink">
+        <span className="font-semibold">{t.report.journal}</span>
+        {h && (
+          <>
+            {" · "}
+            {h.name} · {h.region}
+          </>
+        )}
       </span>
-      {h && (
-        <span className="rounded-full border border-rule-strong px-2.5 py-0.5 text-ink">
-          {h.name} · {h.region}
-        </span>
-      )}
+      <span className="font-semibold tracking-tight text-ink-muted">{t.app.name}</span>
     </div>
   );
 }

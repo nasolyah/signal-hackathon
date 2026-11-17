@@ -70,7 +70,7 @@ function JournalRound({ hospital, today, defaultShift, onAnother }: Props & { on
                     }}
                     className="peer sr-only"
                   />
-                  <Check className="size-4 text-pen opacity-0 peer-checked:opacity-100" aria-hidden />
+                  <Check className="hidden size-4 text-pen peer-checked:block" aria-hidden />
                   {t.shift[s]}
                 </label>
               ))}
@@ -98,11 +98,11 @@ function JournalRound({ hospital, today, defaultShift, onAnother }: Props & { on
         </label>
 
         {/* The ruled page: the one field that matters */}
-        <div className="flex flex-1 flex-col px-0 pt-4">
+        <div className="flex flex-col pt-4">
           <label htmlFor="report-text" className="px-5 pb-1 text-lg font-semibold">
             {t.report.textLabel}
           </label>
-          <div className="relative flex flex-1 flex-col">
+          <div className="relative">
             <textarea
               id="report-text"
               name="text"
@@ -115,11 +115,11 @@ function JournalRound({ hospital, today, defaultShift, onAnother }: Props & { on
               aria-describedby="report-hint"
               spellCheck
               autoComplete="off"
-              className="ruled min-h-[clamp(14rem,42dvh,26rem)] w-full flex-1 resize-none bg-transparent pr-5 pl-12 text-[1.125rem] text-ink outline-none placeholder:text-ink-muted/80 md:text-[1.1875rem]"
+              className="ruled block h-[calc(var(--line)*10)] w-full resize-none bg-transparent pr-5 pl-12 text-[1.125rem] text-ink outline-none placeholder:text-ink-muted md:h-[calc(var(--line)*11)] md:text-[1.1875rem]"
             />
             {pending && (
-              <div className="pointer-events-none absolute right-5 bottom-3 left-12 h-[2px] overflow-hidden" aria-hidden>
-                <div className="h-full origin-left bg-pen motion-safe:animate-[pen-stroke_6s_cubic-bezier(0.16,1,0.3,1)_forwards]" />
+              <div className="pointer-events-none absolute right-5 bottom-0 left-12 h-[2px] overflow-hidden" aria-hidden>
+                <div className="h-full origin-left scale-x-90 bg-pen motion-safe:animate-[pen-stroke_5s_cubic-bezier(0.16,1,0.3,1)_forwards]" />
               </div>
             )}
           </div>
@@ -129,11 +129,11 @@ function JournalRound({ hospital, today, defaultShift, onAnother }: Props & { on
         </div>
 
         {/* Always in view, right above the button: safety is felt before submitting (PRODUCT.md §1) */}
-        <div className="sticky bottom-0 border-t border-rule bg-page/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-[2px]">
+        <div className="sticky bottom-0 mt-auto border-t border-rule bg-page/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-[2px]">
           {/* «Подпись» column is crossed out: this entry is never signed */}
-          <p className="px-1 pb-2.5 text-sm leading-snug text-ink-muted">
-            <span className="ruler-strike">{t.report.signature}</span>{" "}
-            <span className="font-medium text-ink">{t.report.signatureNotNeeded}.</span> {t.report.trustLine}
+          <p className="px-1 pb-3 text-base leading-snug text-pretty text-ink">
+            <span className="ruler-strike text-ink-muted">{t.report.signature}</span>{" "}
+            <span className="font-semibold">{t.report.signatureNotNeeded}.</span> {t.report.trustLine}
           </p>
           {state.status === "failed" && (
             <p className="pb-2 text-sm text-margin-red" role="alert">
@@ -174,7 +174,7 @@ function KeptView({
   ];
 
   return (
-    <JournalPage>
+    <JournalPage wide>
       <JournalHead hospital={hospital} />
       <article className="flex flex-1 flex-col" aria-live="polite">
         <div className="flex items-start justify-between gap-3 px-5 pt-6 pb-4">
@@ -207,12 +207,12 @@ function KeptView({
             </button>
           </div>
           {!showMine && (
-            <p className="px-5 pb-2 pl-12 text-lg font-semibold text-margin-red md:text-xl">
+            <p className="px-5 pb-2 pl-12 text-lg font-semibold text-margin-red md:text-[1.75rem] md:leading-tight">
               {t.report.removedCount(entry.removed)}
             </p>
           )}
           <div className="relative">
-            <p className="ruled min-h-[calc(var(--line)*4)] pr-5 pb-[calc(var(--line)/2)] pl-12 text-[1.1875rem] whitespace-pre-wrap text-ink md:text-[1.375rem]">
+            <p className="ruled min-h-[calc(var(--line)*4)] pr-5 pb-[calc(var(--line)/2)] pl-12 text-[1.1875rem] whitespace-pre-wrap text-ink md:pr-8 md:text-[1.75rem] md:[--line:2.75rem]">
               {showMine ? original : <RedactedText text={entry.redactedText} />}
             </p>
           </div>
@@ -224,13 +224,13 @@ function KeptView({
         <dl className="mt-5 grid grid-cols-2 border-t border-rule">
           {fields.map(([label, value], i) => (
             <div key={label} className={`border-b border-rule px-5 py-3 ${i % 2 === 0 ? "border-r" : ""}`}>
-              <dt className="text-xs text-ink-muted">{label}</dt>
-              <dd className="mt-0.5 text-lg leading-snug font-semibold md:text-xl">{value}</dd>
+              <dt className="text-xs text-ink-muted md:text-sm">{label}</dt>
+              <dd className="mt-0.5 text-lg leading-snug font-semibold md:text-[1.75rem]">{value}</dd>
             </div>
           ))}
           <div className="col-span-2 border-b border-rule px-5 py-3">
-            <dt className="text-xs text-ink-muted">{t.fields.factors}</dt>
-            <dd className="mt-0.5 text-lg leading-snug font-semibold md:text-xl">
+            <dt className="text-xs text-ink-muted md:text-sm">{t.fields.factors}</dt>
+            <dd className="mt-0.5 text-lg leading-snug font-semibold md:text-[1.75rem]">
               {entry.factors.map((f) => t.factor[f]).join(" · ")}
             </dd>
           </div>
@@ -252,5 +252,32 @@ function KeptView({
         <DemoLinks />
       </article>
     </JournalPage>
+  );
+}
+
+// Dev-only preview of the kept view (app/report/preview). Synthetic entry, nothing is stored.
+const PREVIEW_ENTRY: KeptEntry = {
+  date: "2026-11-17",
+  shift: "night",
+  redactedText:
+    "Ночью в [ПАЛАТА] медсестра [СОТРУДНИК] чуть не ввела пациенту [ПАЦИЕНТ] Лантус вместо Актрапида — коробки одинаковые и стоят рядом в холодильнике. Заметила перед уколом. [НОМЕР].",
+  removed: 4,
+  incidentType: "medication",
+  stage: "administration",
+  harm: "none",
+  nearMiss: true,
+  factors: ["similar_packaging", "fatigue"],
+  summary: "",
+  joinedPattern: true,
+};
+
+export function KeptPreview() {
+  return (
+    <KeptView
+      hospital="A"
+      entry={PREVIEW_ENTRY}
+      original="(синтетический пример — исходного текста в превью нет)"
+      onAnother={() => {}}
+    />
   );
 }

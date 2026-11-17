@@ -168,9 +168,10 @@
   text-decoration-thickness: 1.5px;
 }
 
+/* Eases to 90% and holds: never sits "full and static" while the model is still working. */
 @keyframes pen-stroke {
   from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
+  to { transform: scaleX(0.9); }
 }
 
 @keyframes stamp-land {

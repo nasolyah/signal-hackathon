@@ -21,7 +21,7 @@ STORY: The reporter sees the journal's «Подпись» column already struck 
 
 FIRST VIEWPORT: Phone 390×844. Journal head: «Журнал · Больница А · Ташкент», headline «Помогите сделать работу безопаснее». Row: Дата (today, read-only) · Смена (День/Ночь, auto). Ruled «Что произошло?» area with margin rule, ~45% of height, 18px. «Подпись — не требуется» struck through, trust line under it. «Сообщить» full-width blue slab, sticky at the bottom.
 
-FORM: shift handover journal; position 1 on the ordered list (IMPECCABLE’S PICK, chosen over the roll); seed key 1437336f. Signature interaction: while processing, a ballpoint stroke runs along the ruled line; on success a round stamp «принято анонимно» lands once on the kept entry. Reduced motion: instant states.
+FORM: shift handover journal; position 1 on the ordered list (IMPECCABLE’S PICK, chosen over the roll); seed key 1437336f — the roll printed «DIRECTION CONCEPT SEED (key: 1437336f; mode: operate; source: api; approved pool: c3b204a1eed6 …)» and no separate SEED REFERENCE line (Impeccable v4.3.1). Signature interaction: while processing, a ballpoint stroke runs along the ruled line; on success a round stamp «принято анонимно» lands once on the kept entry. Reduced motion: instant states.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
 

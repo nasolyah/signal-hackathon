@@ -11,7 +11,7 @@ export function RedactedText({ text }: { text: string }) {
         PLACEHOLDER.test(part) ? (
           <span
             key={i}
-            className="mx-px inline-block rounded-[2px] border-[1.5px] border-margin-red px-1.5 align-baseline text-[0.78em] leading-[1.35] font-medium tracking-wide text-margin-red [background:repeating-linear-gradient(-45deg,var(--redact-fill)_0_3px,transparent_3px_7px)]"
+            className="mx-px inline-block rounded-[2px] border-[1.5px] border-margin-red px-1.5 align-baseline text-[0.85em] leading-[1.3] font-semibold tracking-wide text-margin-red [background:repeating-linear-gradient(-45deg,var(--redact-fill)_0_3px,transparent_3px_7px)] md:border-2"
           >
             <span className="sr-only">удалено: </span>
             {t.redaction[part] ?? "удалено"}
