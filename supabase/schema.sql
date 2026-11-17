@@ -90,3 +90,16 @@ alter table hospitals enable row level security;
 alter table patterns  enable row level security;
 alter table incidents enable row level security;
 alter table rca       enable row level security;
+
+-- Server role only (projects may be created with "don't auto-expose new tables").
+-- anon / authenticated get nothing: the browser never talks to the DB directly.
+grant usage on schema public to service_role;
+grant all on all tables in schema public to service_role;
+grant all on all sequences in schema public to service_role;
+grant execute on all functions in schema public to service_role;
+
+-- Make the Data API see the new tables right away.
+notify pgrst, 'reload schema';
+
+-- Sanity check: should list hospitals, incidents, patterns, rca
+select table_name from information_schema.tables where table_schema = 'public' order by 1;
