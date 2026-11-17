@@ -1,16 +1,23 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 import { t } from "@/lib/i18n";
 import { FACTORS, HARMS, INCIDENT_TYPES, STAGES, type Factor, type Harm, type IncidentType, type Stage } from "@/lib/taxonomy";
 import { confirmClassification } from "@/app/rca/actions";
+import { Stamp } from "@/app/report/stamp";
+import { tashkentDate } from "@/lib/time";
 
 type Fields = { incident_type: IncidentType; stage: Stage; harm: Harm; near_miss: boolean; factors: Factor[] };
 
 /** AI suggests, a human confirms: proposals stay in faded ink until a person confirms; then the stamp lands. */
 export function Classification({ id, initial, verified }: { id: string; initial: Fields; verified: boolean }) {
   const [f, setF] = useState(initial);
+  const router = useRouter();
   const [ok, setOk] = useState(verified);
+  // The stamp lands once, at the moment a person confirms — not on every page load.
+  const [justConfirmed, setJustConfirmed] = useState(false);
   const [failed, setFailed] = useState(false);
   const [pending, start] = useTransition();
   const tone = ok ? "text-ink" : "text-ink-muted";
@@ -18,13 +25,14 @@ export function Classification({ id, initial, verified }: { id: string; initial:
   const select = <K extends keyof Fields>(key: K, label: string, options: [string, string][]) => (
     <label className="flex flex-col gap-1 border-r border-b border-rule px-5 py-3 lg:px-6">
       <span className="text-xs text-ink-muted">{label}</span>
+      <span className="relative">
       <select
         value={String(f[key])}
         onChange={(e) => {
           setOk(false);
           setF({ ...f, [key]: key === "near_miss" ? e.target.value === "true" : e.target.value } as Fields);
         }}
-        className={`appearance-none bg-transparent text-base font-semibold outline-none focus-visible:rounded-sm focus-visible:ring-3 focus-visible:ring-ring/40 ${tone}`}
+        className={`w-full appearance-none bg-transparent pr-6 text-base font-semibold outline-none focus-visible:rounded-sm focus-visible:ring-3 focus-visible:ring-ring/40 ${tone}`}
       >
         {options.map(([v, l]) => (
           <option key={v} value={v}>
@@ -32,6 +40,8 @@ export function Classification({ id, initial, verified }: { id: string; initial:
           </option>
         ))}
       </select>
+      <ChevronDown className="pointer-events-none absolute top-1/2 right-0 size-4 -translate-y-1/2 text-ink-muted" aria-hidden />
+      </span>
     </label>
   );
 
@@ -39,11 +49,7 @@ export function Classification({ id, initial, verified }: { id: string; initial:
     <section className="border-t border-rule" aria-label={t.rcaUi.confirm}>
       <div className="flex items-center justify-between gap-3 px-5 pt-4 pb-2 lg:px-8">
         <p className="text-sm text-ink-muted">{ok ? null : t.rcaUi.aiProposal}</p>
-        {ok && (
-          <span className="rounded-[4px] border-2 border-pen px-2.5 py-0.5 text-sm font-semibold text-pen motion-safe:animate-[tag-stamp_360ms_cubic-bezier(0.2,0.8,0.2,1)_both] -rotate-3">
-            {t.rcaUi.confirmed}
-          </span>
-        )}
+        {ok && <Stamp date={tashkentDate()} label={t.rcaUi.confirmed} animate={justConfirmed} className="size-[5rem]" />}
       </div>
       <div className="grid grid-cols-2 border-t border-rule">
         {select("incident_type", t.fields.type, INCIDENT_TYPES.map((k) => [k, t.incidentType[k]]))}
@@ -85,7 +91,11 @@ export function Classification({ id, initial, verified }: { id: string; initial:
               start(async () => {
                 const r = await confirmClassification(id, f);
                 setFailed(!r.ok);
-                if (r.ok) setOk(true);
+                if (r.ok) {
+                  setOk(true);
+                  setJustConfirmed(true);
+                  router.refresh();
+                }
               })
             }
             className="flex h-11 items-center rounded-[6px] bg-pen px-4 text-base font-semibold text-pen-ink transition-[filter] hover:brightness-110 focus-visible:ring-4 focus-visible:ring-ring/40 focus-visible:outline-none disabled:cursor-progress disabled:brightness-95"

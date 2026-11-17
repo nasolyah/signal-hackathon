@@ -19,6 +19,6 @@ STORY: The quality lead opens the insulin pattern, reads eleven de-identified ca
 
 FIRST VIEWPORT: Laptop 1440×900. Running head with back link and status. Left page (5/12): pattern title 1.75rem, stats, regions, then case rows with red-pencil redactions. Right page (7/12): «Пять почему» as five ruled lines, «Причины» in six columns, «Меры» ranked, the add-action field at the end.
 
-FORM: «Разбор на развороте» (two-page spread); dealt lead (THE ROLL) of 3; seed: none — the roll ran on Impeccable v4.3.1, which prints no SEED REFERENCE line, so there is no reference to record or corroborate. Signature interaction: a newly added action slides into its rank position (strong rows above, weak below) and its strength tag stamps in once. Reduced motion: instant.
+FORM: «Разбор на развороте» (two-page spread); dealt lead (THE ROLL) of 3; seed: none (unavailable) — this roll printed no SEED REFERENCE line. Signature interaction: a newly added action slides into its rank position (strong rows above, weak below) and its strength tag stamps in once. Reduced motion: instant.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
