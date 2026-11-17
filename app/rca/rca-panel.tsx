@@ -29,6 +29,8 @@ export function RcaPanel({ target, initial, status }: { target: RcaTarget; initi
   const [failed, setFailed] = useState(false);
   // Only the action a person just added slides in and stamps — never on page load.
   const [fresh, setFresh] = useState<string | null>(null);
+  // The closed stamp lands once, when a person closes it here — independent of the refresh timing.
+  const [justClosed, setJustClosed] = useState(false);
   const [pending, startTransition] = useTransition();
 
   const run = (fn: () => Promise<{ ok: true; value: RcaRow } | { ok: false }>, after?: (r: RcaRow) => void) =>
@@ -230,7 +232,7 @@ export function RcaPanel({ target, initial, status }: { target: RcaTarget; initi
         {closed ? (
           // Ruled off with the stamp: the journal's own way of closing an entry (DESIGN state vocabulary)
           <div className="flex items-center gap-5 border-t-4 border-double border-ink pt-4">
-            <Stamp date={tashkentDate()} label={t.rcaUi.closed} animate={state !== status} className="size-[5.5rem]" />
+            <Stamp date={tashkentDate()} label={t.rcaUi.closed} animate={justClosed} className="size-[5.5rem]" />
             <span className="text-base text-ink">{t.rcaUi.closed}</span>
           </div>
         ) : (
@@ -244,6 +246,7 @@ export function RcaPanel({ target, initial, status }: { target: RcaTarget; initi
                   setFailed(!r.ok);
                   if (r.ok) {
                     setState("closed");
+                    setJustClosed(true);
                     router.refresh(); // running head status → «Закрыт»
                   }
                 })
