@@ -1,8 +1,9 @@
 // Reset the demo between rehearsals: delete live reports (rows without expected_* — i.e. not seed),
-// then recompute every pattern's stats, so the insulin alert is back to 11.
+// recompute every pattern's stats (insulin alert back to 11), and re-draft the pattern RCAs.
 //   npm run demo:reset
 import { db } from "@/lib/db";
 import { recomputePatternStats } from "@/lib/patterns";
+import { warmPatternRcas } from "@/lib/rca-warm";
 
 async function main() {
   const sb = db();
@@ -15,7 +16,8 @@ async function main() {
   for (const p of ps ?? []) await recomputePatternStats(p.id);
   await sb.from("patterns").update({ status: "open" }).not("id", "is", null);
   const { data: after } = await sb.from("patterns").select("title, incident_count").order("incident_count", { ascending: false });
-  console.log(`✓ removed ${live?.length ?? 0} live reports; RCA cleared`);
+  console.log(`✓ removed ${live?.length ?? 0} live reports; RCA cleared, re-drafting pattern RCAs…`);
+  await warmPatternRcas(console.log);
   for (const p of after ?? []) console.log(`  ${p.incident_count}  ${p.title}`);
 }
 

@@ -13,7 +13,8 @@
     "patterns": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/patterns.ts",
     "eval": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/eval.ts",
     "reembed": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/reembed.ts",
-    "demo:reset": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/demo-reset.ts"
+    "demo:reset": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/demo-reset.ts",
+    "rca:warm": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/rca-warm.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
