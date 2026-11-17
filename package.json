@@ -11,7 +11,8 @@
     "typecheck": "next typegen && tsc --noEmit",
     "seed": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/seed.ts",
     "patterns": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/patterns.ts",
-    "eval": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/eval.ts"
+    "eval": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/eval.ts",
+    "reembed": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/reembed.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

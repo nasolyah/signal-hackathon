@@ -135,9 +135,13 @@ export async function analyzeReport(rawText: string): Promise<AnalyzeResult> {
   return { ...analysis, total_redactions: visible + safetyNet };
 }
 
-/** Step 2: embedding text = summary | type | factors (SPEC §4). */
-export function embeddingInput(a: Pick<Analysis, "summary" | "incident_type" | "factors">): string {
-  return `${a.summary} | ${a.incident_type} | ${a.factors.join(", ")}`;
+/**
+ * Step 2: embedding text. SPEC said summary | type | factors, but on the seed that made every
+ * medication case look alike (P1 absorbed 10 unrelated cases). Summary + de-identified text keeps
+ * the specifics («инсулин», «второй корпус») and recovered P1 11/11 and P2 7/7 cleanly.
+ */
+export function embeddingInput(a: Pick<Analysis, "summary" | "redacted_text">): string {
+  return `${a.summary}\n${a.redacted_text}`;
 }
 
 export async function embed(text: string): Promise<number[]> {
@@ -145,7 +149,7 @@ export async function embed(text: string): Promise<number[]> {
     gemini().models.embedContent({
       model,
       contents: text,
-      config: { outputDimensionality: EMBEDDING_DIM, taskType: "SEMANTIC_SIMILARITY" },
+      config: { outputDimensionality: EMBEDDING_DIM, taskType: "CLUSTERING" },
     }),
   );
   const values = res.embeddings?.[0]?.values;

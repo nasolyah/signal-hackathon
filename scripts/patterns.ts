@@ -1,7 +1,7 @@
 // Step 4 (SPEC §4): batch pattern discovery.
 //   npm run patterns -- --dry                → threshold sweep, writes nothing
-//   npm run patterns -- --threshold 0.84     → cluster, name with Gemini, write patterns
-// Edge if cosine similarity ≥ threshold; clusters = connected components; keep ≥ 5 incidents.
+//   npm run patterns -- --threshold 0.90 --local 0.84 → cluster, name with Gemini, write patterns
+// Average linkage nationally, then inside each hospital for the rest; keep clusters ≥ 5 incidents.
 
 import { z } from "zod";
 import { db } from "@/lib/db";
@@ -38,14 +38,37 @@ function similarity(rows: Row[]): number[][] {
   return rows.map((a) => rows.map((b) => a.vec.reduce((s, x, i) => s + x * b.vec[i], 0)));
 }
 
-function clusters(rows: Row[], sim: number[][], threshold: number): number[][] {
-  const parent = rows.map((_, i) => i);
-  const find = (i: number): number => (parent[i] === i ? i : (parent[i] = find(parent[i])));
-  for (let i = 0; i < rows.length; i++)
-    for (let j = i + 1; j < rows.length; j++) if (sim[i][j] >= threshold) parent[find(i)] = find(j);
-  const groups = new Map<number, number[]>();
-  rows.forEach((_, i) => groups.set(find(i), [...(groups.get(find(i)) ?? []), i]));
-  return [...groups.values()].filter((g) => g.length >= MIN_CLUSTER).sort((a, b) => b.length - a.length);
+/** Average-linkage agglomerative clustering: merge while mean pairwise similarity ≥ threshold.
+ *  Single linkage chained everything into one blob on the seed; average linkage does not. */
+function averageLinkage(idx: number[], sim: number[][], threshold: number): number[][] {
+  let cl = idx.map((i) => [i]);
+  for (;;) {
+    let best = -1, bi = -1, bj = -1;
+    for (let i = 0; i < cl.length; i++)
+      for (let j = i + 1; j < cl.length; j++) {
+        let s = 0;
+        for (const a of cl[i]) for (const b of cl[j]) s += sim[a][b];
+        s /= cl[i].length * cl[j].length;
+        if (s > best) [best, bi, bj] = [s, i, j];
+      }
+    if (best < threshold) return cl;
+    cl = [...cl.filter((_, k) => k !== bi && k !== bj), [...cl[bi], ...cl[bj]]];
+  }
+}
+
+/**
+ * National pass across all hospitals, then a local pass inside each hospital for what is left:
+ * a pattern visible in one hospital only (falls in one building, same-surname mix-ups) is real too.
+ */
+function clusters(rows: Row[], sim: number[][], national: number, local: number): number[][] {
+  const all = rows.map((_, i) => i);
+  const found = averageLinkage(all, sim, national).filter((g) => g.length >= MIN_CLUSTER);
+  const taken = new Set(found.flat());
+  for (const h of new Set(rows.map((r) => r.hospital_id))) {
+    const rest = all.filter((i) => rows[i].hospital_id === h && !taken.has(i));
+    found.push(...averageLinkage(rest, sim, local).filter((g) => g.length >= MIN_CLUSTER));
+  }
+  return found.sort((a, b) => b.length - a.length);
 }
 
 function describe(rows: Row[], group: number[]): string {
@@ -84,18 +107,23 @@ async function main() {
   console.log(`${rows.length} incidents with embeddings`);
 
   if (process.argv.includes("--dry")) {
-    for (let t = 0.7; t <= 0.951; t += 0.01) {
-      const cs = clusters(rows, sim, t);
-      console.log(`\nthreshold ${t.toFixed(2)}: ${cs.length} clusters ≥${MIN_CLUSTER}`);
-      for (const g of cs) console.log(`   ${describe(rows, g)}`);
-    }
+    for (const n of [0.88, 0.89, 0.9, 0.91])
+      for (const l of [0.8, 0.82, 0.84, 0.86, 0.88]) {
+        const cs = clusters(rows, sim, n, l);
+        console.log(`\nnational ${n.toFixed(2)} · local ${l.toFixed(2)}: ${cs.length} clusters`);
+        for (const g of cs) console.log(`   ${describe(rows, g)}`);
+      }
     return;
   }
 
-  const ti = process.argv.indexOf("--threshold");
-  const threshold = ti > 0 ? Number(process.argv[ti + 1]) : env.simThreshold();
-  const cs = clusters(rows, sim, threshold);
-  console.log(`threshold ${threshold}: ${cs.length} clusters`);
+  const arg = (name: string, fallback: number) => {
+    const i = process.argv.indexOf(name);
+    return i > 0 ? Number(process.argv[i + 1]) : fallback;
+  };
+  const national = arg("--threshold", 0.9);
+  const local = arg("--local", 0.84);
+  const cs = clusters(rows, sim, national, local);
+  console.log(`national ${national} · local ${local}: ${cs.length} clusters`);
 
   const sb = db();
   await sb.from("incidents").update({ pattern_id: null }).not("pattern_id", "is", null);
