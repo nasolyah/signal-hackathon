@@ -16,6 +16,8 @@ export type PatternCard = {
   nightShare: number;
   topFactors: string[];
   status: string;
+  /** Hospitals the pattern spans, in code order (А…Е). */
+  hospitals: HospitalCode[];
 };
 
 export type FeedRow = {
@@ -54,13 +56,20 @@ async function incidents(f: Filters): Promise<IncidentLite[]> {
   return (data ?? []) as IncidentLite[];
 }
 
-export async function patternCards(): Promise<PatternCard[]> {
-  const { data, error } = await db()
-    .from("patterns")
-    .select("id, title, description, incident_count, hospital_count, night_share, top_factors, status")
-    .order("incident_count", { ascending: false });
-  if (error) throw new Error("PATTERNS_QUERY_FAILED");
-  return (data ?? []).map((p) => ({
+export async function patternCards(hospital?: HospitalCode): Promise<PatternCard[]> {
+  const [{ data, error }, { data: members, error: mErr }] = await Promise.all([
+    db()
+      .from("patterns")
+      .select("id, title, description, incident_count, hospital_count, night_share, top_factors, status")
+      .order("incident_count", { ascending: false }),
+    db().from("incidents").select("pattern_id, hospital_id").not("pattern_id", "is", null),
+  ]);
+  if (error || mErr) throw new Error("PATTERNS_QUERY_FAILED");
+  const spans = new Map<string, Set<HospitalCode>>();
+  for (const m of members ?? []) spans.set(m.pattern_id, (spans.get(m.pattern_id) ?? new Set()).add(m.hospital_id));
+  return (data ?? [])
+    .filter((p) => !hospital || spans.get(p.id)?.has(hospital))
+    .map((p) => ({
     id: p.id,
     title: p.title,
     description: p.description,
@@ -69,11 +78,32 @@ export async function patternCards(): Promise<PatternCard[]> {
     nightShare: Number(p.night_share),
     topFactors: p.top_factors ?? [],
     status: p.status,
+    hospitals: [...(spans.get(p.id) ?? [])].sort(),
   }));
 }
 
+/** Minimal numbers the dashboard polls for the live counter. */
+export async function liveCounts(f: Filters = {}) {
+  const [patterns, total] = await Promise.all([
+    patternCards(f.hospital),
+    (async () => {
+      let q = db().from("incidents").select("id", { count: "exact", head: true });
+      if (f.hospital) q = q.eq("hospital_id", f.hospital);
+      const { count } = await q;
+      return count ?? 0;
+    })(),
+  ]);
+  return {
+    total,
+    patterns: Object.fromEntries(
+      patterns.map((p) => [p.id, { count: p.incidentCount, hospitals: p.hospitalCount, night: p.nightShare }]),
+    ),
+  };
+}
+export type LiveCounts = Awaited<ReturnType<typeof liveCounts>>;
+
 export async function dashboardData(f: Filters = {}) {
-  const [rows, patterns] = await Promise.all([incidents(f), patternCards()]);
+  const [rows, patterns] = await Promise.all([incidents(f), patternCards(f.hospital)]);
   const total = rows.length;
   const count = <K extends string>(key: (r: IncidentLite) => K) => {
     const m = new Map<K, number>();

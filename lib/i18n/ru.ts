@@ -160,6 +160,51 @@ export const ru = {
     weakOnlyWarning:
       "Все меры слабые. Инструктаж и предупреждения редко предотвращают повтор — добавьте меру, которая меняет систему",
   },
+  // Ministry-facing (analysts): technical terms like «почти-ошибка» are fine here.
+  dashboard: {
+    title: "Журнал Минздрава",
+    allHospitals: "все больницы",
+    hospitalFilter: "Больница",
+    synthetic: "данные синтетические (демо)",
+    totals: {
+      total: "Всего случаев",
+      nearMiss: "Почти-ошибки",
+      severe: "Тяжёлый вред и смерть",
+      openPatterns: "Открытые закономерности",
+    },
+    patterns: "Закономерности",
+    patternsHint: "Похожие случаи, которые повторяются — сразу в нескольких больницах или в одной",
+    patternsEmpty: "Пока нет. Закономерность появится, когда похожие случаи повторятся хотя бы пять раз.",
+    night: "ночью",
+    mostOften: "Чаще всего",
+    open: "Разобрать",
+    newCase: "новый случай",
+    register: "Реестр случаев",
+    byType: "По типам",
+    byHospital: "По больницам",
+    dayNight: "День и ночь",
+    filterType: "Тип",
+    filterHarm: "Вред",
+    any: "Все",
+    reset: "Сбросить",
+    feedEmpty: "По этим условиям случаев нет.",
+    columns: { date: "Дата", hospital: "Больница", type: "Тип", harm: "Вред", nearMiss: "Почти-ошибка", status: "Статус" },
+    shownOf: (shown: number, total: number) => (shown < total ? `Показаны последние ${shown} из ${total}` : `${total}`),
+    staffLink: "Сотрудник",
+  },
+  plural: {
+    cases: (n: number) => plural(n, "случай", "случая", "случаев"),
+    hospitals: (n: number) => plural(n, "больница", "больницы", "больниц"),
+  },
 };
+
+/** Russian plural: 1 случай, 2 случая, 5 случаев, 11 случаев, 21 случай. */
+function plural(n: number, one: string, few: string, many: string): string {
+  const m10 = n % 10;
+  const m100 = n % 100;
+  if (m10 === 1 && m100 !== 11) return one;
+  if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return few;
+  return many;
+}
 
 export type Dictionary = typeof ru;

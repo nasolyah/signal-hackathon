@@ -180,6 +180,19 @@
   100% { opacity: 1; transform: rotate(-9deg) scale(1); }
 }
 
+/* Dashboard live counter: old count slides up, new one rises in, red pencil underlines once. */
+@keyframes count-out {
+  to { transform: translateY(-0.9em); opacity: 0; filter: blur(2px); }
+}
+@keyframes count-in {
+  from { transform: translateY(0.9em); opacity: 0; filter: blur(2px); }
+  to { transform: translateY(0); opacity: 1; filter: blur(0); }
+}
+@keyframes pencil-underline {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 1ms !important;
