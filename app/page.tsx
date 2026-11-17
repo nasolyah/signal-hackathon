@@ -16,6 +16,9 @@ export default function Home() {
         <Link className="rounded-lg border px-4 py-3 hover:bg-muted" href="/dashboard">
           {t.roles.ministry} → /dashboard
         </Link>
+        <Link className="rounded-lg border px-4 py-3 hover:bg-muted" href="/qr">
+          {t.qr.title} → /qr
+        </Link>
       </nav>
     </main>
   );
