@@ -181,7 +181,7 @@
                     <span class="ui-msg__col">
                       <span class="ui-chat__typing" aria-hidden="true"><i></i><i></i><i></i></span>
                       <span class="ui-chat__answer">Сохранено без имён: палата, медсестра и пациент убраны. <b>Лекарства, без вреда, 12-й похожий случай в 4 больницах.</b></span>
-                      <span class="ui-chat__srcs"><span class="ui-chat__src"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M4 2.5h5l3 3v8H4z"/><path d="M9 2.5v3h3"/></svg>Классификация ВОЗ (ICPS)</span></span>
+                      <span class="ui-chat__srcs"><span class="ui-chat__src"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M4 2.5h5l3 3v8H4z"/><path d="M9 2.5v3h3"/></svg>Рамка ВОЗ ICPS</span></span>
                     </span>
                   </div>
                 </div>
@@ -303,12 +303,12 @@
             </div>
           </article>
           <article class="card card--row card--open span-6">
-            <h3>Раскладывает случай по классификации ВОЗ</h3>
-            <p>Тип, этап помощи, вред и факторы по таксономии ICPS. Любое поле можно поправить.</p>
+            <h3>Раскладывает случай по рамке ВОЗ</h3>
+            <p>Тип, этап помощи, вред и факторы по концептуальной рамке ВОЗ ICPS. Любое поле можно поправить.</p>
             <div class="panel">
               <div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:340px;--ax:max(24px, 50% - 170px);--ay:48px;--ay-sm:16px">
                 <div class="ui ui-panel ui-checks" data-ui="checklist">
-                  <div class="ui-checks__head"><div class="ui-title">Классификация случая</div><span class="ui-spacer"></span><div class="ui-meta" data-checks-count>4 из 5</div></div>
+                  <div class="ui-checks__head"><div class="ui-title">Разметка случая</div><span class="ui-spacer"></span><div class="ui-meta" data-checks-count>4 из 5</div></div>
                   <div class="ui-checks__bar"><i data-checks-bar style="--k:0.8"></i></div>
                   <ul class="ui-checks__list">
                     <li class="ui-check is-done"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Тип: лекарства</span></li>
@@ -352,7 +352,7 @@
                     <span class="ui-agent ui-msg__av" aria-hidden="true"></span>
                     <span class="ui-msg__col">
                       <span class="ui-chat__answer">Имя медсестры убрано. <b>Тип: лекарства, смена: ночь.</b></span>
-                      <span class="ui-chat__srcs"><span class="ui-chat__src"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M4 2.5h5l3 3v8H4z"/><path d="M9 2.5v3h3"/></svg>Классификация ВОЗ (ICPS)</span></span>
+                      <span class="ui-chat__srcs"><span class="ui-chat__src"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M4 2.5h5l3 3v8H4z"/><path d="M9 2.5v3h3"/></svg>Рамка ВОЗ ICPS</span></span>
                     </span>
                   </div>
                 </div>
@@ -369,7 +369,7 @@
       <div class="grid grid--top">
         <div class="span-5 stack-6">
           <h2 id="numbers-h">Точность на 120 синтетических случаях</h2>
-          <p class="t-lead">Датасет собран по таксономии ВОЗ из шести больниц, в нём заложены три закономерности. Сигнал нашёл все три без подсказок и ещё одну, которую никто не закладывал.</p>
+          <p class="t-lead">Датасет собран по рамке ВОЗ ICPS из шести больниц, в нём заложены три закономерности. Сигнал нашёл все три без подсказок и ещё одну, которую никто не закладывал.</p>
         </div>
         <div class="frame frame--split span-6 start-7">
           <div class="dg" data-diagram='{"layout":"lanes","alt":"120 синтетических случаев из шести больниц проходят через Сигнал, и он находит три заложенные закономерности целиком: 11 из 11, 7 из 7 и 5 из 5","input":{"label":"120","icon":"ui:file-text","sub":"случаев"},"core":{"label":"Сигнал","icon":"ui:search"},"lanes":[{"label":"Инсулины","icon":"ui:syringe","done":true,"sub":"11 из 11"},{"label":"Падения","icon":"ui:hospital","done":true,"sub":"7 из 7"},{"label":"Фамилии","icon":"ui:users","done":true,"sub":"5 из 5"}]}'></div>
@@ -401,7 +401,7 @@
         <div class="faq span-6 start-7">
           <div class="faq__item"><h3>Вы что, никого не будете наказывать?</h3><p>Нет. Честную ошибку исправляют в системе, халатность наказывают, как и сейчас. Тяжкие случаи расследуются официально.</p></div>
           <div class="faq__item"><h3>Где хранятся данные?</h3><p>В базе только текст без имён. Для пилота это серверы в Узбекистане или в стране из списка Кабмина.</p></div>
-          <div class="faq__item"><h3>Что, если ИИ классифицирует неверно?</h3><p>ИИ предлагает, человек подтверждает: ответственный за качество меняет поле, и случай получает отметку «проверено».</p></div>
+          <div class="faq__item"><h3>Что, если ИИ ошибётся в разметке?</h3><p>ИИ предлагает, человек подтверждает: ответственный за качество меняет поле, и случай получает отметку «проверено».</p></div>
           <div class="faq__item"><h3>Это просто обёртка над Gemini?</h3><p>Нет. Очистка до ИИ, строгая схема ВОЗ, поиск повторов по эмбеддингам и меры по RCA². Модель можно заменить.</p></div>
         </div>
       </div>

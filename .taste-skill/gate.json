@@ -6,48 +6,6 @@
  "status": "open",
  "history": [
   {
-   "at": "2026-11-18T00:45:58.257Z",
-   "mode": "manual",
-   "status": "fail",
-   "fails": 1,
-   "round": 2,
-   "reused": false,
-   "stopHookActive": false
-  },
-  {
-   "at": "2026-11-18T00:48:27.604Z",
-   "mode": "manual",
-   "status": "open",
-   "fails": 1,
-   "round": 3,
-   "reused": false,
-   "stopHookActive": false
-  },
-  {
-   "at": "2026-11-18T01:00:19.405Z",
-   "mode": "hook",
-   "host": "claude",
-   "decision": "allow",
-   "reason": "no build is active here",
-   "stopHookActive": false
-  },
-  {
-   "at": "2026-11-18T03:06:18.055Z",
-   "mode": "hook",
-   "host": "claude",
-   "decision": "allow",
-   "reason": "no build is active here",
-   "stopHookActive": false
-  },
-  {
-   "at": "2026-11-18T03:08:22.048Z",
-   "mode": "hook",
-   "host": "claude",
-   "decision": "allow",
-   "reason": "no build is active here",
-   "stopHookActive": false
-  },
-  {
    "at": "2026-11-18T03:12:56.633Z",
    "mode": "hook",
    "host": "claude",
@@ -161,6 +119,46 @@
   },
   {
    "at": "2026-11-18T04:37:54.799Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T04:44:23.574Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T04:47:40.400Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T05:18:32.689Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T05:22:34.680Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T07:39:33.369Z",
    "mode": "hook",
    "host": "claude",
    "decision": "allow",

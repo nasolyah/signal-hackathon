@@ -82,7 +82,7 @@ export const ru = {
     icu: "Реанимация",
   } satisfies Record<Department, string>,
   fields: {
-    classification: "Классификация ВОЗ",
+    classification: "Разметка по рамке ВОЗ (ICPS)",
     type: "Тип",
     stage: "Этап",
     harm: "Вред пациенту",
@@ -238,7 +238,7 @@ export const ru = {
     closeNeedsStrong: "Чтобы закрыть разбор, нужна хотя бы одна сильная или средняя мера",
     closed: "Разбор закрыт",
     failed: "Не получилось. Попробуйте ещё раз.",
-    confirm: "Подтвердить классификацию",
+    confirm: "Подтвердить разметку",
     confirming: "Сохраняем…",
     confirmed: "проверено",
     aiProposal: "предложение ИИ — проверьте",

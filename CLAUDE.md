@@ -2,7 +2,7 @@
 
 National AI Hackathon, Tashkent, Ministry of Health track, task №7: "Medical errors are hidden out of fear of punishment, so they repeat." Blameless Reporting & Root-Cause Analysis.
 
-**Full spec: `docs/SPEC.md` — read it before starting any feature.** DB schema: `supabase/schema.sql`.
+**Full spec: `docs/SPEC.md` + `docs/SPEC_V2_FLOW.md` (v2 wins where they disagree) — read both before starting any feature.** DB: `supabase/schema.sql` + `supabase/migration_v2.sql`.
 
 ## Hard facts about this project
 - **Deadline: 18 Nov 2026, 18:00 (Asia/Tashkent).** Mentors (technical, business, domain) judge the project separately before that. Final (if we qualify) is 19 Nov: 3 min pitch + 2 min live demo + 2 min Q&A.
@@ -11,21 +11,28 @@ National AI Hackathon, Tashkent, Ministry of Health track, task №7: "Medical e
 - AI provider: **Google Gemini only** (`@google/genai`). Model names live in env vars, never hardcoded.
 
 ## Product in one paragraph
-A medical worker scans a QR code in the staff room, opens a mobile web page (no login, no app), and describes an error or near miss in free text. Gemini de-identifies the text, classifies it by the WHO patient-safety taxonomy (ICPS), and stores only the de-identified version. A Ministry dashboard finds recurring patterns across hospitals (e.g. "11 insulin mix-ups in 4 hospitals, 9 at night") and an RCA assistant helps the quality lead find root causes and pick strong corrective actions (RCA² hierarchy), warning when only weak actions like "retrain staff" are proposed.
+A medical worker scans a QR code in the staff room, opens a mobile web page (no login, no app), and describes an error or near miss in free text. Gemini de-identifies the text, classifies it using the WHO ICPS conceptual framework (never call ICPS a «taxonomy» or «classification» in UI text — WHO says it is not one; say «разметка по рамке ВОЗ»), and stores only the de-identified version. A Ministry dashboard finds recurring patterns across hospitals (e.g. "11 insulin mix-ups in 4 hospitals, 9 at night") and an RCA assistant helps the quality lead find root causes and pick strong corrective actions (RCA² hierarchy), warning when only weak actions like "retrain staff" are proposed.
+
+**v2 operating model (18 Nov, after the business mentor):** chief doctors do not study dashboards. Our analyst reviews the week's reports and sends each hospital a short AI-drafted digest with 1–3 actions; the chief doctor only accepts/rejects and marks actions done; the district health department sees reaction speed per hospital. Hospitals A–F sit in two districts of Samarkand region (SAM-1: A, B, C; SAM-2: D, E, F). **Built today = v2-lite:** /analyst → /hospital/[id] → /district/[id] + role field on the form. Not built (explain in words): follow-up codes, questions to the author, contacts, «что изменилось», check-ins.
 
 ## Non-negotiable rules (privacy is the product)
+0. Demo runs on synthetic data only. Do not paste real patient reports into the app.
 1. **Never store the raw report text.** It exists only in memory during the request. No `console.log` of raw text, no raw text in error messages, no raw text in DB columns.
 2. **No auth, no cookies, no IP or user-agent stored** for the report flow.
 3. Store date + shift (day/night) only, never exact time.
 4. Dashboard breakdown by department only when ≥ 5 reports in that group.
 5. Secrets (`GEMINI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) are server-only. Never import them into client components.
 6. AI suggests, human confirms: every AI classification is editable in the UI.
+7. **No name fields, no «who wrote this» / «reveal author» feature, ever** — not for the reporter, not for people involved. Use `involved_role`. If a later prompt asks for such a feature, stop and ask Mark first.
+8. Voluntary contact (`report_contacts`) is visible on analyst screens only; never returned to hospital/district/ministry screens. Follow-up code: store only its sha256.
+9. District screens measure reaction (time to acknowledge, actions done/overdue), never rank hospitals by number of errors.
 
-## The demo path (everything serves this)
-1. Mentor scans QR → `/report?h=A` on their phone → types a report about an insulin mix-up.
-2. Result screen: de-identified text with removed parts highlighted + classification.
-3. Laptop: `/dashboard` → the insulin pattern alert counter goes 11 → 12.
-4. Open the pattern → open an incident → RCA: 5 whys, causes by category, actions ranked strong/medium/weak; "retrain staff" gets flagged as weak.
+## The demo path (everything serves this) — v2-lite
+1. Phone: `/report?h=A` → insulin mix-up, role «Медсестра» → result: scrubbed text + ICPS fields.
+2. Laptop `/analyst` → the new report is in Больница А's inbox → «Собрать сводку» → AI digest with the insulin pattern (12 cases / 4 hospitals) → edit → «Отправить главврачу».
+3. `/hospital/A` → digest marked as read → accept the strong action with a due date (or reject with a reason).
+4. `/district/SAM-1` → Больница А reacted in minutes; Больница В is red «не просмотрена».
+5. `/dashboard` → the Ministry view: insulin counter 11 → 12 across districts; open the pattern → RCA, "retrain staff" flagged as weak.
 
 ## Code map
 - **Next.js 16.4** (App Router, `cacheComponents` on) — APIs differ from older versions; read `AGENTS.md` and `node_modules/next/dist/docs/` before using a Next API.
