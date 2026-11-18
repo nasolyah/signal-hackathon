@@ -1,0 +1,17 @@
+[
+  {
+    "check": "hero-lines",
+    "target": "section.hero h1",
+    "reason": "Russian page. The stress test fills the centred h1 to its 36-character Latin budget; Cyrillic at that length is wider and wraps to 3 lines. The page's own h1 «Анонимные отчёты об ошибках» (27 characters) takes 2 lines at 1440, 1024, 820, 768 and 390."
+  },
+  {
+    "check": "stagger",
+    "target": "h1#hero-h",
+    "reason": "The centred hero (layout-v4.md: the one exception, on the page axis) centres both h1 lines, so their left edges differ by design; nothing else on the page is centred."
+  },
+  {
+    "check": "cut-text",
+    "target": "div.dg-node.dg-node--tile:nth-of-type(1) > span.dg-cap > span.dg-cap__l",
+    "reason": "Diagram captions sit under their 40px tile by the kit design (diagram.css .dg-cap: position absolute, top 100% + 6px, centred). At 390 the checker takes the tile as the caption box; the crop 390-10-cut-text.jpg shows 120, Инсулины, Падения and Фамилии whole and readable under their tiles."
+  }
+]

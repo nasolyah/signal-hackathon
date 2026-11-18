@@ -1,0 +1,515 @@
+{
+ "start": "2026-11-17T17:25:08.268Z",
+ "round": 3,
+ "idle": 0,
+ "errors": 0,
+ "status": "open",
+ "history": [
+  {
+   "at": "2026-11-17T17:58:33.418Z",
+   "mode": "manual",
+   "status": "fail",
+   "fails": 3,
+   "round": 1,
+   "reused": false,
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T00:45:58.257Z",
+   "mode": "manual",
+   "status": "fail",
+   "fails": 1,
+   "round": 2,
+   "reused": false,
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T00:48:27.604Z",
+   "mode": "manual",
+   "status": "open",
+   "fails": 1,
+   "round": 3,
+   "reused": false,
+   "stopHookActive": false
+  }
+ ],
+ "max": 3,
+ "marker": {
+  "page": null,
+  "url": "http://localhost:3000/landing.html",
+  "root": null,
+  "kind": "software",
+  "category": "анонимные сообщения о медицинских ошибках для больниц",
+  "primary": "Сообщить о случае",
+  "rounds": 3,
+  "start": "2026-11-17T17:25:08.268Z",
+  "by": "gate.mjs --start"
+ },
+ "manual": true,
+ "roundKey": "1bda6b725aba1345:fd8a64fa",
+ "roundFree": false,
+ "idleFree": false,
+ "blockKey": null,
+ "fp": "1bda6b725aba1345",
+ "page": "http://localhost:3000/landing.html",
+ "found": {
+  "fails": [
+   {
+    "check": "stagger",
+    "where": "h1#hero-h \"Анонимные отчёты об ошибках\"",
+    "msg": "the 2 lines of this heading start at 572, 418px: a headline broken across columns, read in a zigzag",
+    "fix": "start every row of the list on one left edge",
+    "widths": [
+     1440
+    ],
+    "from": "consistency",
+    "ids": [
+     "stagger"
+    ],
+    "wheres": [
+     "h1#hero-h \"Анонимные отчёты об ошибках\""
+    ]
+   },
+   {
+    "check": "cut-text",
+    "where": "div.dg-nodes > div.dg-node.dg-node--tile:nth-of-type(1) > span.dg-cap > span.dg-cap__l \"120\"",
+    "msg": "runs past the edge of its box div.frame.frame--split > div.dg > div.dg-nodes > div.dg-node.dg-node--tile:nth-of-type(1) (and 3 more like it: \"Инсулины\", \"Падения\", \"Фамилии\")",
+    "fix": "give the text room: no overflow clipping a line, no line past its box",
+    "widths": [
+     390
+    ],
+    "from": "consistency",
+    "ids": [
+     "cut-text"
+    ],
+    "wheres": [
+     "div.dg-nodes > div.dg-node.dg-node--tile:nth-of-type(1) > span.dg-cap > span.dg-cap__l \"120\""
+    ]
+   },
+   {
+    "check": "collide",
+    "where": "div.grid.grid--top > div.faq.span-6 > div.faq__item:nth-of-type(3) > p \"ИИ предлагает, человек подтверждает: отв\"",
+    "msg": "the words \"ИИ предлагает, человек подтвержд\" lie over \"Отправьте отчёт с телефона\" of another section: two lines in one place (they run out of their own section, which is shorter than what it holds)",
+    "fix": "on a phone nothing lies on anything else: let the section grow with its content (min-height for its screens, never a fixed height; --hm: 2 when it needs two) or cut what it holds; keep pictures and cards off the buttons; pad the page under a fixed bar by the bar's height (top: the first section; end: the footer)",
+    "widths": [
+     320
+    ],
+    "from": "consistency",
+    "ids": [
+     "collide"
+    ],
+    "wheres": [
+     "div.grid.grid--top > div.faq.span-6 > div.faq__item:nth-of-type(3) > p \"ИИ предлагает, человек подтверждает: отв\""
+    ]
+   },
+   {
+    "check": "hero-lines",
+    "where": "section.hero h1",
+    "msg": "the check fills the h1 to 36 characters (this hero's maxChars in heroes.json), not the page's own: it takes 3 lines at 1440, 2 at most",
+    "fix": "the check fills the h1 to this hero's maxChars, not your own: take the next type pairing the deal printed (start.mjs); when the h1 is final and fits, waive it (target: section.hero h1)",
+    "widths": [
+     1440
+    ],
+    "from": "layout",
+    "ids": [
+     "hero-lines"
+    ],
+    "wheres": [
+     "section.hero h1"
+    ]
+   }
+  ],
+  "warns": [
+   {
+    "check": "overlap-text",
+    "where": "div.ui.app > div.app__pane.app__pane--open > div.ui.ui-doc > aside.ui-doc__note.ui-panel \"Удалено ИИ Имя медсестры заменено меткой\"",
+    "msg": "inside div.ui.ui-doc, a box sits on the mock's own text and hides it mid-line (\"Тип: лекарства. Этап: введение\") (and 1 more like it: \"До записи в базу\")",
+    "fix": "move the box off the text (or the text off the box)",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "cut-text",
+    "where": "div.ui-win__main > ul.ui-win__rows > li.ui-win__row:nth-of-type(5) > span.ui-win__who \"Самарканд · день\"",
+    "msg": "cut 15px at the bottom by the overflow of section.hero.hero--centred > div.wrap > div.hero-text > div.hero__window: a fragment run out through its panel's edge",
+    "fix": "give the text room: no overflow clipping a line, no line past its box",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "cut-text",
+    "where": "p.t-stat.mo-cr > span.mo-cr__col:nth-of-type(1) > span.mo-cr__strip > span:nth-of-type(2) \"9\"",
+    "msg": "cut 43px at the bottom by the overflow of div.grid.numbers__row > div.stat.span-3:nth-of-type(1) > p.t-stat.mo-cr > span.mo-cr__col:nth-of-type(1) (inside a held section or scroll scene, whose motion --quick does not check) (and 5 more like it: \"0\", \"0\", \"8\", \"9\", ...)",
+    "fix": "give the text room: no overflow clipping a line, no line past its box",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "cut-text",
+    "where": "p.t-stat.mo-cr > span.mo-cr__col > span.mo-cr__strip > span:nth-of-type(2) \"5\"",
+    "msg": "cut 43px at the bottom by the overflow of div.grid.numbers__row > div.stat.span-3:nth-of-type(4) > p.t-stat.mo-cr > span.mo-cr__col (inside a held section or scroll scene, whose motion --quick does not check)",
+    "fix": "give the text room: no overflow clipping a line, no line past its box",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "scroll-reveal",
+    "where": "section#numbers > div.wrap > div.grid.numbers__row \"8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 \"",
+    "msg": "starts an animation (1.4 s) the moment it is scrolled into view (an IntersectionObserver) on span.mo-cr__strip (inside a dealt moment's section, [data-moment]: an enter moment is expected on every kind; its still is judged under reduced motion)",
+    "fix": "show it at rest: no fade, rise or unmask when it is scrolled into view",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "scroll-reveal",
+    "where": "div.wrap > div.grid.grid--top > div.frame.frame--split > div.dg \"120 случаев Сигнал Инсулины 11 из 11 Пад\"",
+    "msg": "starts \"color\" (0.9 s) the moment it is scrolled into view (an IntersectionObserver) on div.dg-node.dg-node--card:nth-of-type(1) (inside a dealt moment's section, [data-moment]: an enter moment is expected on every kind; its still is judged under reduced motion)",
+    "fix": "show it at rest: no fade, rise or unmask when it is scrolled into view",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "no-visual",
+    "where": "section#privacy \"Исходный текст нигде не хранится\"",
+    "msg": "pictures, effects and mocks cover 15% of this section; a feature section needs a visual (about 25% or more)",
+    "fix": "give the section a visual: a UI fragment on a ground, real icons, or a photograph that fits",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "dark-ground",
+    "where": "div.hero-text > div.hero__window > div.ly-piece > div.ui.app",
+    "msg": "the ground behind the UI is nearly as light as the UI on it (white on near-white)",
+    "fix": "light the ground behind the UI (a daylight data-fx-palette): at least 3:1 against the card",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "copy-headline",
+    "where": "h1#hero-h \"Анонимные отчёты об ошибках\"",
+    "msg": "\"Анонимные отчёты об ошибках\": no category known to check it against (pass --category, or write the <title> as \"Name: what it is for whom\")",
+    "fix": "put the category noun in the h1 (and who it is for, or where), in 2 to 8 words",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "copy-headings",
+    "where": "div.grid.grid--top > div.faq.span-6 > div.faq__item:nth-of-type(4) > h3 \"Это просто обёртка над Gemini?\"",
+    "msg": "\"Это просто обёртка над Gemini?\" names no product, part, place or section (the one brand line a page may have)",
+    "fix": "name the thing in every heading: the product, a part, the place or a section noun",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "text-contrast",
+    "where": "div.ui-win__main > ul.ui-win__rows > li.ui-win__row:nth-of-type(2) > span.ui-win__st \"Обезличивание\"",
+    "msg": "12 lines of text in drawn mocks read under 4.5:1 (2 colour pairs), the worst \"Обезличивание\" in #7fc09b on #f4fff8 at 2.07:1",
+    "fix": "lift the mocks' muted text (labels, meta, initials) to 4.5:1 on their own panel, or set it larger",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "busy-ground",
+    "where": "p.t-stat.mo-cr > span.mo-cr__col:nth-of-type(2) > span.mo-cr__strip > span:nth-of-type(19) \"7\"",
+    "msg": "text over a busy part of a picture (its luminance varies by 0.29 under the words) (inside a held section or scroll scene, whose motion --quick does not check)",
+    "fix": "move the text to a calm part of the picture, or put it on a panel",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "section-gaps",
+    "where": "section#privacy / section#features",
+    "msg": "255px between these sections, +27% against the median 201px of gaps at a change of ground",
+    "fix": "use one gap between sections (all within 25% of each other)",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "section-gaps",
+    "where": "section#product / section#privacy",
+    "msg": "uneven space at the edge of a band: 72px outside its edge, 115px inside it (the space on either side of a change of ground reads as one gap only when the two match)",
+    "fix": "use one gap between sections (all within 25% of each other)",
+    "widths": [
+     1440,
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "links",
+    "where": "div.wrap > div.grid.grid--top > div.span-5.stack-4 > a.link \"Написать команде\"",
+    "msg": "\"Написать команде\" goes to #contact, in the footer",
+    "fix": "point every link at a real section, page or file",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "fade-cut",
+    "where": "ul.ui-notify__list > li.ui-note:nth-of-type(3) > span.ui-note__text > span.ui-note__body \"Инструктаж: повтор не предотвращает\"",
+    "msg": "a line of div.ui.ui-notify fades out under its edge (\"Инструктаж: повтор не \"): drawn at a fraction of #686868 on #ffffff, half-erased",
+    "fix": "fit the mock's rows inside its panel (fewer rows, a taller panel), or end the fade below the last whole row: no row half-erased",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "copy-length",
+    "where": "section#questions \"Вопросы\"",
+    "msg": "1 section over 90 words a screen outside the UI mocks (\"Вопросы\" 97); 50 words a screen across the page (352 words in 7 screens): a tech page says it in about 80 or fewer",
+    "fix": "cut every section to its heading, one line and the product UI: the UI says the rest; no second paragraph, no list of feature sentences",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "nav-current",
+    "where": "header.nav",
+    "msg": "the nav stays on screen with 5 links to the page's sections, but never marks the one you are in (no link changes as the page scrolls)",
+    "fix": "mark the link of the section on screen (a colour, a weight or a line under it) as the visitor scrolls",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "loop-cycle",
+    "where": "div.hero__window > div.ly-piece > div.ui.app > div.app__pane.app__pane--open",
+    "msg": "a fragment loop of 0.9 s: under the 2.5-4 s cycle, it reads as blinking",
+    "fix": "set the loop's cycle to 2.5-4 s (--m-cycle) with every keyframe on it, repeating",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "skip-link",
+    "where": "header.nav > div.wrap.nav__bar > a.skip-link:nth-of-type(1) \"Перейти к содержанию\"",
+    "msg": "the first Tab stop is \"Перейти к содержанию\", not a skip link: a keyboard user tabs through the whole nav on every visit",
+    "fix": "add the starter's skip link as the header's first child: <a class=\"skip-link\" href=\"#top\">Skip to content</a>",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "action-repeat",
+    "where": "header.nav > div.wrap.nav__bar > div.nav__actions > a.btn.btn--primary \"сообщить о случае\"",
+    "msg": "\"сообщить о случае\" shows 2 times on the first screen at 1440px (nav, hero): the nav's button and the hero's; nothing else on the screen may repeat it",
+    "fix": "show the action once a screen besides the nav's button: the hero's, the close's or the phone bar's, never all at once",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "overlap-text",
+    "where": "div.ui.app > div.app__pane.app__pane--open > div.ui.ui-doc > aside.ui-doc__note.ui-panel \"Удалено на сервере Номер палаты убран до\"",
+    "msg": "inside div.ui.ui-doc, a box sits on the mock's own text and hides it mid-line (\"Заметила перед уколом. Отчёт н\")",
+    "fix": "move the box off the text (or the text off the box)",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "cut-text",
+    "where": "div.app__pane.app__pane--open > div.ui.ui-doc > article.ui-doc__page > div.ui-doc__text:nth-of-type(5) \"Тип: лекарства. Этап: введение. Вред: бе\"",
+    "msg": "cut 6px at the bottom by the overflow of section#product > div.wrap > div.ui.app > div.app__pane.app__pane--open: a fragment run out through its panel's edge",
+    "fix": "give the text room: no overflow clipping a line, no line past its box",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "cut-text",
+    "where": "ul.ui-toggles__list > li.ui-tg:nth-of-type(4) > span.ui-tg__text > span.ui-tg__label \"Текст без имён\"",
+    "msg": "cut 10px at the bottom by the overflow of section#privacy > div.wrap > div.grid.grid--top > div.frame.frame--split: a fragment run out through its panel's edge",
+    "fix": "give the text room: no overflow clipping a line, no line past its box",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "cut-text",
+    "where": "div.ui.ui-panel > ul.ui-checks__list > li.ui-check:nth-of-type(3) > span.ui-check__label \"Вред: без вреда\"",
+    "msg": "cut 5px at the bottom by the overflow of div.group > div.grid > article.card.card--row:nth-of-type(2) > div.panel: a fragment run out through its panel's edge",
+    "fix": "give the text room: no overflow clipping a line, no line past its box",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "cut-text",
+    "where": "ul.ui-notify__list > li.ui-note:nth-of-type(3) > span.ui-note__text > span.ui-note__title \"Слабая мера RCA²\"",
+    "msg": "cut 11px at the bottom by the overflow of div.wrap > div.grid > article.card.card--row:nth-of-type(1) > div.panel: a fragment run out through its panel's edge (and 1 more like it: \"RCA²\")",
+    "fix": "give the text room: no overflow clipping a line, no line past its box",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "dark-ground",
+    "where": "section#privacy > div.wrap > div.grid.grid--top > div.frame.frame--split",
+    "msg": "the ground behind the UI is nearly as light as the UI on it (white on near-white)",
+    "fix": "light the ground behind the UI (a daylight data-fx-palette): at least 3:1 against the card",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "cta",
+    "where": "section#features \"Из отчётов к системным мерам. Разбор ище\"",
+    "msg": "a section over 1.5 screens long with no link or button in it",
+    "fix": "add the action: a button in the hero, one on every priced item, one in the closing section",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "text-contrast",
+    "where": "li.ui-note:nth-of-type(1) > span.ui-note__text > span.ui-note__title > time \"RCA²\"",
+    "msg": "3 lines of text in drawn mocks read under 4.5:1 (1 colour pair), the worst \"RCA²\" in #848484 on #ffffff at 3.74:1",
+    "fix": "lift the mocks' muted text (labels, meta, initials) to 4.5:1 on their own panel, or set it larger",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "proximity",
+    "where": "section#numbers > div.wrap > div.grid.grid--top > div.frame.frame--split \"Точность на 120 синтетических случаях Да\"",
+    "msg": "stacked at this width, the visual starts 14px under the text and buttons above it (\"Точность на 120 синтетических \"): it reads glued to them",
+    "fix": "give the stacked split the section's own gap between text and visual (40px or more on a phone)",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "fade-cut",
+    "where": "span.ui-msg__col > span.ui-chat__answer > b > span.ui-chat__w:nth-of-type(2) \"лекарства,\"",
+    "msg": "3 lines of div.ui.ui-panel fade out under its edge (\"лекарства,\", \"смена:\", \"ночь.\"): drawn at a fraction of #232323 on #ffffff, half-erased",
+    "fix": "fit the mock's rows inside its panel (fewer rows, a taller panel), or end the fade below the last whole row: no row half-erased",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   }
+  ],
+  "crashed": [],
+  "seconds": {
+   "consistency": 120,
+   "layout": 4
+  }
+ },
+ "open": [
+  {
+   "check": "collide",
+   "where": "div.grid.grid--top > div.faq.span-6 > div.faq__item:nth-of-type(3) > p \"ИИ предлагает, человек подтверждает: отв\"",
+   "msg": "the words \"ИИ предлагает, человек подтвержд\" lie over \"Отправьте отчёт с телефона\" of another section: two lines in one place (they run out of their own section, which is shorter than what it holds)",
+   "fix": "on a phone nothing lies on anything else: let the section grow with its content (min-height for its screens, never a fixed height; --hm: 2 when it needs two) or cut what it holds; keep pictures and cards off the buttons; pad the page under a fixed bar by the bar's height (top: the first section; end: the footer)",
+   "widths": [
+    320
+   ],
+   "from": "consistency",
+   "ids": [
+    "collide"
+   ],
+   "wheres": [
+    "div.grid.grid--top > div.faq.span-6 > div.faq__item:nth-of-type(3) > p \"ИИ предлагает, человек подтверждает: отв\""
+   ]
+  }
+ ],
+ "waived": [
+  {
+   "check": "stagger",
+   "where": "h1#hero-h \"Анонимные отчёты об ошибках\"",
+   "msg": "the 2 lines of this heading start at 572, 418px: a headline broken across columns, read in a zigzag",
+   "fix": "start every row of the list on one left edge",
+   "widths": [
+    1440
+   ],
+   "from": "consistency",
+   "ids": [
+    "stagger"
+   ],
+   "wheres": [
+    "h1#hero-h \"Анонимные отчёты об ошибках\""
+   ],
+   "reason": "The centred hero (layout-v4.md: the one exception, on the page axis) centres both h1 lines, so their left edges differ by design; nothing else on the page is centred."
+  },
+  {
+   "check": "cut-text",
+   "where": "div.dg-nodes > div.dg-node.dg-node--tile:nth-of-type(1) > span.dg-cap > span.dg-cap__l \"120\"",
+   "msg": "runs past the edge of its box div.frame.frame--split > div.dg > div.dg-nodes > div.dg-node.dg-node--tile:nth-of-type(1) (and 3 more like it: \"Инсулины\", \"Падения\", \"Фамилии\")",
+   "fix": "give the text room: no overflow clipping a line, no line past its box",
+   "widths": [
+    390
+   ],
+   "from": "consistency",
+   "ids": [
+    "cut-text"
+   ],
+   "wheres": [
+    "div.dg-nodes > div.dg-node.dg-node--tile:nth-of-type(1) > span.dg-cap > span.dg-cap__l \"120\""
+   ],
+   "reason": "Diagram captions sit under their 40px tile by the kit design (diagram.css .dg-cap: position absolute, top 100% + 6px, centred). At 390 the checker takes the tile as the caption box; the crop 390-10-cut-text.jpg shows 120, Инсулины, Падения and Фамилии whole and readable under their tiles."
+  },
+  {
+   "check": "hero-lines",
+   "where": "section.hero h1",
+   "msg": "the check fills the h1 to 36 characters (this hero's maxChars in heroes.json), not the page's own: it takes 3 lines at 1440, 2 at most",
+   "fix": "the check fills the h1 to this hero's maxChars, not your own: take the next type pairing the deal printed (start.mjs); when the h1 is final and fits, waive it (target: section.hero h1)",
+   "widths": [
+    1440
+   ],
+   "from": "layout",
+   "ids": [
+    "hero-lines"
+   ],
+   "wheres": [
+    "section.hero h1"
+   ],
+   "reason": "Russian page. The stress test fills the centred h1 to its 36-character Latin budget; Cyrillic at that length is wider and wraps to 3 lines. The page's own h1 «Анонимные отчёты об ошибках» (27 characters) takes 2 lines at 1440, 1024, 820, 768 and 390."
+  }
+ ],
+ "warnCount": 31,
+ "at": "2026-11-18T00:48:27.605Z",
+ "openTold": true
+}

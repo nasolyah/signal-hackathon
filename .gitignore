@@ -50,3 +50,11 @@ next-env.d.ts
 .impeccable/review/
 .impeccable/mocks/
 .impeccable/build/
+
+# taste-skill working files (Chrome profiles, shots, checker reports)
+.taste-skill/chrome-*/
+.taste-skill/shots/
+.taste-skill/gate/
+.taste-skill/*.txt
+/shots/
+public/.taste-skill/

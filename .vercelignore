@@ -3,3 +3,6 @@ packs
 docs
 *.zip
 scripts
+.taste-skill
+shots
+public/.taste-skill

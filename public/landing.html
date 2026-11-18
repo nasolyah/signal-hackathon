@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="ru" data-type="software" data-radius="soft" data-ground="sage" data-buttons="solid" data-motion>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Сигнал: анонимные отчёты о врачебных ошибках для больниц</title>
+<meta name="description" content="Медсестра за минуту сообщает о случае с телефона, ИИ убирает имена до сохранения, а Минздрав видит повторы между больницами.">
+<meta property="og:title" content="Сигнал: анонимные отчёты о врачебных ошибках">
+<meta property="og:description" content="Отчёт без имён за минуту, поиск повторов между больницами и разбор причин с мерами по силе.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://signal-hackathon.vercel.app/share.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#ffffff">
+<!-- <link rel="canonical" href="https://[the client's domain]/"> -->
+<meta name="site-kind" content="software">
+<meta name="page-type" content="software">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wdth,wght@85..100,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/system.css">
+<link rel="stylesheet" href="assets/ui/cards.css">
+<link rel="stylesheet" href="assets/motion/motion.css">
+<link rel="stylesheet" href="assets/backgrounds/backgrounds.css">
+<link rel="stylesheet" href="assets/layout/layout.css">
+<link rel="stylesheet" href="assets/icons/icon.css">
+<style>
+:root {
+  --p-bg: #ffffff; --p-surface: #f3f3f3; --p-ink: #232323; --p-muted: #686868;
+  --p-accent: #a1ffcb; --p-accent-ink: #232323; --p-action: #232323; --p-action-ink: #ffffff;
+  --p-inv-bg: #232323; --p-inv-surface: #303030; --p-inv-ink: #ffffff; --p-inv-muted: #a4a4a4;
+  --p-inv-accent: #a1ffcb; --p-inv-accent-ink: #232323; --p-inv-action: #a1ffcb; --p-inv-action-ink: #232323;
+  --font-display: "IBM Plex Sans", system-ui, sans-serif;
+  --font-text: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --display-weight: 500;
+  --display-tracking: -0.025em;
+  --display-tracking-xl: -0.035em;
+  --ly-scale: 0.98;
+}
+</style>
+<link rel="stylesheet" href="assets/ui/base.css">
+<link rel="stylesheet" href="assets/ui/window/fragment.css">
+<link rel="stylesheet" href="assets/ui/chat/fragment.css">
+<link rel="stylesheet" href="assets/ui/doc/fragment.css">
+<link rel="stylesheet" href="assets/ui/toggles/fragment.css">
+<link rel="stylesheet" href="assets/ui/checklist/fragment.css">
+<link rel="stylesheet" href="assets/ui/notify/fragment.css">
+<link rel="stylesheet" href="assets/diagrams/diagram.css">
+<script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
+<script src="assets/backgrounds/backgrounds.js"></script>
+<script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
+<link rel="modulepreload" href="assets/moments/moments.js">
+<link rel="modulepreload" href="assets/moments/lib.js">
+<link rel="modulepreload" href="assets/moments/counter-rolls/moment.js">
+<!-- page CSS: the app-frame recipe (sections-library.md) and one --p-h for the card group -->
+<style>
+  .app.ui { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); margin-top: var(--s-7); background: var(--u-bg); border: 1px solid var(--u-border); border-radius: var(--u-r); box-shadow: var(--u-shadow); }
+  .app > .app__pane { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
+  .app > .app__pane + .app__pane { border-left: 1px solid var(--u-line); }
+  .app > .app__pane > .ui-panel { width: 100%; border: 0; border-radius: 0; box-shadow: none; }
+  .app > .app__pane::after { content: ""; position: absolute; inset: auto 0 0 0; height: 64px; background: linear-gradient(transparent, var(--u-bg)); pointer-events: none; }
+  .hero__window .app.ui { margin-top: 0; height: 320px; }
+  #product .app__pane--open { padding: var(--s-6) var(--s-6) 0; }
+  @media (min-width: 1024px) and (max-width: 1279px) { .app.ui { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); } }
+  @media (max-width: 1023px) {
+    .app.ui { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+    .app > .app__pane--list { max-height: 252px; }
+    .app > .app__pane--list::after { display: none; }
+    .app .ui-win__side { display: none; }
+    .app .ui-win__body { grid-template-columns: minmax(0, 1fr); }
+    .app > .app__pane + .app__pane { border-left: 0; border-top: 1px solid var(--u-line); }
+    .hero__window .app > .app__pane--list { display: none; }
+    .hero__window .app.ui { grid-template-rows: minmax(0, 1fr); }
+    .hero__window .app > .app__pane + .app__pane { border-top: 0; }
+  }
+  @media (max-width: 639px) {
+    .app.ui { grid-template-rows: minmax(0, 1fr); }
+    .app > .app__pane--list { display: none; }
+    .app > .app__pane + .app__pane { border-top: 0; }
+  }
+  #features .panel { --p-h: 300px; }
+  .hero--centred .hero__lead { color: var(--ink); }
+  /* Cyrillic needs the line box the Latin-tuned display line height trims */
+  .closing .close__word { line-height: 1; padding-top: .06em; }
+  #questions .stack-row { display: flex; flex-wrap: wrap; gap: var(--s-5); align-items: center; margin-top: var(--s-6); }
+  #questions .stack-row span { display: inline-flex; align-items: center; gap: var(--s-2); font-size: var(--t-small); }
+  @media (min-width: 640px) and (max-width: 1023px) { #privacy .frame--split { aspect-ratio: auto; height: 340px; } }
+  @media (max-width: 639px) { #privacy .frame--split { aspect-ratio: auto; height: 260px; } }
+  #numbers .numbers__row { margin-top: var(--s-7); }
+  #numbers .frame--split { aspect-ratio: auto; height: 340px; }
+  @media (max-width: 1023px) { #numbers .frame--split { height: 300px; } }
+  @media (max-width: 639px) { #numbers .numbers__row > .stat { grid-column: span 6; } #numbers .frame--split { height: 240px; } }
+  @media (max-width: 639px) { #features .panel { --p-h: 180px; } #features .ui-chat__day { display: none; } #features .stage { --fade-h: 40px; } }
+  /* the figure and its caption: a step apart (the rolling digits sit on a one-line box) */
+  #numbers .stat { display: flex; flex-direction: column; gap: var(--s-3); }
+  /* desktop: the toggles frame takes the screen's height, so the section ends on its picture, not on an empty band */
+  @media (min-width: 1024px) { #privacy .frame--split { aspect-ratio: auto; height: calc(100svh - var(--padt) - var(--padb) - var(--bar)); max-height: 640px; } }
+  /* tablet: both screens of the features run their cards down to the screen's foot, as the kit does from 1024 */
+  @media (min-width: 640px) and (max-width: 1023px) {
+    #features > .wrap > .group > .grid:last-child, #features > .wrap > .grid:last-child { align-self: stretch; flex: 1 1 auto; min-height: 0; }
+    #features > .wrap > .grid:last-child { align-content: stretch; }
+  }
+  /* desktop and phone: the answers run down to the section's foot, so the questions end on the same line as the sections above */
+  @media (min-width: 1024px), (max-width: 639px) {
+    #questions .wrap > .grid { flex: 1 1 0; min-height: 0; }
+    #questions .faq { align-self: stretch; display: flex; flex-direction: column; justify-content: space-between; }
+  }
+  /* phone: the questions keep one screen; the subline and the technical fourth answer step aside, the stack icons stay */
+  @media (max-width: 639px) {
+    #questions .questions__sub, #questions .faq__item:nth-child(4) { display: none; }
+    #questions .wrap > .grid { grid-template-rows: auto 1fr; flex: 1 0 auto; } /* grows to the screen, never shrinks under its words (320) */
+    #questions .stack-row { margin-top: var(--s-4); gap: var(--s-4); }
+    #questions .stack-row .ic { width: 28px; height: 28px; }
+  }
+  #product .section-head__link { display: block; width: fit-content; margin-top: var(--s-3); }
+</style>
+</head>
+<body>
+<!-- Plan line 1: software (AI reporting tool for hospitals and the Ministry of Health).
+     Plan line 2: hero centred; palette white-mint-tiles (second of the deal: the first, lunar-grey-bronze, is a near-black
+     ground and the owner asked for a light page only) — a white ward ground and a mint accent; type plex; nav-mega
+     (no menus: a one-page site), footer-columns, close-word, rhythm surface-pairs, buttons solid, mark ring;
+     effect grain-gradient in the hero window; card grounds: none fit, the lit ground sage; moment counter-rolls
+     (one: seven sections), line-carries-colour not used. -->
+<header class="nav">
+  <div class="wrap nav__bar">
+    <a class="skip-link" href="#top">Перейти к содержанию</a>
+    <a class="nav__logo" href="#top"><span class="mark" data-mark="ring" aria-hidden="true"></span>Сигнал</a>
+    <nav class="nav__links" aria-label="Главное меню">
+      <div class="nav__item"><a class="nav__link" href="#product">Продукт</a></div>
+      <div class="nav__item"><a class="nav__link" href="#privacy">Данные</a></div>
+      <div class="nav__item"><a class="nav__link" href="#features">Возможности</a></div>
+      <div class="nav__item"><a class="nav__link" href="#numbers">Точность</a></div>
+      <div class="nav__item"><a class="nav__link" href="#questions">Вопросы</a></div>
+    </nav>
+    <div class="nav__actions">
+      <a class="btn btn--primary" href="/report?h=A">Сообщить о случае</a>
+    </div>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span></button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero hero--centred" data-enter aria-labelledby="hero-h">
+    <div class="wrap"><div class="hero-text">
+      <div class="hero__c">
+        <a class="pill" href="#numbers"><span>Задача Минздрава №7</span><span class="muted">Точность на 120 случаях</span></a>
+        <h1 id="hero-h"><span class="ly-mark" aria-hidden="true"></span> Анонимные отчёты об ошибках</h1>
+        <p class="hero__lead">Медсестра за минуту описывает случай с телефона. Сигнал убирает имена ещё до сохранения и сравнивает случаи из разных больниц, чтобы найти общую причину.</p>
+        <div class="btn-row"><a class="btn btn--primary" href="/report?h=A">Сообщить о случае</a><a class="btn btn--secondary" href="/dashboard">Открыть журнал Минздрава</a></div>
+      </div>
+      <div class="hero__window" data-fx="grain-gradient" data-fx-seed="7" role="img" aria-label="Отчёт медсестры с именами и тот же отчёт, сохранённый без имён, с типом случая и числом похожих случаев">
+        <div class="ly-piece" aria-hidden="true">
+          <div class="ui app" data-ui-pause-host>
+            <div class="app__pane app__pane--list">
+              <div class="ui ui-panel ui-win" data-ui="window" data-ui-opts='{"compact":true}' data-open="Новый" data-work="Обезличивание" data-done="Сохранён">
+                <div class="ui-win__bar"><span class="ui-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="ui-win__crumb">Сигнал <i>/</i> <b>Входящие</b></span><span class="ui-spacer"></span></div>
+                <div class="ui-win__body">
+                  <div class="ui-win__main">
+                    <ul class="ui-win__rows">
+                      <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">А</span><span class="ui-win__who">Ташкент · ночь</span><span class="ui-win__sub">Инсулины в одной коробке</span><span class="ui-win__st" data-st>Новый</span><span class="ui-win__age">1 мин</span></li>
+                      <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">В</span><span class="ui-win__who">Фергана · ночь</span><span class="ui-win__sub">Падение в тёмном коридоре</span><span class="ui-win__st is-done" data-st>Сохранён</span><span class="ui-win__age">9 мин</span></li>
+                      <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="5">Е</span><span class="ui-win__who">Наманган · день</span><span class="ui-win__sub">Пробирки однофамильцев</span><span class="ui-win__st is-done" data-st>Сохранён</span><span class="ui-win__age">20 мин</span></li>
+                      <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">Д</span><span class="ui-win__who">Бухара · ночь</span><span class="ui-win__sub">Похожие ампулы рядом</span><span class="ui-win__st is-done" data-st>Сохранён</span><span class="ui-win__age">34 мин</span></li>
+                      <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="4">Б</span><span class="ui-win__who">Самарканд · день</span><span class="ui-win__sub">Аллергию не передали</span><span class="ui-win__st is-done" data-st>Сохранён</span><span class="ui-win__age">1 ч</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="app__pane app__pane--open" data-ui-loop>
+              <div class="ui ui-panel ui-chat" data-ui="chat">
+                <div class="ui-head"><span class="ui-agent" aria-hidden="true"></span><div class="ui-title">Больница А · новый отчёт</div><span class="ui-spacer"></span></div>
+                <div class="ui-chat__body">
+                  <div class="ui-msg ui-msg--me" data-chat-q><span class="ui-msg__text">Ночью в палате 7 медсестра Нигора чуть не ввела Каримову Лантус вместо Актрапида, коробки стоят рядом.</span></div>
+                  <div class="ui-msg ui-msg--bot" data-chat-a>
+                    <span class="ui-agent ui-msg__av" aria-hidden="true"></span>
+                    <span class="ui-msg__col">
+                      <span class="ui-chat__typing" aria-hidden="true"><i></i><i></i><i></i></span>
+                      <span class="ui-chat__answer">Сохранено без имён: палата, медсестра и пациент убраны. <b>Лекарства, без вреда, 12-й похожий случай в 4 больницах.</b></span>
+                      <span class="ui-chat__srcs"><span class="ui-chat__src"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M4 2.5h5l3 3v8H4z"/><path d="M9 2.5v3h3"/></svg>Классификация ВОЗ (ICPS)</span></span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <section class="section" id="product" aria-labelledby="product-h">
+    <div class="wrap">
+      <div class="grid grid--top">
+        <h2 class="span-5" id="product-h">Каждый отчёт приходит без имён</h2>
+        <p class="span-6 start-7">Слева отчёты из шести больниц по мере поступления. Справа открытый случай: отмечено то, что Сигнал убрал, и на каком шаге. <a class="link section-head__link" href="#privacy">Прочитать про хранение данных</a></p>
+      </div>
+      <div class="ui app fill" role="img" aria-label="Журнал входящих отчётов и открытый отчёт, в котором отмечены удалённые номер палаты и имя медсестры" data-ui-pause-host>
+        <div class="app__pane app__pane--list">
+          <div class="ui ui-panel ui-win" data-ui="window" data-open="Новый" data-work="Обезличивание" data-done="Сохранён">
+            <div class="ui-win__bar"><span class="ui-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="ui-win__crumb">Журнал Минздрава <i>/</i> <b>Входящие</b></span><span class="ui-spacer"></span></div>
+            <div class="ui-win__body">
+              <nav class="ui-win__side" aria-hidden="true">
+                <span class="ui-win__nav is-on">Новые<em>3</em></span>
+                <span class="ui-win__nav">На разборе<em>4</em></span>
+                <span class="ui-win__nav">Закрытые</span>
+                <span class="ui-win__label">Больницы</span>
+                <span class="ui-win__nav"><span class="ui-win__hash">#</span>Ташкент</span>
+                <span class="ui-win__nav"><span class="ui-win__hash">#</span>Фергана</span>
+              </nav>
+              <div class="ui-win__main">
+                <div class="ui-win__cols" aria-hidden="true"><span>Больница</span><span>Случай</span><span>Статус</span><span>Когда</span></div>
+                <ul class="ui-win__rows">
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">А</span><span class="ui-win__who">Ташкент · ночь</span><span class="ui-win__sub">Инсулины в одной коробке</span><span class="ui-win__st" data-st>Новый</span><span class="ui-win__age">1 мин</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="4">Г</span><span class="ui-win__who">Андижан · ночь</span><span class="ui-win__sub">Протафан вместо Актрапида</span><span class="ui-win__st" data-st>Новый</span><span class="ui-win__age">6 мин</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">В</span><span class="ui-win__who">Фергана · ночь</span><span class="ui-win__sub">Падение в тёмном коридоре</span><span class="ui-win__st" data-st>Новый</span><span class="ui-win__age">9 мин</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="5">Е</span><span class="ui-win__who">Наманган · день</span><span class="ui-win__sub">Пробирки однофамильцев</span><span class="ui-win__st is-done" data-st>Сохранён</span><span class="ui-win__age">20 мин</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">Д</span><span class="ui-win__who">Бухара · ночь</span><span class="ui-win__sub">Похожие ампулы рядом</span><span class="ui-win__st is-done" data-st>Сохранён</span><span class="ui-win__age">34 мин</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="4">Б</span><span class="ui-win__who">Самарканд · день</span><span class="ui-win__sub">Аллергию не передали</span><span class="ui-win__st is-done" data-st>Сохранён</span><span class="ui-win__age">1 ч</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">А</span><span class="ui-win__who">Ташкент · день</span><span class="ui-win__sub">Инфузомат без сигнала</span><span class="ui-win__st is-done" data-st>Сохранён</span><span class="ui-win__age">2 ч</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">В</span><span class="ui-win__who">Фергана · ночь</span><span class="ui-win__sub">Свет в коридоре не горит</span><span class="ui-win__st is-done" data-st>Сохранён</span><span class="ui-win__age">3 ч</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">Д</span><span class="ui-win__who">Бухара · день</span><span class="ui-win__sub">Выписку отдали не тому</span><span class="ui-win__st is-done" data-st>Сохранён</span><span class="ui-win__age">5 ч</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="5">Е</span><span class="ui-win__who">Наманган · ночь</span><span class="ui-win__sub">Капельница не тому Юсупову</span><span class="ui-win__st is-done" data-st>Сохранён</span><span class="ui-win__age">6 ч</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="app__pane app__pane--open" data-ui-loop>
+          <div class="ui ui-doc" data-ui="doc">
+            <article class="ui-doc__page">
+              <div class="ui-doc__label">Больница А · Ташкент · ночная смена</div>
+              <div class="ui-doc__title">Инсулины в одной коробке</div>
+              <div class="ui-doc__text">Ночью в <mark class="ui-doc__mark is-on">палате</mark> медсестра чуть не ввела пациенту Лантус вместо Актрапида: коробки одинаковые и стоят рядом в холодильнике.</div>
+              <div class="ui-doc__text">Заметила перед уколом. Отчёт написала <mark class="ui-doc__mark" data-kind="Удалено ИИ" data-msg="Имя медсестры заменено меткой «сотрудник»." data-where="До записи в базу">медсестра</mark> той же смены.</div>
+              <div class="ui-doc__text">Тип: лекарства. Этап: введение. Вред: без вреда. Не дошло до пациента: да. Что помогло: похожие упаковки, усталость.</div>
+              <div class="ui-doc__text">Похожие случаи: 11 в четырёх больницах, 9 из них ночью. Случай добавлен в закономерность «Путаница инсулинов».</div>
+              <div class="ui-doc__text">Исходный текст отчёта не сохранён. Дата сохранена без времени, смена указана.</div>
+            </article>
+            <aside class="ui-doc__note ui-panel is-on" aria-live="polite">
+              <div class="ui-doc__kind"><span class="ui-doc__dot"></span><span data-doc-kind>Удалено на сервере</span></div>
+              <div class="ui-doc__msg" data-doc-msg>Номер палаты убран до отправки в ИИ.</div>
+              <div class="ui-doc__where" data-doc-where>Шаг 0, правила на нашем сервере</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section ground-surface" id="privacy" aria-labelledby="privacy-h">
+    <div class="wrap">
+      <div class="grid grid--top">
+        <div class="span-5 stack-6">
+          <h2 id="privacy-h">Исходный текст нигде не хранится</h2>
+          <p class="t-lead">Номера палат, историй болезни и телефоны вырезаются на нашем сервере ещё до ИИ. Имена убирает модель, и в базу попадает только обезличенная версия.</p>
+          <ul class="stack-3">
+            <li>Без регистрации, cookies и IP-адреса</li>
+            <li>Дата и смена, без точного времени</li>
+            <li>Разрез по отделению только от 5 случаев</li>
+          </ul>
+          <a class="link" href="#questions">Прочитать ответы про данные</a>
+        </div>
+        <div class="frame frame--split span-6 start-7" data-visual>
+          <div class="stage stage--fade-br"><div class="at-rise fit" style="--fit-max:380px;--ax:max(24px, 50% - 190px);--ay:max(40px, 50% - 190px);--ay-sm:16px">
+            <div class="ui ui-panel ui-toggles" data-ui="toggles">
+              <div class="ui-head">
+                <svg class="ui-icon ui-toggles__ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8 13 4v3.6c0 3-2.1 5.4-5 6.6-2.9-1.2-5-3.6-5-6.6V4z"/><path d="m5.8 8 1.6 1.6 3-3.2"/></svg>
+                <div class="ui-title">Что попадает в базу</div>
+                <span class="ui-spacer"></span>
+                <div class="ui-meta" data-tg-count>2 из 5</div>
+              </div>
+              <ul class="ui-toggles__list">
+                <li class="ui-tg"><span class="ui-tg__text"><span class="ui-tg__label">Имя автора</span><span class="ui-tg__sub">Отчёт не подписывается</span></span><button class="ui-switch" type="button" role="switch" aria-checked="false" aria-label="Имя автора"><i></i></button></li>
+                <li class="ui-tg"><span class="ui-tg__text"><span class="ui-tg__label">IP-адрес и устройство</span><span class="ui-tg__sub">Не читаются сервером</span></span><button class="ui-switch" type="button" role="switch" aria-checked="false" aria-label="IP-адрес и устройство"><i></i></button></li>
+                <li class="ui-tg"><span class="ui-tg__text"><span class="ui-tg__label">Исходный текст</span><span class="ui-tg__sub">Живёт только в памяти запроса</span></span><button class="ui-switch" type="button" role="switch" aria-checked="false" aria-label="Исходный текст"><i></i></button></li>
+                <li class="ui-tg"><span class="ui-tg__text"><span class="ui-tg__label">Текст без имён</span><span class="ui-tg__sub">С метками на месте удалённого</span></span><button class="ui-switch is-on" type="button" role="switch" aria-checked="true" aria-label="Текст без имён"><i></i></button></li>
+                <li class="ui-tg"><span class="ui-tg__text"><span class="ui-tg__label">Дата и смена</span><span class="ui-tg__sub">День или ночь, без часов</span></span><button class="ui-switch is-on" type="button" role="switch" aria-checked="true" aria-label="Дата и смена"><i></i></button></li>
+              </ul>
+            </div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section g2" id="features" style="--h: 2" aria-labelledby="features-h">
+    <div class="wrap">
+      <div class="group">
+        <div class="section-head">
+          <h2 id="features-h">Из отчётов к системным мерам. <span class="muted">Разбор ищет причину, а не виноватого.</span></h2>
+        </div>
+        <div class="grid">
+          <article class="card card--row card--open span-6">
+            <h3>Находит повторы между больницами</h3>
+            <p>Похожие случаи из разных больниц складываются в одну закономерность: путаница инсулинов нашлась в четырёх.</p>
+            <div class="panel">
+              <div class="dg" data-diagram='{"layout":"hub","alt":"Закономерность «Путаница инсулинов» связывает случаи из Ташкента, Самарканда, Андижана и Бухары","center":{"label":"Путаница инсулинов","icon":"ui:syringe"},"spokes":[{"label":"Ташкент","icon":"ui:hospital","sub":"3 случая"},{"label":"Самарканд","icon":"ui:hospital","sub":"3 случая"},{"label":"Андижан","icon":"ui:hospital","sub":"2 случая"},{"label":"Бухара","icon":"ui:hospital","sub":"3 случая"}]}' data-ui-loop></div>
+            </div>
+          </article>
+          <article class="card card--row card--open span-6">
+            <h3>Раскладывает случай по классификации ВОЗ</h3>
+            <p>Тип, этап помощи, вред и факторы по таксономии ICPS. Любое поле можно поправить.</p>
+            <div class="panel">
+              <div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:340px;--ax:max(24px, 50% - 170px);--ay:48px;--ay-sm:16px">
+                <div class="ui ui-panel ui-checks" data-ui="checklist">
+                  <div class="ui-checks__head"><div class="ui-title">Классификация случая</div><span class="ui-spacer"></span><div class="ui-meta" data-checks-count>4 из 5</div></div>
+                  <div class="ui-checks__bar"><i data-checks-bar style="--k:0.8"></i></div>
+                  <ul class="ui-checks__list">
+                    <li class="ui-check is-done"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Тип: лекарства</span></li>
+                    <li class="ui-check is-done"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Этап: введение</span></li>
+                    <li class="ui-check is-done"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Вред: без вреда</span></li>
+                    <li class="ui-check is-done"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Факторы: упаковка, усталость</span></li>
+                    <li class="ui-check"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Проверено человеком</span></li>
+                  </ul>
+                </div>
+              </div></div>
+            </div>
+          </article>
+        </div>
+      </div>
+      <div class="grid">
+        <article class="card card--row card--open span-6">
+          <h3>Ранжирует меры по силе</h3>
+          <p>Пять «почему», причины по шести группам и меры по иерархии RCA². Инструктаж Сигнал помечает как слабую меру.</p>
+          <div class="panel">
+            <div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:380px;--ax:max(24px, 50% - 190px);--ay:calc(100% - 200px);--ay-sm:16px">
+              <div class="ui ui-notify" data-ui="notify">
+                <ul class="ui-notify__list" data-notify-list>
+                  <li class="ui-note"><span class="ui-note__ico"><svg class="ui-icon" viewBox="0 0 16 16"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg></span><span class="ui-note__text"><span class="ui-note__title">Сильная мера<time>RCA²</time></span><span class="ui-note__body">Хранить инсулины на разных полках</span></span></li>
+                  <li class="ui-note"><span class="ui-note__ico"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M8 3v10M3 8h10"/></svg></span><span class="ui-note__text"><span class="ui-note__title">Средняя мера<time>RCA²</time></span><span class="ui-note__body">Цветные ярлыки на ячейках</span></span></li>
+                  <li class="ui-note"><span class="ui-note__ico"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M8 4v5"/><path d="M8 11.5v.5"/></svg></span><span class="ui-note__text"><span class="ui-note__title">Слабая мера<time>RCA²</time></span><span class="ui-note__body">Инструктаж: повтор не предотвращает</span></span></li>
+                </ul>
+              </div>
+            </div></div>
+          </div>
+        </article>
+        <article class="card card--row card--open span-6">
+          <h3>Принимает отчёты по-узбекски</h3>
+          <p>Можно писать по-русски, по-узбекски или вперемешку, с опечатками. QR-код в ординаторской ведёт сразу на форму.</p>
+          <div class="panel">
+            <div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:400px;--ax:max(24px, 50% - 200px);--ay:48px;--ay-sm:16px">
+              <div class="ui ui-panel ui-chat" data-ui="chat">
+                <div class="ui-head"><span class="ui-agent" aria-hidden="true"></span><div class="ui-title">Сигнал</div><span class="ui-spacer"></span></div>
+                <div class="ui-chat__body">
+                  <div class="ui-msg ui-msg--me" data-chat-q><span class="ui-msg__text">Tunda hamshira insulinni adashtirib qo'ydi, Protafan o'rniga Aktrapid oldi.</span></div>
+                  <div class="ui-msg ui-msg--bot" data-chat-a>
+                    <span class="ui-agent ui-msg__av" aria-hidden="true"></span>
+                    <span class="ui-msg__col">
+                      <span class="ui-chat__answer">Имя медсестры убрано. <b>Тип: лекарства, смена: ночь.</b></span>
+                      <span class="ui-chat__srcs"><span class="ui-chat__src"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M4 2.5h5l3 3v8H4z"/><path d="M9 2.5v3h3"/></svg>Классификация ВОЗ (ICPS)</span></span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="numbers" aria-labelledby="numbers-h">
+    <div class="wrap">
+      <div class="grid grid--top">
+        <div class="span-5 stack-6">
+          <h2 id="numbers-h">Точность на 120 синтетических случаях</h2>
+          <p class="t-lead">Датасет собран по таксономии ВОЗ из шести больниц, в нём заложены три закономерности. Сигнал нашёл все три без подсказок и ещё одну, которую никто не закладывал.</p>
+        </div>
+        <div class="frame frame--split span-6 start-7">
+          <div class="dg" data-diagram='{"layout":"lanes","alt":"120 синтетических случаев из шести больниц проходят через Сигнал, и он находит три заложенные закономерности целиком: 11 из 11, 7 из 7 и 5 из 5","input":{"label":"120","icon":"ui:file-text","sub":"случаев"},"core":{"label":"Сигнал","icon":"ui:search"},"lanes":[{"label":"Инсулины","icon":"ui:syringe","done":true,"sub":"11 из 11"},{"label":"Падения","icon":"ui:hospital","done":true,"sub":"7 из 7"},{"label":"Фамилии","icon":"ui:users","done":true,"sub":"5 из 5"}]}'></div>
+        </div>
+      </div>
+      <div class="grid numbers__row" data-moment="counter-rolls">
+        <div class="stat span-3"><p class="t-stat">89%</p><p class="t-small muted">случаев: тип определён верно</p></div>
+        <div class="stat span-3"><p class="t-stat">97%</p><p class="t-small muted">случаев: почти-ошибка распознана верно</p></div>
+        <div class="stat span-3"><p class="t-stat">85%</p><p class="t-small muted">случаев: вред точно, остальные на соседний уровень</p></div>
+        <div class="stat span-3"><p class="t-stat">4</p><p class="t-small muted">закономерности найдены между больницами</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="questions" aria-labelledby="questions-h">
+    <div class="wrap">
+      <div class="grid grid--top">
+        <div class="span-5 stack-4">
+          <h2 id="questions-h">Вопросы</h2>
+          <p class="muted questions__sub">Про наказание, данные и работу ИИ.</p>
+          <a class="link" href="#contact">Написать команде</a>
+          <div class="stack-row" aria-label="На чём сделан Сигнал">
+            <span><img class="ic ic-40" src="assets/icons/gemini.svg" alt="" width="40" height="40">Gemini</span>
+            <span><img class="ic ic-40" src="assets/icons/supabase.svg" alt="" width="39" height="40">Supabase</span>
+            <span><img class="ic ic-40" src="assets/icons/nextjs.svg" alt="" width="40" height="40">Next.js</span>
+            <span><img class="ic ic-40 ic-ink" src="assets/icons/vercel.svg" alt="" width="40" height="35">Vercel</span>
+          </div>
+        </div>
+        <div class="faq span-6 start-7">
+          <div class="faq__item"><h3>Вы что, никого не будете наказывать?</h3><p>Нет. Честную ошибку исправляют в системе, халатность наказывают, как и сейчас. Тяжкие случаи расследуются официально.</p></div>
+          <div class="faq__item"><h3>Где хранятся данные?</h3><p>В базе только текст без имён. Для пилота это серверы в Узбекистане или в стране из списка Кабмина.</p></div>
+          <div class="faq__item"><h3>Что, если ИИ классифицирует неверно?</h3><p>ИИ предлагает, человек подтверждает: ответственный за качество меняет поле, и случай получает отметку «проверено».</p></div>
+          <div class="faq__item"><h3>Это просто обёртка над Gemini?</h3><p>Нет. Очистка до ИИ, строгая схема ВОЗ, поиск повторов по эмбеддингам и меры по RCA². Модель можно заменить.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer closing g2m" id="contact" aria-labelledby="close-h">
+  <div class="wrap">
+    <div class="closing__cta close--word">
+      <div class="section-head--split">
+        <div><h2 id="close-h">Отправьте отчёт с телефона</h2><p class="t-lead">Без регистрации. Отчёт попадёт в журнал Минздрава за секунды.</p></div>
+        <a class="btn btn--primary" href="/report?h=A">Сообщить о случае<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+      </div>
+      <p class="close__word" aria-hidden="true">Сигнал</p>
+    </div>
+    <div class="closing__links">
+      <div class="grid">
+        <div class="span-4 stack-4">
+          <a class="nav__logo" href="#top"><span class="mark" data-mark="ring" aria-hidden="true"></span>Сигнал</a>
+          <p class="footer__lede">Анонимная отчётность для больниц</p>
+        </div>
+        <div class="span-2 footer__col"><h3>Продукт</h3><ul><li><a href="#product">Журнал</a></li><li><a href="#privacy">Данные</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Возможности</h3><ul><li><a href="#features">Повторы</a></li><li><a href="#numbers">Точность</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Демо</h3><ul><li><a href="/dashboard">Открыть журнал Минздрава</a></li><li><a href="/qr">QR-коды для печати</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Вопросы</h3><ul><li><a href="#questions">Ответы</a></li><li><a href="mailto:team@signal.example">Написать команде</a></li></ul></div>
+      </div>
+      <div class="footer__legal">
+        <span>&copy; 2026 Сигнал. Данные в демо синтетические. Названия продуктов и логотипы принадлежат их владельцам.</span>
+        <div class="socials"></div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="assets/system.js"></script>
+<script type="module" src="assets/motion/motion.js"></script>
+<script type="module" src="assets/layout/layout.js"></script>
+<script type="module" src="assets/diagrams/mount.js"></script>
+</body>
+</html>

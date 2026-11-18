@@ -49,7 +49,7 @@ Goal: a working, demo-able product by the deadline — not production code.
 - New feature → `/plan` first, confirm, then build.
 - Long session → `/save-session`; new session → `/resume-session`.
 - Picking a UI library → `pick-ui-library`, don't debate it.
-- Product UI (all screens here) → `impeccable` (`/impeccable shape` before a new screen). Final pass → `/impeccable critique` and `polish`. No landing page, so `design-taste-frontend` is not used.
+- Design direction (Mark, 17 Nov): the landing page on `/` is built with `design-taste-frontend` (taste-skill) and is the visual authority; the product screens are rebuilt to match it, replacing the earlier «Журнал» world. Light theme only. Fewer elements per screen, clear hierarchy, generous spacing — the old dashboard was too dense. `impeccable` stays for reviews/polish of product screens within that design.
 - Motion only where it helps the demo (`emil-design-eng`, `animate`): the alert counter change, the redaction highlight.
 - Before submission → `security-reviewer` agent on API routes, then `break-ui` on demo screens (long texts, empty states).
 - Backup demo video → `ui-demo` skill.

@@ -1,0 +1,11 @@
+{
+ "page": null,
+ "url": "http://localhost:3000/landing.html",
+ "root": null,
+ "kind": "software",
+ "category": "анонимные сообщения о медицинских ошибках для больниц",
+ "primary": "Сообщить о случае",
+ "rounds": 3,
+ "start": "2026-11-17T17:25:08.268Z",
+ "by": "gate.mjs --start"
+}
