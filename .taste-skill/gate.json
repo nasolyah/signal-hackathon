@@ -6,15 +6,6 @@
  "status": "open",
  "history": [
   {
-   "at": "2026-11-17T17:58:33.418Z",
-   "mode": "manual",
-   "status": "fail",
-   "fails": 3,
-   "round": 1,
-   "reused": false,
-   "stopHookActive": false
-  },
-  {
    "at": "2026-11-18T00:45:58.257Z",
    "mode": "manual",
    "status": "fail",
@@ -154,6 +145,22 @@
   },
   {
    "at": "2026-11-18T04:23:48.844Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T04:37:09.330Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T04:37:54.799Z",
    "mode": "hook",
    "host": "claude",
    "decision": "allow",
