@@ -11,21 +11,32 @@ import { formatDateRu } from "@/lib/time";
 import { RedactedText } from "@/app/report/redacted-text";
 import { RcaPanel } from "@/app/rca/rca-panel";
 import { RcaSheet, SheetSkeleton } from "@/app/rca/sheet";
+import { devData, WORST_PATTERN, WORST_RCA } from "@/lib/dev-fixtures";
+import { DevDataToggle } from "@/components/dev-data-toggle";
 
 export const metadata: Metadata = { title: `${t.rcaUi.patternKicker} · ${t.app.name}` };
 
-export default function PatternPage({ params }: PageProps<"/pattern/[id]">) {
+export default function PatternPage({ params, searchParams }: PageProps<"/pattern/[id]">) {
   return (
     <Suspense fallback={<SheetSkeleton />}>
-      <Pattern params={params} />
+      <Pattern params={params} searchParams={searchParams} />
     </Suspense>
   );
 }
 
 const UUID = /^[0-9a-f-]{36}$/i;
 
-async function Pattern({ params }: Pick<PageProps<"/pattern/[id]">, "params">) {
+async function Pattern({ params, searchParams }: Pick<PageProps<"/pattern/[id]">, "params" | "searchParams">) {
   const { id } = await params;
+  if (devData((await searchParams).data)) {
+    const { cases, ...p } = WORST_PATTERN;
+    return (
+      <>
+        <PatternView id="dev" p={p} rows={cases} rca={WORST_RCA} />
+        <DevDataToggle states={[["", "Демо"], ["worst", "Худший случай"]]} />
+      </>
+    );
+  }
   if (!UUID.test(id)) notFound();
   const sb = db();
   const [{ data: p }, { data: cases }, rca] = await Promise.all([
@@ -38,16 +49,31 @@ async function Pattern({ params }: Pick<PageProps<"/pattern/[id]">, "params">) {
     getRca({ kind: "pattern", id }),
   ]);
   if (!p) notFound();
-  const rows = (cases ?? []) as {
-    id: string;
-    incident_date: string;
-    hospital_id: HospitalCode;
-    shift: Shift;
-    incident_type: IncidentType;
-    harm: Harm;
-    near_miss: boolean;
-    redacted_text: string;
-  }[];
+  return <PatternView id={id} p={p} rows={(cases ?? []) as CaseRow[]} rca={rca} />;
+}
+
+type CaseRow = {
+  id: string;
+  incident_date: string;
+  hospital_id: HospitalCode;
+  shift: Shift;
+  incident_type: IncidentType;
+  harm: Harm;
+  near_miss: boolean;
+  redacted_text: string;
+};
+
+type PatternRowData = {
+  title: string;
+  description: string | null;
+  incident_count: number;
+  hospital_count: number;
+  night_share: number | string;
+  top_factors: string[] | null;
+  status: string;
+};
+
+function PatternView({ id, p, rows, rca }: { id: string; p: PatternRowData; rows: CaseRow[]; rca: Awaited<ReturnType<typeof getRca>> }) {
   const regions = [...new Set(rows.map((r) => r.hospital_id))].sort().map((h) => t.hospitals[h].region);
   const nightPct = Math.round(Number(p.night_share) * 100);
 
@@ -59,7 +85,7 @@ async function Pattern({ params }: Pick<PageProps<"/pattern/[id]">, "params">) {
         <div className="px-5 pt-10 pb-12 lg:px-10 lg:pt-12">
           <h1 className="text-[1.75rem] leading-[1.15] font-medium tracking-[-0.02em] text-balance text-ink lg:text-[2.25rem]">{p.title}</h1>
           <p className="mt-4 text-lg text-ink">
-            {p.incident_count} {t.plural.cases(p.incident_count)} · {p.hospital_count} {t.plural.hospitals(p.hospital_count)} ·{" "}
+            {t.num(p.incident_count)} {t.plural.cases(p.incident_count)} · {p.hospital_count} {t.plural.hospitals(p.hospital_count)} ·{" "}
             <span className="font-medium">
               {nightPct}% {t.dashboard.night}
             </span>

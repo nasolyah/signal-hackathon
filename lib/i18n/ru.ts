@@ -43,6 +43,8 @@ export const ru = {
     textPlaceholder:
       "Опишите случай своими словами — по-русски или по-узбекски. Имена и номера палат система уберёт сама.",
     tooShort: "Добавьте пару слов: что случилось и что этому помогло.",
+    tooLong: "Слишком длинно: до 4 000 знаков. Сократите, пожалуйста, самое главное останется.",
+    charCount: (n: number, max: number) => `${n.toLocaleString("ru-RU")} из ${max.toLocaleString("ru-RU")} знаков`,
     signature: "Подпись",
     signatureNotNeeded: "не требуется",
     trustLine: "Мы не сохраняем ваше имя, IP-адрес и исходный текст",
@@ -245,6 +247,8 @@ export const ru = {
     sheetTrust: "Мы не сохраняем ваше имя, IP-адрес и исходный текст.",
     demo: "Для демо",
   },
+  /** «1 284» — Russian grouping with a no-break space. */
+  num: (n: number) => n.toLocaleString("ru-RU"),
   plural: {
     cases: (n: number) => plural(n, "случай", "случая", "случаев"),
     hospitals: (n: number) => plural(n, "больница", "больницы", "больниц"),

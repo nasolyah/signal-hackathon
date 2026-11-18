@@ -22,9 +22,9 @@ export function FilterSelect({
   const params = useSearchParams();
 
   return (
-    <label className="flex items-center gap-2.5">
+    <label className="flex max-w-full min-w-0 items-center gap-2.5">
       <span className="text-sm text-ink-muted">{label}</span>
-      <span className="relative">
+      <span className="relative min-w-0">
         <select
           value={value}
           onChange={(e) => {
@@ -34,7 +34,7 @@ export function FilterSelect({
             const qs = next.toString();
             router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
           }}
-          className="h-10 appearance-none rounded-lg border border-rule-strong bg-page pr-9 pl-3.5 text-sm text-ink hover:bg-ground outline-none focus-visible:ring-3 focus-visible:ring-ring/40"
+          className="h-10 w-full max-w-full appearance-none rounded-lg border border-rule-strong bg-page pr-9 pl-3.5 text-sm text-ink hover:bg-ground outline-none focus-visible:ring-3 focus-visible:ring-ring/40"
         >
           <option value="">{anyLabel}</option>
           {options.map(([v, l]) => (

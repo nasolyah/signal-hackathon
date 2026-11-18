@@ -16,10 +16,12 @@ const LiveContext = createContext<LiveCounts | null>(null);
 export function LiveCountsProvider({
   initial,
   hospital,
+  poll = true,
   children,
 }: {
   initial: LiveCounts;
   hospital: string | null;
+  poll?: boolean;
   children: React.ReactNode;
 }) {
   const [counts, setCounts] = useState(initial);
@@ -27,6 +29,7 @@ export function LiveCountsProvider({
   const lastTotal = useRef(initial.total);
 
   useEffect(() => {
+    if (!poll) return; // dev fixtures (break-ui) stay as given
     let stop = false;
     const tick = async () => {
       if (document.hidden) return;
@@ -43,7 +46,7 @@ export function LiveCountsProvider({
       stop = true;
       clearInterval(id);
     };
-  }, [hospital, router]);
+  }, [hospital, router, poll]);
 
   return <LiveContext.Provider value={counts}>{children}</LiveContext.Provider>;
 }
@@ -79,22 +82,22 @@ export function LiveNumber({
   return (
     <span className={`relative inline-flex align-baseline ${underline ? "pb-[0.14em]" : ""} ${className}`}>
       <span className="sr-only" aria-live="polite">
-        {shown}
+        {t.num(shown)}
       </span>
-      <span aria-hidden className="relative inline-block overflow-hidden">
+      <span aria-hidden className="relative inline-block overflow-hidden whitespace-nowrap">
         {prev !== null && (
           <span
             key={`out-${bump}`}
             className="absolute inset-0 motion-safe:animate-[count-out_420ms_cubic-bezier(0.22,1,0.36,1)_forwards] motion-reduce:hidden"
           >
-            {prev}
+            {t.num(prev)}
           </span>
         )}
         <span
           key={`in-${bump}`}
           className={`inline-block ${prev !== null ? "motion-safe:animate-[count-in_420ms_cubic-bezier(0.22,1,0.36,1)_both]" : ""}`}
         >
-          {shown}
+          {t.num(shown)}
         </span>
       </span>
       {underline && bump > 0 && (
@@ -136,7 +139,7 @@ export function LivePatternStats({
   return (
     <div className={size === "lg" ? "mt-2" : "mt-1"}>
       <p className={size === "lg" ? "text-lg text-ink" : "text-sm text-ink-muted"}>
-        {live.count} {t.plural.cases(live.count)} · {live.hospitals} {t.plural.hospitals(live.hospitals)} ·{" "}
+        {t.num(live.count)} {t.plural.cases(live.count)} · {live.hospitals} {t.plural.hospitals(live.hospitals)} ·{" "}
         <span className="font-medium text-ink">
           {nightPct}% {t.dashboard.night}
         </span>

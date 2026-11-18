@@ -11,13 +11,15 @@ import { RedactedText } from "@/app/report/redacted-text";
 import { RcaPanel } from "@/app/rca/rca-panel";
 import { RcaSheet, SheetSkeleton } from "@/app/rca/sheet";
 import { Classification } from "./classification";
+import { devData, WORST_INCIDENT, WORST_RCA, WORST_RCA_WEAK_ONLY } from "@/lib/dev-fixtures";
+import { DevDataToggle } from "@/components/dev-data-toggle";
 
 export const metadata: Metadata = { title: `${t.rcaUi.incidentHead} · ${t.app.name}` };
 
-export default function IncidentPage({ params }: PageProps<"/incident/[id]">) {
+export default function IncidentPage({ params, searchParams }: PageProps<"/incident/[id]">) {
   return (
     <Suspense fallback={<SheetSkeleton />}>
-      <Incident params={params} />
+      <Incident params={params} searchParams={searchParams} />
     </Suspense>
   );
 }
@@ -42,8 +44,10 @@ type Row = {
   pattern_id: string | null;
 };
 
-async function Incident({ params }: Pick<PageProps<"/incident/[id]">, "params">) {
+async function Incident({ params, searchParams }: Pick<PageProps<"/incident/[id]">, "params" | "searchParams">) {
   const { id } = await params;
+  const dev = devData((await searchParams).data);
+  if (dev) return <DevIncident weakOnly={dev === "empty"} />;
   if (!UUID.test(id)) notFound();
   const sb = db();
   const [{ data }, rca] = await Promise.all([
@@ -59,7 +63,12 @@ async function Incident({ params }: Pick<PageProps<"/incident/[id]">, "params">)
   const { data: pattern } = r.pattern_id
     ? await sb.from("patterns").select("id, title").eq("id", r.pattern_id).maybeSingle()
     : { data: null };
+  return <IncidentView r={r} pattern={pattern} rca={rca} />;
+}
+
+function IncidentView({ r, pattern, rca }: { r: Row; pattern: { id: string; title: string } | null; rca: Awaited<ReturnType<typeof getRca>> }) {
   const h = t.hospitals[r.hospital_id];
+  const id = r.id;
 
   return (
     <RcaSheet
@@ -113,5 +122,16 @@ async function Incident({ params }: Pick<PageProps<"/incident/[id]">, "params">)
       }
       right={<RcaPanel target={{ kind: "incident", id }} initial={rca} status={r.status} />}
     />
+  );
+}
+
+// HACK: dev-only break-ui view (?data=worst, ?data=empty = only weak actions). Never reached in production.
+function DevIncident({ weakOnly }: { weakOnly: boolean }) {
+  const { pattern_title, ...row } = WORST_INCIDENT;
+  return (
+    <>
+      <IncidentView r={{ ...row, pattern_id: "dev" }} pattern={{ id: "dev", title: pattern_title }} rca={weakOnly ? WORST_RCA_WEAK_ONLY : WORST_RCA} />
+      <DevDataToggle states={[["", "Демо"], ["worst", "Худший случай"], ["empty", "Только слабые меры"]]} />
+    </>
   );
 }

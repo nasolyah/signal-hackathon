@@ -29,12 +29,13 @@ export function RcaSheet({
         </span>
         <Link
           href="/dashboard"
-          className="inline-flex h-10 items-center gap-2 rounded-lg border border-rule-strong px-4 text-sm font-medium text-ink transition-colors hover:bg-ground focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none"
+          aria-label={t.rcaUi.back}
+          className="inline-flex size-10 items-center justify-center gap-2 rounded-lg border border-rule-strong text-sm font-medium text-ink transition-colors hover:bg-ground focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none sm:w-auto sm:px-4"
         >
-          <ArrowLeft className="size-4" aria-hidden /> {t.rcaUi.back}
+          <ArrowLeft className="size-4" aria-hidden /> <span className="hidden sm:inline">{t.rcaUi.back}</span>
         </Link>
       </AppBar>
-      <div className="grid flex-1 lg:min-h-0 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+      <div className="grid flex-1 grid-cols-[minmax(0,1fr)] [overflow-wrap:anywhere] lg:min-h-0 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <section className="relative bg-ground lg:overflow-y-auto lg:[scrollbar-gutter:stable]">{left}</section>
         <section className="relative min-w-0 lg:overflow-y-auto lg:[scrollbar-gutter:stable]">{right}</section>
       </div>

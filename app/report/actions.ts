@@ -35,6 +35,7 @@ export type KeptEntry = {
 export type ReportState =
   | { status: "idle" }
   | { status: "too_short" }
+  | { status: "too_long" }
   | { status: "failed" }
   | { status: "kept"; entry: KeptEntry };
 
@@ -48,8 +49,9 @@ export async function submitReport(_prev: ReportState, formData: FormData): Prom
     shiftTouched: formData.get("shift_touched") === "1",
   });
   if (!parsed.success) {
-    const textIssue = parsed.error.issues.some((i) => i.path[0] === "text");
-    return { status: textIssue ? "too_short" : "failed" };
+    const textIssue = parsed.error.issues.find((i) => i.path[0] === "text");
+    if (textIssue) return { status: textIssue.code === "too_big" ? "too_long" : "too_short" };
+    return { status: "failed" };
   }
   const { hospital, text, department, shiftTouched } = parsed.data;
 

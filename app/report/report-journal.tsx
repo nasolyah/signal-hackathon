@@ -9,6 +9,7 @@ import { submitReport, type KeptEntry, type ReportState } from "./actions";
 import { DemoLinks, JournalHead, JournalPage } from "./journal-chrome";
 import { RedactedText } from "./redacted-text";
 import { Stamp } from "./stamp";
+import { WORST_KEPT } from "@/lib/dev-fixtures";
 
 type Props = { hospital: HospitalCode; today: string; defaultShift: Shift };
 
@@ -19,6 +20,8 @@ export function ReportJournal(props: Props) {
 }
 
 const IDLE: ReportState = { status: "idle" };
+/** Same limit as the server (app/report/actions.ts). Not maxLength: a paste must never be cut silently. */
+const MAX_TEXT = 4000;
 
 function JournalRound({ hospital, today, defaultShift, onAnother }: Props & { onAnother: () => void }) {
   const [state, action, pending] = useActionState(submitReport, IDLE);
@@ -111,7 +114,7 @@ function JournalRound({ hospital, today, defaultShift, onAnother }: Props & { on
               onChange={(e) => setText(e.target.value)}
               readOnly={pending}
               placeholder={t.report.textPlaceholder}
-              aria-invalid={state.status === "too_short"}
+              aria-invalid={state.status === "too_short" || state.status === "too_long" || text.length > MAX_TEXT}
               aria-describedby="report-hint"
               spellCheck
               autoComplete="off"
@@ -123,8 +126,11 @@ function JournalRound({ hospital, today, defaultShift, onAnother }: Props & { on
               </div>
             )}
           </div>
+          {text.length > MAX_TEXT * 0.85 && (
+            <p className={`pt-1.5 text-sm ${text.length > MAX_TEXT ? "text-margin-red" : "text-ink-muted"}`}>{t.report.charCount(text.length, MAX_TEXT)}</p>
+          )}
           <p id="report-hint" className="min-h-6 pt-1.5 text-sm text-margin-red" aria-live="polite">
-            {state.status === "too_short" ? t.report.tooShort : null}
+            {state.status === "too_short" ? t.report.tooShort : state.status === "too_long" || text.length > MAX_TEXT ? t.report.tooLong : null}
           </p>
         </div>
 
@@ -200,7 +206,7 @@ function KeptView({
             </button>
           </div>
           {!showMine && (
-            <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-mint px-3.5 py-1.5 text-base font-medium text-ink md:text-lg">
+            <p className="mt-3 inline-flex items-center gap-2 rounded-2xl bg-mint px-3.5 py-1.5 text-base font-medium text-ink md:text-lg">
               {t.report.removedCount(entry.removed)}
             </p>
           )}
@@ -265,11 +271,11 @@ const PREVIEW_ENTRY: KeptEntry = {
   joinedPattern: true,
 };
 
-export function KeptPreview() {
+export function KeptPreview({ worst = false }: { worst?: boolean }) {
   return (
     <KeptView
       hospital="A"
-      entry={PREVIEW_ENTRY}
+      entry={worst ? WORST_KEPT : PREVIEW_ENTRY}
       original="(синтетический пример — исходного текста в превью нет)"
       onAnother={() => {}}
     />

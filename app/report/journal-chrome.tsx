@@ -7,7 +7,7 @@ import type { HospitalCode } from "@/lib/taxonomy";
 export function JournalPage({ children, wide = false }: { children: React.ReactNode; wide?: boolean }) {
   return (
     <div
-      className={`flex min-h-dvh w-full flex-1 flex-col bg-page md:min-h-0 md:flex-none md:overflow-hidden md:rounded-[20px] md:shadow-[0_1px_2px_rgb(0_0_0/0.04),0_24px_48px_-24px_rgb(0_0_0/0.18)] ${wide ? "md:max-w-[48rem]" : "md:max-w-[40rem]"}`}
+      className={`flex min-h-dvh w-full min-w-0 flex-1 flex-col bg-page [overflow-wrap:anywhere] md:min-h-0 md:flex-none md:overflow-hidden md:rounded-[20px] md:shadow-[0_1px_2px_rgb(0_0_0/0.04),0_24px_48px_-24px_rgb(0_0_0/0.18)] ${wide ? "md:max-w-[48rem]" : "md:max-w-[40rem]"}`}
     >
       {children}
     </div>
