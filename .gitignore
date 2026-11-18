@@ -58,3 +58,6 @@ next-env.d.ts
 .taste-skill/*.txt
 /shots/
 public/.taste-skill/
+
+# demo video intermediates (the mp4 is kept)
+docs/demo/*.webm
