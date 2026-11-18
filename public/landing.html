@@ -114,6 +114,9 @@
     #questions .stack-row .ic { width: 28px; height: 28px; }
   }
   #product .section-head__link { display: block; width: fit-content; margin-top: var(--s-3); }
+  /* the classification checklist: a done field is confirmed, not wrong — tick and bar stay, no strike line */
+  #features .ui-check__label::after { display: none; }
+  #features .ui-check.is-done .ui-check__label { color: var(--ink); }
 </style>
 </head>
 <body>
@@ -325,7 +328,7 @@
           <h3>Ранжирует меры по силе</h3>
           <p>Пять «почему», причины по шести группам и меры по иерархии RCA². Инструктаж Сигнал помечает как слабую меру.</p>
           <div class="panel">
-            <div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:380px;--ax:max(24px, 50% - 190px);--ay:calc(100% - 200px);--ay-sm:16px">
+            <div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:380px;--ax:max(24px, 50% - 190px);--ay:max(32px, 50% - 130px);--ay-sm:16px">
               <div class="ui ui-notify" data-ui="notify">
                 <ul class="ui-notify__list" data-notify-list>
                   <li class="ui-note"><span class="ui-note__ico"><svg class="ui-icon" viewBox="0 0 16 16"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg></span><span class="ui-note__text"><span class="ui-note__title">Сильная мера<time>RCA²</time></span><span class="ui-note__body">Хранить инсулины на разных полках</span></span></li>
@@ -340,7 +343,7 @@
           <h3>Принимает отчёты по-узбекски</h3>
           <p>Можно писать по-русски, по-узбекски или вперемешку, с опечатками. QR-код в ординаторской ведёт сразу на форму.</p>
           <div class="panel">
-            <div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:400px;--ax:max(24px, 50% - 200px);--ay:48px;--ay-sm:16px">
+            <div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:400px;--ax:max(24px, 50% - 200px);--ay:max(32px, 50% - 150px);--ay-sm:16px">
               <div class="ui ui-panel ui-chat" data-ui="chat">
                 <div class="ui-head"><span class="ui-agent" aria-hidden="true"></span><div class="ui-title">Сигнал</div><span class="ui-spacer"></span></div>
                 <div class="ui-chat__body">
