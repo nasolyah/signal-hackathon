@@ -1,0 +1,399 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Сигнал — презентация</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap"><style>* { margin: 0; box-sizing: border-box }
+html { background: #8a8a86 }
+body > section { width: 1920px; height: 1080px; overflow: hidden; position: relative; margin: 0 auto 40px; }
+aside { display: none }
+h1 { font-size: 96px; font-weight: 600 } h2 { font-size: 64px; font-weight: 600 } h3 { font-size: 44px; font-weight: 600 }
+x-shape { display: block } x-shape[kind=ellipse] { border-radius: 50% }
+.tbl { border-collapse: collapse } .tbl th, .tbl td { padding: .35em .6em; text-align: left; border-bottom: 2px solid #D9D9D3 } .tbl th { font-weight: 600 }
+@page { size: 1920px 1080px; margin: 0 }
+@media print { html { background: none } body > section { margin: 0; break-after: page } * { animation: none !important } }
+:root {
+  --page: #FBFBF9;
+  --ground: #F0F0EC;
+  --ink: #232323;
+  --muted: #5C5C5C;
+  --rule: #D9D9D3;
+  --mint: #A1FFCB;
+  --mint-deep: #1F7A4D;
+  --red: #B3352B;
+  --red-soft: #F7E1DD;
+  --red-ink: #8A2820;
+  --dark: #1E1F1D;
+  --on-dark: #F2F2EC;
+  --on-dark-muted: #B5B8AE;
+  --accent-ink: #2F4A3A;
+}
+
+body { font-family: 'IBM Plex Sans', Arial, sans-serif; color: var(--ink); }
+
+section {
+  counter-increment: page;
+  background: var(--page);
+  color: var(--ink);
+  padding: 128px 128px 160px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+/* Heading block: eyebrow + title, always at the top margin */
+.head { display: flex; flex-direction: column; gap: 20px; }
+.eyebrow { font-family: 'IBM Plex Mono', 'Courier New', monospace; font-size: 24px; font-weight: 500; line-height: 1.3; color: var(--mint-deep); letter-spacing: 0.5px; }
+.title { font-size: 72px; line-height: 1.1; font-weight: 500; letter-spacing: -1.5px; }
+.lead { font-size: 32px; line-height: 1.45; color: var(--muted); max-width: 1400px; }
+.src { font-family: 'IBM Plex Mono', 'Courier New', monospace; font-size: 24px; line-height: 1.4; color: var(--muted); }
+.cap { font-size: 32px; line-height: 1.4; color: var(--muted); }
+
+/* Footer band: brand left, page number right */
+.foot { position: absolute; left: 128px; bottom: 64px; width: 1664px; display: flex; justify-content: space-between; }
+.fl { font-family: 'IBM Plex Mono', 'Courier New', monospace; font-size: 24px; line-height: 1.3; color: var(--muted); }
+.pn::after { content: counter(page); }
+
+/* Statement slides */
+section.dark { background: var(--dark); color: var(--on-dark); }
+.dark .eyebrow { color: var(--mint); }
+.dark .lead { color: var(--on-dark-muted); }
+.dark .fl { color: var(--on-dark-muted); }
+section.accent { background: var(--mint); }
+.accent .eyebrow { color: var(--ink); }
+.accent .lead { color: var(--accent-ink); }
+.accent .fl { color: var(--accent-ink); }
+
+/* Cover */
+section.cover { padding: 128px; justify-content: space-between; }
+.brand-row { display: flex; align-items: center; gap: 20px; }
+.brand-dot { width: 32px; height: 32px; background: var(--mint-deep); }
+.brand { font-size: 32px; font-weight: 600; line-height: 1.2; }
+.hero { font-size: 120px; line-height: 1.05; font-weight: 500; letter-spacing: -3px; max-width: 1500px; }
+.pill { align-self: flex-start; font-family: 'IBM Plex Mono', 'Courier New', monospace; font-size: 24px; font-weight: 500; line-height: 1.3; background: var(--mint); color: var(--ink); padding: 12px 24px; border-radius: 48px; }
+
+/* Columns */
+.cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+.cols3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 56px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+
+/* Big numbers */
+.stat { display: flex; flex-direction: column; gap: 20px; border-top: 2px solid var(--ink); padding-top: 32px; }
+.num { font-size: 120px; line-height: 1; font-weight: 500; letter-spacing: -3px; white-space: nowrap; }
+.num-bad { color: var(--red); }
+
+/* Cards */
+.card { background: var(--ground); border-radius: 24px; padding: 40px 48px; display: flex; flex-direction: column; gap: 20px; }
+.card-mint { background: var(--mint); }
+.card-title { font-size: 44px; line-height: 1.15; font-weight: 500; letter-spacing: -0.5px; }
+.steps { font-size: 32px; line-height: 1.45; padding-left: 44px; }
+.steps-quiet { color: var(--muted); }
+
+/* Rows: numbered steps */
+.rows { display: flex; flex-direction: column; }
+.row { display: grid; grid-template-columns: 112px 640px 1fr; gap: 48px; align-items: start; padding: 24px 0; border-top: 2px solid var(--rule); }
+.row-last { border-bottom: 2px solid var(--rule); }
+.step-n { font-family: 'IBM Plex Mono', 'Courier New', monospace; font-size: 44px; line-height: 1.15; font-weight: 500; color: var(--mint-deep); }
+.row-title { font-size: 44px; line-height: 1.15; font-weight: 500; letter-spacing: -0.5px; }
+.row-text { font-size: 32px; line-height: 1.4; color: var(--muted); }
+
+/* Example: redaction */
+.quote { font-size: 32px; line-height: 1.45; }
+.gone { color: var(--red); }
+.kept { color: var(--mint-deep); }
+.pills { display: flex; flex-wrap: wrap; gap: 16px; }
+.chip { font-size: 24px; font-weight: 500; line-height: 1.3; background: var(--mint); padding: 10px 22px; border-radius: 48px; }
+.big { font-size: 44px; line-height: 1.2; font-weight: 500; letter-spacing: -0.5px; }
+.stack { display: flex; flex-direction: column; gap: 28px; }
+
+/* Digest mock */
+.mock { border: 2px solid var(--rule); border-radius: 24px; padding: 40px 48px; display: flex; flex-direction: column; gap: 24px; background: var(--page); }
+.mock-head { font-size: 32px; line-height: 1.4; font-weight: 500; }
+.measure { display: grid; grid-template-columns: 200px 1fr; gap: 32px; align-items: start; }
+.badge { font-size: 24px; font-weight: 500; line-height: 1.3; padding: 8px 18px; border-radius: 48px; background: var(--mint); text-align: center; }
+.badge-weak { background: var(--red-soft); color: var(--red-ink); }
+.m-text { font-size: 32px; line-height: 1.4; }
+.m-why { font-size: 24px; line-height: 1.4; color: var(--muted); }
+.m-why-weak { color: var(--red-ink); }
+.btns { display: flex; gap: 20px; }
+.btn { font-size: 24px; font-weight: 500; line-height: 1.3; padding: 14px 28px; border-radius: 12px; background: var(--ink); color: var(--page); }
+.btn-ghost { background: var(--page); color: var(--ink); border: 2px solid var(--rule); }
+
+/* Tables */
+.tbl { font-size: 32px; color: var(--ink); width: 100%; }
+
+/* Prices */
+.price { font-size: 72px; line-height: 1.05; font-weight: 500; letter-spacing: -1.5px; white-space: nowrap; }
+
+/* Ask */
+.link { font-family: 'IBM Plex Mono', 'Courier New', monospace; font-size: 32px; font-weight: 500; line-height: 1.3; color: var(--ink); }
+
+/* Arrival: plain rule is the finished look; the start is in `from` */
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } }
+.rise { animation: rise 700ms cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: calc(var(--i, 0) * 120ms); }
+</style></head><body>
+<section id="cover" class="cover" data-transition="fade">
+<div class="brand-row">
+<x-shape kind="ellipse" class="brand-dot"></x-shape>
+<p class="brand">Сигнал</p>
+</div>
+<div class="head">
+<h1 class="hero rise">Что в больнице может навредить пациенту?</h1>
+<p class="lead rise" style="--i:1">Анонимные сигналы от персонала, пациентов и родственников. ИИ убирает имена, находит повторы между больницами, а главврач получает меру.</p>
+</div>
+<p class="pill">Трек Минздрава · задача №7</p>
+<aside>0:00–0:10. Представься одной фразой: «Мы — команда Сигнала». Прочитай вопрос на слайде вслух — это и есть продукт: мы спрашиваем не «кто ошибся», а «что в больнице может навредить пациенту». Сразу дай понять, что писать может любой: медсестра, врач, санитар, пациент, родственник.</aside>
+</section>
+
+<section id="problem" class="dark" data-transition="fade">
+<div class="head">
+<p class="eyebrow">Задача Минздрава</p>
+<h2 class="title rise">Ошибки скрывают из страха наказания — и они повторяются</h2>
+</div>
+<p class="lead rise" style="--i:2">Ночью пациентка упала в коридоре: свет не горит уже неделю. Медсестра помогла ей, но про свет не сказала — спросят, почему не досмотрела. Через неделю в том же коридоре падает следующий пациент.</p>
+<div class="foot"><p class="fl">Сигнал</p><p class="fl pn"></p></div>
+<aside>0:10–0:30. Это формулировка самой задачи трека — не наша выдумка. Расскажи историю про коридор спокойно, без драмы: никто не плохой, просто сказать страшно. Главная мысль: система узнаёт о проблеме только когда уже есть жалоба семьи, а разбор ищет «кто не досмотрел», а не «почему в коридоре темно».</aside>
+</section>
+
+<section id="scale" data-transition="fade">
+<div class="head">
+<p class="eyebrow">Масштаб</p>
+<h2 class="title">Большая часть вреда предотвратима</h2>
+</div>
+<div class="cols3">
+<div class="stat rise" style="--i:1">
+<p class="num">1 из 10</p>
+<p class="cap">пациентов получает вред при оказании помощи</p>
+<p class="src">ВОЗ</p>
+</div>
+<div class="stat rise" style="--i:2">
+<p class="num">83%</p>
+<p class="cap">нежелательных событий можно было предотвратить</p>
+<p class="src">ВОЗ, 26 больниц в 8 странах с низким и средним доходом</p>
+</div>
+<div class="stat rise" style="--i:3">
+<p class="num num-bad">0</p>
+<p class="cap">национальных данных по Узбекистану мы не нашли</p>
+<p class="src">Нет сигналов — нет данных</p>
+</div>
+</div>
+<div class="foot"><p class="fl">Сигнал</p><p class="fl pn"></p></div>
+<aside>0:30–0:45. Три цифры, по одной фразе на каждую. «Каждый десятый пациент получает вред при лечении, и больше 80% таких случаев можно было предотвратить — это данные ВОЗ. По Узбекистану таких данных нет вообще. И это не случайность: пока о проблемах молчат, их нельзя посчитать». Не говори «до 15% расходов» без «в странах ОЭСР».</aside>
+</section>
+
+<section id="shift" data-transition="fade">
+<div class="head">
+<p class="eyebrow">Наш подход</p>
+<h2 class="title">Спрашиваем не «кто виноват», а «что может навредить»</h2>
+</div>
+<div class="cols2">
+<div class="card rise" style="--i:1">
+<h3 class="card-title">Сейчас</h3>
+<ol class="steps steps-quiet">
+<li>Жалоба семьи</li>
+<li>Разбор: кто не досмотрел</li>
+<li>Приказ: провести инструктаж</li>
+<li>Через месяц — снова</li>
+</ol>
+</div>
+<div class="card card-mint rise" style="--i:2">
+<h3 class="card-title">С Сигналом</h3>
+<ol class="steps">
+<li>Сигнал: в коридоре нет света</li>
+<li>То же — в другой больнице</li>
+<li>Мера: свет и подсветка пола</li>
+<li>Условие исправлено</li>
+</ol>
+</div>
+</div>
+<p class="lead">Писать может любой: персонал, пациент, родственник. Как сервис о ямах на дорогах, только для больниц.</p>
+<div class="foot"><p class="fl">Сигнал</p><p class="fl pn"></p></div>
+<aside>0:45–1:05. Это главный слайд. Мы сместили вопрос с людей на условия. Про тёмный коридор не страшно написать ни медсестре, ни пациенту — никто никого не обвиняет. Поэтому форма открыта для всех. Слева — как сейчас: жалоба, поиск виноватого, слабая мера, повтор. Справа — как с нами: сигнал заранее, повтор в другой больнице, сильная мера, которая меняет среду. Сравнение с ямами на дорогах всем понятно — скажи его.</aside>
+</section>
+
+<section id="how" data-transition="fade">
+<div class="head">
+<p class="eyebrow">Как это работает</p>
+<h2 class="title">От QR-кода до решения главврача</h2>
+</div>
+<div class="rows">
+<div class="row rise" style="--i:1">
+<p class="step-n">01</p>
+<h3 class="row-title">QR-код в больнице</h3>
+<p class="row-text">Без входа и без имени, по-русски или по-узбекски, за минуту</p>
+</div>
+<div class="row rise" style="--i:2">
+<p class="step-n">02</p>
+<h3 class="row-title">ИИ убирает имена</h3>
+<p class="row-text">Исходный текст не сохраняется; разметка по рамке ВОЗ</p>
+</div>
+<div class="row rise" style="--i:3">
+<p class="step-n">03</p>
+<h3 class="row-title">Повторы между больницами</h3>
+<p class="row-text">Одна больница видит случайность, мы — закономерность</p>
+</div>
+<div class="row row-last rise" style="--i:4">
+<p class="step-n">04</p>
+<h3 class="row-title">Сводка главврачу</h3>
+<p class="row-text">Раз в неделю 1–3 меры; главврач выбирает меру и срок</p>
+</div>
+</div>
+<div class="foot"><p class="fl">Сигнал</p><p class="fl pn"></p></div>
+<aside>1:05–1:25. Четыре шага, по одному предложению. Подчеркни два места: на шаге 2 исходный текст живёт только в памяти сервера и нигде не сохраняется — это анонимность по устройству, а не обещание. На шаге 4 решает человек: ИИ только готовит черновик, аналитик его правит, главврач выбирает меру. «Рамка ВОЗ» — это ICPS; не называй её таксономией или классификатором.</aside>
+</section>
+
+<section id="example" data-transition="fade">
+<div class="head">
+<p class="eyebrow">Пример из демо</p>
+<h2 class="title">Падение в тёмном коридоре</h2>
+</div>
+<div class="cols2">
+<div class="card rise" style="--i:1">
+<p class="src">Что написала медсестра</p>
+<p class="quote">Ночью пациентка <span class="gone">Саидова</span> из <span class="gone">палаты 4</span> упала в коридоре — свет не горит уже неделю. Медсестра <span class="gone">Дильноза</span> помогла ей встать.</p>
+<p class="src">Что сохранилось</p>
+<p class="quote">Ночью пациентка <b class="kept">[пациент]</b> из <b class="kept">[палата]</b> упала в коридоре — свет не горит уже неделю. Медсестра <b class="kept">[сотрудник]</b> помогла ей встать.</p>
+</div>
+<div class="stack rise" style="--i:2">
+<div class="pills">
+<p class="chip">Падение</p>
+<p class="chip">Лёгкий вред</p>
+<p class="chip">Ночь</p>
+<p class="chip">Освещение</p>
+</div>
+<p class="big">8-й похожий случай — теперь в 2 больницах</p>
+<p class="cap">Одна больница сочла бы это случайностью. Вместе это закономерность с общей причиной.</p>
+</div>
+</div>
+<p class="src">Точность на синтетическом наборе: тип 89% · почти-ошибка 97% · заложенные повторы найдены 11 из 11, 7 из 7, 5 из 5</p>
+<div class="foot"><p class="fl">Сигнал</p><p class="fl pn"></p></div>
+<aside>1:25–1:45. Покажи, что красным — то, что система убрала: фамилию, палату, имя медсестры. Сохраняется только правая версия с метками. Сверху ИИ разложил случай по рамке ВОЗ: падение, лёгкий вред, ночь, причина — освещение. Главное — справа: это уже восьмой такой случай, и теперь он во второй больнице. Именно здесь появляется закономерность, которую одна больница не увидит. Если спросят про точность: цифры на синтетических данных, на реальных измерим на пилоте.</aside>
+</section>
+
+<section id="digest" data-transition="fade">
+<div class="head">
+<p class="eyebrow">Главврачу</p>
+<h2 class="title">Сводка, а не дашборд</h2>
+</div>
+<div class="mock rise" style="--i:1">
+<p class="src">Главное за неделю · Больница А</p>
+<p class="mock-head">Падения ночью в коридоре корпуса 2: перегорел свет, нет ночной подсветки</p>
+<div class="measure">
+<p class="badge">Сильная</p>
+<div>
+<p class="m-text">Заменить свет и поставить ночную подсветку пола</p>
+<p class="m-why">Устраняет причину в среде</p>
+</div>
+</div>
+<div class="measure">
+<p class="badge badge-weak">Слабая</p>
+<div>
+<p class="m-text">Предупреждать пациентов не вставать без сопровождения</p>
+<p class="m-why m-why-weak">Полагается на память пациента</p>
+</div>
+</div>
+<div class="btns">
+<p class="btn">Принять до 30 ноября</p>
+<p class="btn btn-ghost">Отклонить с причиной</p>
+</div>
+</div>
+<div class="foot"><p class="fl">Сигнал</p><p class="fl pn"></p></div>
+<aside>1:45–2:00. Это ответ на то, что нам сказал ментор: главврачи не будут изучать дашборды. Поэтому раз в неделю наш аналитик с помощью ИИ собирает короткую сводку: что повторяется и 1–3 меры. Меры отсортированы по силе по методике RCA²: сильная меняет среду, слабая полагается на память и внимание. Главврач делает одно действие — принимает меру со сроком или отклоняет с причиной.</aside>
+</section>
+
+<section id="district" data-transition="fade">
+<div class="head">
+<p class="eyebrow">Району</p>
+<h2 class="title">Реакция, а не число сигналов</h2>
+</div>
+<table class="tbl rise" style="--i:1">
+<tr><th style="width:24%">Больница</th><th style="width:34%">Сводка</th><th style="width:14%">Принято</th><th style="width:14%">Выполнено</th><th style="width:14%">Просрочено</th></tr>
+<tr><td>Больница А</td><td>прочитана за 5 ч</td><td>1</td><td>0</td><td>0</td></tr>
+<tr><td>Больница Б</td><td>прочитана за 20 ч</td><td>1</td><td>0</td><td>0</td></tr>
+<tr><td>Больница В</td><td style="color:#B3352B">не открыта больше 2 суток</td><td>0</td><td>0</td><td>0</td></tr>
+</table>
+<p class="lead">Рейтинг по числу сигналов наказал бы тех, кто честно пишет, — и больницы перестали бы сообщать.</p>
+<div class="foot"><p class="fl">Сигнал</p><p class="fl pn"></p></div>
+<aside>2:00–2:10. Райздрав видит не сколько сигналов в больнице, а как быстро она реагирует: прочитал ли главврач сводку, принял ли меру, выполнил ли в срок. Больница В не открыла сводку больше двух суток — это видно сразу. Скажи вслух, почему мы не ранжируем по числу сигналов: больница, где пишут больше, не хуже — там просто перестали молчать. Больницу с нулём сигналов надо проверять первой.</aside>
+</section>
+
+<section id="privacy" data-transition="fade">
+<div class="head">
+<p class="eyebrow">Приватность</p>
+<h2 class="title">Анонимность встроена в устройство</h2>
+</div>
+<div class="grid2">
+<div class="card rise" style="--i:1">
+<h3 class="card-title">Исходный текст не хранится</h3>
+<p class="cap">Живёт только в памяти запроса, в базу попадает обезличенная версия</p>
+</div>
+<div class="card rise" style="--i:2">
+<h3 class="card-title">Без входа, имени и IP</h3>
+<p class="cap">Форма по QR-коду, без регистрации и cookie</p>
+</div>
+<div class="card rise" style="--i:3">
+<h3 class="card-title">Только дата и смена</h3>
+<p class="cap">Точное время по смене вычислило бы автора</p>
+</div>
+<div class="card rise" style="--i:4">
+<h3 class="card-title">Отделение — от 5 сигналов</h3>
+<p class="cap">Меньше пяти — разрез не показываем</p>
+</div>
+</div>
+<p class="src">Сервер и база — в Сеуле: Южная Корея есть в перечне стран ПКМ №415</p>
+<div class="foot"><p class="fl">Сигнал</p><p class="fl pn"></p></div>
+<aside>2:10–2:25. Ключевая фраза: «Мы не обещаем анонимность — мы её не можем нарушить, потому что нужных данных просто нет». Исходный текст нигде не хранится, нет входа, не храним IP, вместо времени только смена, а разрез по отделению показываем, только когда сигналов пять и больше — иначе по маленькому отделению можно вычислить человека. Не говори «полная анонимизация»: на свободном тексте гарантии нет, скажи «обезличивание в два слоя».</aside>
+</section>
+
+<section id="roles" data-transition="fade">
+<div class="head">
+<p class="eyebrow">Кто что видит</p>
+<h2 class="title">У автора сигнала нет аккаунта</h2>
+</div>
+<table class="tbl rise" style="--i:1">
+<tr><th style="width:36%">Роль</th><th style="width:64%">Что видит</th></tr>
+<tr><td>Автор сигнала</td><td>Только форму по QR — без аккаунта, никогда</td></tr>
+<tr><td>Аналитик</td><td>Обезличенные сигналы, собирает сводки</td></tr>
+<tr><td>Главврач</td><td>Сводки и меры своей больницы</td></tr>
+<tr><td>Райздрав</td><td>Скорость реакции своих больниц</td></tr>
+</table>
+<p class="src">В демо экраны открыты. В пилоте — вход по приглашению для каждой роли</p>
+<div class="foot"><p class="fl">Сигнал</p><p class="fl pn"></p></div>
+<aside>2:25–2:35. Аккаунты есть у всех, кто принимает решения, но никогда — у того, кто сообщает. Аналитик — наш сотрудник: видит обезличенные сигналы и собирает сводки. Главврач видит только свою больницу. Райздрав — только скорость реакции, без текстов и без рейтинга по числу сигналов. Если спросят, почему в демо нет входа: экраны открыты сознательно, данные синтетические; в пилоте вход по приглашению.</aside>
+</section>
+
+<section id="model" data-transition="fade">
+<div class="head">
+<p class="eyebrow">Кто платит</p>
+<h2 class="title">Подписка: первые деньги — частные клиники</h2>
+</div>
+<div class="cols3">
+<div class="card rise" style="--i:1">
+<p class="price">$40</p>
+<p class="src">в месяц</p>
+<p class="cap">Частная клиника — платит сама</p>
+</div>
+<div class="card rise" style="--i:2">
+<p class="price">$30</p>
+<p class="src">в месяц</p>
+<p class="cap">Госполиклиника — по лицензии Минздрава</p>
+</div>
+<div class="card rise" style="--i:3">
+<p class="price">$100–400</p>
+<p class="src">в месяц</p>
+<p class="cap">Больница — по числу коек</p>
+</div>
+</div>
+<p class="lead">Расходы первого года ≈ $200 тыс. Чтобы их покрыть, нужно ≈415 частных клиник — около 5% из 8,7 тыс. в стране. Цены — наши допущения, проверим на пилоте.</p>
+<div class="foot"><p class="fl">Сигнал</p><p class="fl pn"></p></div>
+<aside>2:35–2:50. Продаём не дашборд, а сервис: сигналы, обезличивание и еженедельную сводку от аналитика. Первые деньги — частные клиники: с 1 июля 2026 они лечат за счёт госстрахования, а по сообщениям с 2028 года госстрахование будет работать только с аккредитованными клиниками — мы даём подразделению качества готовую документацию. Госбольницы на пилоте бесплатно, лицензия Минздрава — после результатов. Говори «чтобы покрыть расходы, нужно 415», а не «415 заплатят». ИИ стоит меньше цента на сигнал — главные расходы это люди.</aside>
+</section>
+
+<section id="ask" class="accent" data-transition="fade">
+<div class="head">
+<p class="eyebrow">Следующий шаг</p>
+<h2 class="hero rise">Пилот в 2–3 больницах Ташкента</h2>
+</div>
+<p class="lead rise" style="--i:1">Пилот → лицензия Минздрава → вся страна и интеграция с DMED → Центральная Азия</p>
+<p class="link rise" style="--i:2">signal-hackathon.vercel.app</p>
+<div class="foot"><p class="fl">Сигнал</p><p class="fl pn"></p></div>
+<aside>2:50–3:00. Одна просьба: пилот в двух-трёх больницах Ташкента — здесь Минздрав, больше всего частных клиник (наши первые клиенты), и команда может приезжать в больницы сама. Дальше лицензия Минздрава, вся страна через DMED и Центральная Азия: продукт уже на русском, узбекский — следующий словарь. Закончи фразой: «Сейчас покажем, как это работает вживую» — и переходи к демо: телефон с формой, затем главная карточка «Больше всего вреда пациентам», где счётчик падений меняется с 7 на 8. Перед демо Марк запускает npm run demo:reset.</aside>
+</section>
+
+</body></html>

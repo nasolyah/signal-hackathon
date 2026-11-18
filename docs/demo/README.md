@@ -1,21 +1,33 @@
 # Backup demo video
 
-`signal-demo.mp4` (H.264, 1280×720, 67 s) — the demo path: a report from the phone → names removed →
-the insulin counter 11 → 12 on the Ministry journal → RCA, where «Провести инструктаж персонала» is rated weak.
+`signal-demo.mp4` (H.264, 1280×720, 30 fps, exactly 2:00) — the v2-lite path, with no Ministry screens:
 
-Re-record (dev server on :3000, it shares the prod DB):
+1. Phone: a nurse reports a fall in a dark corridor, with names → the names are removed before saving, WHO-framework fields.
+2. District (райздрав) page: the falls pattern now spans two hospitals of the district (8 cases).
+3. Analyst: «Собрать сводку» → AI draft with measures ranked by strength → «Отправить главврачу».
+4. Hospital A: the chief doctor opens the digest (the district sees it was read) and accepts the strong measure.
+5. District: Hospital A reacted in a minute, Hospital В has not opened its digest for over 48 h.
+
+## Re-record
+
+Frames come from the Chrome DevTools screencast (~24 fps, smooth); AI waits and page loads are time-compressed,
+then `encode.swift` writes a constant 30 fps MP4 with AVFoundation. The recording drives production and writes to
+the shared database, so reset before and after.
 
 ```bash
 npm run demo:reset
 ```
 
 ```bash
-mkdir -p /tmp/sig-demo && cd /tmp/sig-demo && npm init -y && npm i playwright-core@1.56.1 && npx playwright-core install ffmpeg
+cd docs/demo && PW_CORE=<path to playwright-core> node record.cjs --rehearse
 ```
 
 ```bash
-cd /tmp/sig-demo && cp "<repo>/docs/demo/record.cjs" "<repo>/docs/demo/to-mp4.cjs" . && echo '<!doctype html><body>' > blank.html && OUT_DIR="<repo>/docs/demo" node record.cjs && node to-mp4.cjs "<repo>/docs/demo/signal-demo.webm" "<repo>/docs/demo/signal-demo.mp4"
+cd docs/demo && PW_CORE=<path to playwright-core> FRAMES=/tmp/signal-frames node record.cjs && swift encode.swift /tmp/signal-frames/list.txt signal-demo.mp4
 ```
 
-Then run `npm run demo:reset` again (the recording adds a live report and a user action).
-The recorder takes screenshots in a loop: the screencast of new-headless Chrome crops the bottom 84 px.
+```bash
+npm run demo:reset
+```
+
+`PW_CORE` is any local `playwright-core` (1.5x+); the system Google Chrome is used as the browser.
