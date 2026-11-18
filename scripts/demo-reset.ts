@@ -4,6 +4,7 @@
 import { db } from "@/lib/db";
 import { recomputePatternStats } from "@/lib/patterns";
 import { warmPatternRcas } from "@/lib/rca-warm";
+import { seedV2 } from "@/lib/seed-v2";
 
 async function main() {
   const sb = db();
@@ -19,6 +20,8 @@ async function main() {
   console.log(`✓ removed ${live?.length ?? 0} live reports; RCA cleared, re-drafting pattern RCAs…`);
   await warmPatternRcas(console.log);
   for (const p of after ?? []) console.log(`  ${p.incident_count}  ${p.title}`);
+  // v2: last week's digests back to their demo states, this week empty for the live demo.
+  await seedV2(console.log).catch((e) => console.error("✗ v2 seed:", (e as Error).message));
 }
 
 main().catch((e) => {

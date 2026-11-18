@@ -56,7 +56,7 @@ async function Register({ searchParams }: Pick<PageProps<"/dashboard/register">,
 
   return (
     <>
-      <AppBar place={t.dashboard.register}>
+      <AppBar place={t.dashboard.register} role="ministry">
         <SecondaryLink href={back}>
           <ArrowLeft className="size-4" aria-hidden /> <span className="hidden sm:inline">{t.rcaUi.back}</span>
         </SecondaryLink>

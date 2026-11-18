@@ -27,3 +27,15 @@ export function formatDateRu(iso: string): string {
   const [y, m, d] = iso.split("-");
   return `${d}.${m}.${y}`;
 }
+
+/** «18.11 14:05» in Tashkent time — for sent/read stamps of digests (not for reports: rule 3). */
+export function formatStampRu(iso: string): string {
+  return new Intl.DateTimeFormat("ru-RU", { timeZone: "Asia/Tashkent", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }).format(new Date(iso)).replace(",", "");
+}
+
+/** «12 мин», «5 ч», «3 дн» — reaction time for the district screen. */
+export function formatSpanRu(hours: number): string {
+  if (hours < 1) return `${Math.max(1, Math.round(hours * 60))} мин`;
+  if (hours < 48) return `${Math.round(hours)} ч`;
+  return `${Math.round(hours / 24)} дн`;
+}

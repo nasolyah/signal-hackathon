@@ -90,11 +90,7 @@ async function Dashboard({
       poll={!dev}
     >
       {/* HACK: demo role switcher (SPEC §2) — the staff form sits one click away */}
-      <AppBar place={t.dashboard.title}>
-        <SecondaryLink href="/report?h=A" className="hidden sm:inline-flex">
-          {t.dashboard.staffForm}
-        </SecondaryLink>
-      </AppBar>
+      <AppBar place={t.dashboard.title} role="ministry" />
 
       <div className="mx-auto w-full max-w-[76rem] px-5 pb-24 lg:px-10">
         {/* 1. Heading and the one scope control */}
@@ -176,7 +172,7 @@ async function Dashboard({
                   title={t.dashboard.byHospital}
                   labelWidth="6.5rem"
                   rows={data.byHospital.map(([k, n]) => [
-                    t.hospitals[k].region,
+                    t.hospitals[k].name,
                     n,
                   ])}
                 />
@@ -291,7 +287,7 @@ function LeadPattern({ p }: { p: PatternCard }) {
           </h2>
           <LivePatternStats id={p.id} initial={initial} size="lg" />
           <p className="mt-3 text-sm text-ink-muted">
-            {p.hospitals.map((h) => t.hospitals[h].region).join(" · ")}
+            {p.hospitals.map((h) => t.hospitals[h].name).join(" · ")}
           </p>
           {p.topFactors.length > 0 && (
             <p className="mt-1 line-clamp-2 text-sm text-ink-muted">

@@ -33,7 +33,7 @@ export function RegisterTable({ rows, showShift = false }: { rows: FeedRow[]; sh
               <tr key={r.id} className="group relative cursor-pointer border-b border-rule transition-colors hover:bg-ground">
                 <td className="py-4 pr-4 whitespace-nowrap text-ink-muted">{formatDateRu(r.date).slice(0, 5)}</td>
                 {showShift && <td className="px-4 py-4 whitespace-nowrap text-ink-muted">{t.shift[r.shift]}</td>}
-                <td className="px-4 py-4 whitespace-nowrap">{t.hospitals[r.hospital].region}</td>
+                <td className="px-4 py-4 whitespace-nowrap">{t.hospitals[r.hospital].name}</td>
                 <td className="px-4 py-4">
                   <Link
                     href={`/incident/${r.id}`}

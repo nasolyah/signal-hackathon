@@ -4,7 +4,7 @@ import { z } from "zod";
 import { analyzeReport, embed, embeddingInput } from "@/lib/ai/analyze";
 import { db } from "@/lib/db";
 import { attachToPattern } from "@/lib/patterns";
-import { DEPARTMENTS, HOSPITAL_CODES, SHIFTS, type Factor, type Harm, type IncidentType, type Stage } from "@/lib/taxonomy";
+import { DEPARTMENTS, HOSPITAL_CODES, INVOLVED_ROLES, SHIFTS, type Factor, type Harm, type IncidentType, type Stage } from "@/lib/taxonomy";
 import { tashkentDate } from "@/lib/time";
 import { allow, LIMITS } from "@/lib/rate-limit";
 
@@ -15,6 +15,7 @@ const Input = z.object({
   hospital: z.enum(HOSPITAL_CODES),
   text: z.string().trim().min(20).max(4000),
   department: z.enum(DEPARTMENTS).nullable(),
+  involved_role: z.enum(INVOLVED_ROLES),
   shift: z.enum(SHIFTS),
   shiftTouched: z.boolean(),
 });
@@ -46,6 +47,7 @@ export async function submitReport(_prev: ReportState, formData: FormData): Prom
     hospital: formData.get("hospital"),
     text: formData.get("text"),
     department: typeof dept === "string" && dept !== "" ? dept : null,
+    involved_role: formData.get("involved_role") ?? "unknown",
     shift: formData.get("shift"),
     shiftTouched: formData.get("shift_touched") === "1",
   });
@@ -54,7 +56,7 @@ export async function submitReport(_prev: ReportState, formData: FormData): Prom
     if (textIssue) return { status: textIssue.code === "too_big" ? "too_long" : "too_short" };
     return { status: "failed" };
   }
-  const { hospital, text, department, shiftTouched } = parsed.data;
+  const { hospital, text, department, involved_role, shiftTouched } = parsed.data;
   if (!allow("report", LIMITS.report)) return { status: "failed" }; // cost guard: no Gemini call
 
   try {
@@ -70,6 +72,7 @@ export async function submitReport(_prev: ReportState, formData: FormData): Prom
       .insert({
         hospital_id: hospital,
         department,
+        involved_role,
         shift,
         incident_date: date,
         redacted_text: a.redacted_text,

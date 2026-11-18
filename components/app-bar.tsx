@@ -14,11 +14,42 @@ export function RingMark({ className = "size-5" }: { className?: string }) {
   );
 }
 
+export type Role = "staff" | "analyst" | "hospital" | "district" | "ministry";
+
+// HACK: no auth — the five roles are plain links for the demo; in production every role is a login.
+const ROLE_LINKS: [Role, string][] = [
+  ["staff", "/report?h=A"],
+  ["analyst", "/analyst"],
+  ["hospital", "/hospital/A"],
+  ["district", "/district/SAM-1"],
+  ["ministry", "/dashboard"],
+];
+
+/** The demo role switcher: who is looking at the system right now. */
+function RoleNav({ role }: { role?: Role }) {
+  return (
+    <nav aria-label="Роль" className="hidden items-center gap-1 rounded-full bg-ground p-1 lg:flex">
+      {ROLE_LINKS.map(([r, href]) => (
+        <Link
+          key={r}
+          href={href}
+          aria-current={r === role ? "page" : undefined}
+          className={`rounded-full px-3 py-1.5 text-sm transition-colors focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none ${
+            r === role ? "bg-page font-medium text-ink shadow-[0_1px_2px_rgb(0_0_0/0.08)]" : "text-ink-muted hover:text-ink"
+          }`}
+        >
+          {t.roles[r]}
+        </Link>
+      ))}
+    </nav>
+  );
+}
+
 /**
  * The product's top bar, matching the landing's nav: the mark and name on the left, the current place,
- * and the one action on the right. White, one hairline under it, nothing else.
+ * the role switcher, and the one action on the right. White, one hairline under it, nothing else.
  */
-export function AppBar({ place, wide = false, children }: { place?: string; wide?: boolean; children?: React.ReactNode }) {
+export function AppBar({ place, wide = false, role, children }: { place?: string; wide?: boolean; role?: Role; children?: React.ReactNode }) {
   return (
     <header className="sticky top-0 z-20 border-b border-rule bg-page/90 backdrop-blur supports-[backdrop-filter]:bg-page/80 print:hidden">
       <div className={`mx-auto flex h-16 w-full items-center justify-between gap-6 px-5 lg:px-10 ${wide ? "" : "max-w-[76rem]"}`}>
@@ -32,6 +63,7 @@ export function AppBar({ place, wide = false, children }: { place?: string; wide
           </Link>
           {place && <span className="hidden truncate text-sm text-ink-muted sm:inline">{place}</span>}
         </div>
+        <RoleNav role={role} />
         {children && <div className="flex shrink-0 items-center gap-3">{children}</div>}
       </div>
     </header>

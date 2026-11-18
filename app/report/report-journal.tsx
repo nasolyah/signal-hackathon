@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { t } from "@/lib/i18n";
-import { DEPARTMENTS, SHIFTS, type HospitalCode, type Shift } from "@/lib/taxonomy";
+import { DEPARTMENTS, INVOLVED_ROLES, SHIFTS, type HospitalCode, type Shift } from "@/lib/taxonomy";
 import { formatDateRu } from "@/lib/time";
 import { submitReport, type KeptEntry, type ReportState } from "./actions";
 import { DemoLinks, JournalHead, JournalPage } from "./journal-chrome";
@@ -132,6 +132,24 @@ function JournalRound({ hospital, today, defaultShift, onAnother }: Props & { on
           <p id="report-hint" className="min-h-6 pt-1.5 text-sm text-margin-red" aria-live="polite">
             {state.status === "too_short" ? t.report.tooShort : state.status === "too_long" || text.length > MAX_TEXT ? t.report.tooLong : null}
           </p>
+          <label className="mt-3 flex flex-col gap-1.5">
+            <span className="text-sm text-ink-muted">{t.report.roleLabel}</span>
+            <span className="relative">
+              <select
+                name="involved_role"
+                defaultValue="unknown"
+                className="h-11 w-full appearance-none rounded-lg border border-rule-strong bg-page pr-9 pl-3.5 text-base text-ink outline-none hover:bg-ground focus-visible:border-mint-deep focus-visible:ring-3 focus-visible:ring-ring/30"
+              >
+                {INVOLVED_ROLES.map((r) => (
+                  <option key={r} value={r}>
+                    {t.involvedRole[r]}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-ink-muted" aria-hidden />
+            </span>
+            <span className="text-sm text-ink-muted">{t.report.roleHint}</span>
+          </label>
         </div>
 
         {/* Always in view, right above the button: safety is felt before submitting (PRODUCT.md §1) */}
@@ -232,6 +250,12 @@ function KeptView({
             </dd>
           </div>
         </dl>
+
+        {(entry.harm === "severe" || entry.harm === "death") && (
+          <p role="note" className="mx-5 mt-8 rounded-xl border border-[#e5b54a] bg-[#fdf6e3] px-4 py-3.5 text-base leading-snug text-ink md:mx-8">
+            {t.report.severeBanner}
+          </p>
+        )}
 
         {entry.joinedPattern && (
           <p className="mx-5 mt-8 flex gap-2.5 rounded-xl bg-accent px-4 py-3.5 text-base text-ink md:mx-8">

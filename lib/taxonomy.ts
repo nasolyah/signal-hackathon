@@ -57,6 +57,10 @@ export const CAUSE_CATEGORIES = [
 ] as const;
 
 export const HOSPITAL_CODES = ["A", "B", "C", "D", "E", "F"] as const;
+/** v2: two districts of Samarkand region (supabase/migration_v2.sql). */
+export const DISTRICTS = { "SAM-1": ["A", "B", "C"], "SAM-2": ["D", "E", "F"] } as const;
+export type DistrictId = keyof typeof DISTRICTS;
+export const DISTRICT_IDS = Object.keys(DISTRICTS) as DistrictId[];
 
 /** Departments seen in the seed dataset (data/README.md); used by the /report select. */
 export const DEPARTMENTS = [
@@ -69,6 +73,10 @@ export const DEPARTMENTS = [
   "icu",
 ] as const;
 export type Department = (typeof DEPARTMENTS)[number];
+
+/** v2: who was involved, as a role — never a name (CLAUDE.md rule 7). */
+export const INVOLVED_ROLES = ["nurse", "doctor", "junior_staff", "pharmacist", "lab", "other", "unknown"] as const;
+export type InvolvedRole = (typeof INVOLVED_ROLES)[number];
 
 export type IncidentType = (typeof INCIDENT_TYPES)[number];
 export type Stage = (typeof STAGES)[number];

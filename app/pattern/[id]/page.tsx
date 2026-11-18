@@ -74,7 +74,7 @@ type PatternRowData = {
 };
 
 function PatternView({ id, p, rows, rca }: { id: string; p: PatternRowData; rows: CaseRow[]; rca: Awaited<ReturnType<typeof getRca>> }) {
-  const regions = [...new Set(rows.map((r) => r.hospital_id))].sort().map((h) => t.hospitals[h].region);
+  const regions = [...new Set(rows.map((r) => r.hospital_id))].sort().map((h) => t.hospitals[h].name);
   const nightPct = Math.round(Number(p.night_share) * 100);
 
   return (
@@ -111,7 +111,7 @@ function PatternView({ id, p, rows, rca }: { id: string; p: PatternRowData; rows
                 >
                   <span className="flex flex-wrap items-baseline justify-between gap-x-3 text-sm text-ink-muted">
                     <span>
-                      {formatDateRu(r.incident_date)} · {t.hospitals[r.hospital_id].region} · {t.shift[r.shift]}
+                      {formatDateRu(r.incident_date)} · {t.hospitals[r.hospital_id].name} · {t.shift[r.shift]}
                     </span>
                     <span className={r.harm === "severe" || r.harm === "death" ? "font-medium text-margin-red" : ""}>
                       {t.harm[r.harm]}
