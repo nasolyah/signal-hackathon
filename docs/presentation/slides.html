@@ -260,9 +260,37 @@ section.cover { padding: 120px 128px; justify-content: space-between; }
 <aside>Красным — то, что система убрала: фамилия, палата, имя медсестры. В базе остаётся только нижняя версия. Справа главное: это уже восьмой похожий сигнал, и теперь он во второй больнице — появляется закономерность с общей причиной, которую одна больница не увидит. Если спросят про точность: цифры на синтетических данных, на реальных измерим на пилоте.</aside>
 </section>
 
+<section id="tech" class="forest" data-transition="fade">
+<div class="head">
+<p class="kicker">06 · Под капотом</p>
+<h2 class="h">Работает вживую — и мы это проверили</h2>
+</div>
+<div class="c4">
+<div class="col rise" style="--i:1">
+<p class="num">89%</p>
+<p class="d">тип события определён верно</p>
+</div>
+<div class="col rise" style="--i:2">
+<p class="num">97%</p>
+<p class="d">верно понято, дошло ли до пациента</p>
+</div>
+<div class="col rise" style="--i:3">
+<p class="num">11/11</p>
+<p class="d">заложенный повтор найден целиком</p>
+</div>
+<div class="col rise" style="--i:4">
+<p class="num">0</p>
+<p class="d">исходных текстов в базе и логах</p>
+</div>
+</div>
+<p class="lead">Тесты: точность на размеченном синтетическом наборе, прогон пяти текстов через весь конвейер, проверка типов, ревью безопасности и стресс-тест экранов. Стек: Next.js · Supabase и pgvector · Gemini · сервер в Сеуле.</p>
+<div class="foot"><p class="fl">Сигнал · синтетические данные; на реальных измерим на пилоте</p><p class="fl pn"></p></div>
+<aside>Это не макет, а работающий продукт, и мы его измерили. На размеченном синтетическом наборе ИИ верно определяет тип события в 89% случаев и в 97% — дошло ли событие до пациента. Все три заложенные закономерности найдены полностью, и нашлась одна, которую мы не закладывали. Исходный текст не хранится нигде — ноль в базе и в логах. Кроме точности: прогон пяти текстов через весь конвейер, проверка типов, ревью безопасности и стресс-тест экранов. Оговорись: на реальных данных цифры будут ниже, их измерим на пилоте.</aside>
+</section>
+
 <section id="digest" data-transition="fade">
 <div class="head">
-<p class="kicker">06 · Главврачу</p>
+<p class="kicker">07 · Главврачу</p>
 <h2 class="h">Не дашборд, а сводка с мерами</h2>
 </div>
 <div class="mock rise" style="--i:1">
@@ -293,7 +321,7 @@ section.cover { padding: 120px 128px; justify-content: space-between; }
 
 <section id="district" class="forest" data-transition="fade">
 <div class="head">
-<p class="kicker">07 · Райздраву</p>
+<p class="kicker">08 · Райздраву</p>
 <h2 class="h">Скорость реакции, а не число сигналов</h2>
 </div>
 <table class="tbl rise" style="--i:1">
@@ -309,7 +337,7 @@ section.cover { padding: 120px 128px; justify-content: space-between; }
 
 <section id="privacy" data-transition="fade">
 <div class="head">
-<p class="kicker">08 · Приватность</p>
+<p class="kicker">09 · Приватность</p>
 <h2 class="h">Анонимность встроена в устройство</h2>
 </div>
 <div class="c2">
@@ -337,7 +365,7 @@ section.cover { padding: 120px 128px; justify-content: space-between; }
 
 <section id="roles" data-transition="fade">
 <div class="head">
-<p class="kicker">09 · Доступ</p>
+<p class="kicker">10 · Доступ</p>
 <h2 class="h">У автора сигнала нет аккаунта</h2>
 </div>
 <table class="tbl rise" style="--i:1">
@@ -354,7 +382,7 @@ section.cover { padding: 120px 128px; justify-content: space-between; }
 
 <section id="market" class="forest" data-transition="fade">
 <div class="head">
-<p class="kicker">10 · Рынок</p>
+<p class="kicker">11 · Рынок</p>
 <h2 class="h">Тысячи клиник, и всем нужен контроль качества</h2>
 </div>
 <div class="c4">
@@ -382,7 +410,7 @@ section.cover { padding: 120px 128px; justify-content: space-between; }
 
 <section id="model" data-transition="fade">
 <div class="head">
-<p class="kicker">11 · Бизнес-модель</p>
+<p class="kicker">12 · Бизнес-модель</p>
 <h2 class="h">Подписка: платит тот, кто отвечает за&#160;качество</h2>
 </div>
 <div class="c3">
@@ -409,7 +437,7 @@ section.cover { padding: 120px 128px; justify-content: space-between; }
 
 <section id="economics" data-transition="fade">
 <div class="head">
-<p class="kicker">12 · Экономика</p>
+<p class="kicker">13 · Экономика</p>
 <h2 class="h">Окупаемость — ≈415 частных клиник в первый год</h2>
 </div>
 <table class="tbl rise" style="--i:1">
@@ -426,7 +454,7 @@ section.cover { padding: 120px 128px; justify-content: space-between; }
 
 <section id="competitors" data-transition="fade">
 <div class="head">
-<p class="kicker">13 · Конкуренты</p>
+<p class="kicker">14 · Конкуренты</p>
 <h2 class="h">Жалобы — в 1003, улучшения — в&#160;Сигнал</h2>
 </div>
 <table class="tbl rise" style="--i:1">
@@ -443,7 +471,7 @@ section.cover { padding: 120px 128px; justify-content: space-between; }
 
 <section id="roadmap" class="forest" data-transition="fade">
 <div class="head">
-<p class="kicker">14 · Рост</p>
+<p class="kicker">15 · Рост</p>
 <h2 class="h">От пилота в Ташкенте — к стране и Центральной Азии</h2>
 </div>
 <div class="c4">
