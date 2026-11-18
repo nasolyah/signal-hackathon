@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Сигнал
 
-## Getting Started
+Анонимные отчёты о медицинских инцидентах и разбор причин для больниц Узбекистана.
+National AI Hackathon, Ташкент · трек Минздрава, задача №7: «Ошибки скрывают из страха наказания, поэтому они повторяются».
 
-First, run the development server:
+**Демо:** https://signal-hackathon.vercel.app
+- форма для персонала (то, что открывается по QR-коду): https://signal-hackathon.vercel.app/report?h=A
+- журнал Минздрава: https://signal-hackathon.vercel.app/dashboard
+- видео демо, 67 с: [docs/demo/signal-demo.mp4](docs/demo/signal-demo.mp4)
+
+Все данные в демо синтетические.
+
+## Как это работает
+
+1. **Отчёт без страха.** Медсестра сканирует QR-код в ординаторской и описывает случай с телефона, по-русски или по-узбекски. Без входа, без cookies, без IP.
+2. **Обезличивание до сохранения.** Сервер сначала вырезает номера палат, историй болезни, телефоны и даты регулярными выражениями, затем Gemini убирает имена и раскладывает случай по таксономии ВОЗ (ICPS). В базу попадает только текст без имён.
+3. **Поиск повторов.** Тексты без имён превращаются в эмбеддинги; новый случай присоединяется к закономерности, если не меньше 3 из 5 ближайших соседей похожи на него на 0,85 и выше. Журнал Минздрава показывает, где одна и та же ошибка повторяется в разных больницах (например, «путаница инсулинов: 11 случаев, 4 больницы, 82% ночью»).
+4. **Разбор причин, а не поиск виноватого.** ИИ готовит черновик: пять «почему», причины по шести группам и меры по иерархии RCA². Человек правит любое поле. Слабые меры вроде «провести инструктаж» помечаются как слабые, а закрыть разбор без хотя бы одной сильной или средней меры нельзя — это проверяет код, не ИИ.
+
+## Приватность — это и есть продукт
+
+- Исходный текст отчёта нигде не хранится и не логируется: он живёт только в памяти запроса.
+- Ни входа, ни cookies, ни IP, ни user-agent в потоке отчёта.
+- Хранится только дата и смена (день/ночь), без точного времени.
+- Разрез по отделению показывается только для групп от 5 отчётов.
+- Ключи Gemini и Supabase только на сервере; таблицы закрыты RLS, публичный ключ читает пустоту.
+- ИИ предлагает, человек подтверждает: каждая классификация редактируется.
+
+## Точность на 120 синтетических случаях
+
+| Что | Результат |
+|---|---|
+| Тип инцидента | 89% |
+| Вред пациенту | 85% (100% в пределах ±1 уровня) |
+| Почти-ошибка | 97% |
+| Заложенные закономерности | 11 из 11, 7 из 7, 5 из 5 |
+
+Проверка: `npm run eval`.
+
+## Стек
+
+Next.js 16 (App Router) · TypeScript · Tailwind CSS 4 · shadcn/ui · Google Gemini (`@google/genai`: анализ, эмбеддинги, разбор) · Supabase Postgres + pgvector · Vercel.
+
+## Запуск локально
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # заполнить ключи Gemini и Supabase
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. Создать проект Supabase и выполнить [supabase/schema.sql](supabase/schema.sql) в SQL Editor.
+2. Загрузить синтетические случаи и найти закономерности:
+   ```bash
+   npm run seed
+   npm run patterns
+   ```
+3. Запустить:
+   ```bash
+   npm run dev
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Полезные скрипты: `npm run demo:reset` (вернуть демо в исходное состояние), `npm run eval` (точность), `npm run smoke` (проверка Gemini на 5 текстах).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Где что лежит
 
-## Learn More
+- `app/report` — форма отчёта и экран результата · `app/dashboard` — журнал Минздрава и реестр · `app/pattern`, `app/incident`, `app/rca` — разбор причин
+- `lib/ai` — обезличивание, анализ, эмбеддинги, RCA · `lib/patterns.ts` — поиск повторов · `lib/rate-limit.ts` — защита от перерасхода
+- `public/landing.html` — лендинг · `docs/SPEC.md` — спецификация · `data/` — синтетический датасет
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Лендинг собран на ассетах [taste-skill](TASTE-SKILL-LICENSE) (MIT); сторонние лицензии лежат в корне репозитория.
