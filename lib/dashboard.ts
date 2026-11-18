@@ -56,6 +56,36 @@ async function incidents(f: Filters): Promise<IncidentLite[]> {
   return (data ?? []) as IncidentLite[];
 }
 
+const toFeed = (r: IncidentLite): FeedRow => ({
+  id: r.id,
+  date: r.incident_date,
+  hospital: r.hospital_id,
+  type: r.incident_type,
+  harm: r.harm,
+  nearMiss: r.near_miss,
+  status: r.status,
+  shift: r.shift,
+});
+
+export const REGISTER_PAGE_SIZE = 50;
+
+/** The full register: one page of rows (newest first) and the total for the filters. */
+export async function registerPage(f: Filters & { shift?: Shift }, page: number): Promise<{ rows: FeedRow[]; total: number }> {
+  let q = db()
+    .from("incidents")
+    .select("id, hospital_id, incident_type, harm, near_miss, status, shift, incident_date", { count: "exact" })
+    .order("incident_date", { ascending: false })
+    .order("id");
+  if (f.hospital) q = q.eq("hospital_id", f.hospital);
+  if (f.type) q = q.eq("incident_type", f.type);
+  if (f.harm) q = q.eq("harm", f.harm);
+  if (f.shift) q = q.eq("shift", f.shift);
+  const from = (page - 1) * REGISTER_PAGE_SIZE;
+  const { data, count, error } = await q.range(from, from + REGISTER_PAGE_SIZE - 1);
+  if (error) throw new Error("REGISTER_QUERY_FAILED");
+  return { rows: ((data ?? []) as IncidentLite[]).map(toFeed), total: count ?? 0 };
+}
+
 export async function patternCards(hospital?: HospitalCode): Promise<PatternCard[]> {
   const [{ data, error }, { data: members, error: mErr }] = await Promise.all([
     db()
@@ -122,16 +152,7 @@ export async function dashboardData(f: Filters = {}) {
     byType: count((r) => r.incident_type),
     byHospital: count((r) => r.hospital_id),
     byShift: { day: rows.filter((r) => r.shift === "day").length, night: rows.filter((r) => r.shift === "night").length },
-    feed: rows.slice(0, 60).map<FeedRow>((r) => ({
-      id: r.id,
-      date: r.incident_date,
-      hospital: r.hospital_id,
-      type: r.incident_type,
-      harm: r.harm,
-      nearMiss: r.near_miss,
-      status: r.status,
-      shift: r.shift,
-    })),
+    feed: rows.slice(0, 60).map(toFeed),
   };
 }
 

@@ -31,6 +31,7 @@ export function FilterSelect({
             const next = new URLSearchParams(params);
             if (e.target.value) next.set(name, e.target.value);
             else next.delete(name);
+            next.delete("page"); // a new filter starts from the first page
             const qs = next.toString();
             router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
           }}

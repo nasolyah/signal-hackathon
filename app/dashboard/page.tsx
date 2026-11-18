@@ -17,8 +17,8 @@ import {
   type HospitalCode,
   type IncidentType,
 } from "@/lib/taxonomy";
-import { formatDateRu } from "@/lib/time";
 import { FilterSelect } from "./filters";
+import { RegisterTable } from "./register-table";
 import {
   LiveCountsProvider,
   LivePatternCount,
@@ -200,24 +200,13 @@ async function Dashboard({
                 {t.dashboard.registerHint}
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-              <FilterSelect
-                name="type"
-                label={t.dashboard.filterType}
-                value={filters.type ?? ""}
-                anyLabel={t.dashboard.any}
-                options={INCIDENT_TYPES.map((k) => [k, t.incidentType[k]])}
-              />
-              <FilterSelect
-                name="harm"
-                label={t.dashboard.filterHarm}
-                value={filters.harm ?? ""}
-                anyLabel={t.dashboard.any}
-                options={HARMS.map((k) => [k, t.harm[k]])}
-              />
-            </div>
+            <SecondaryLink href={filters.hospital ? `/dashboard/register?h=${filters.hospital}` : "/dashboard/register"}>
+              {t.dashboard.openAll}
+              <span className="text-ink-muted">{t.num(data.kpi.total)}</span>
+              <ArrowRight className="size-4" aria-hidden />
+            </SecondaryLink>
           </div>
-          <Register rows={data.feed} total={data.kpi.total} />
+          <Register rows={data.feed.slice(0, 10)} />
         </section>
       </div>
       {process.env.NODE_ENV !== "production" && (
@@ -433,75 +422,12 @@ function DayNight({ day, night }: { day: number; night: number }) {
   );
 }
 
-function Register({
-  rows,
-  total,
-}: {
-  rows: Awaited<ReturnType<typeof dashboardData>>["feed"];
-  total: number;
-}) {
-  const c = t.dashboard.columns;
+function Register({ rows }: { rows: Awaited<ReturnType<typeof dashboardData>>["feed"] }) {
   if (rows.length === 0)
-    return (
-      <p className="mt-6 rounded-[20px] bg-ground px-8 py-10 text-base text-ink-muted">
-        {t.dashboard.feedEmpty}
-      </p>
-    );
+    return <p className="mt-6 rounded-[20px] bg-ground px-8 py-10 text-base text-ink-muted">{t.dashboard.feedEmpty}</p>;
   return (
-    <div className="mt-6 overflow-x-auto">
-      <table className="w-full min-w-[42rem] border-collapse text-[0.9375rem]">
-        <caption className="sr-only">{t.dashboard.register}</caption>
-        <thead>
-          <tr className="border-b border-rule text-left text-sm text-ink-muted">
-            <th className="py-3 pr-4 font-normal">{c.date}</th>
-            <th className="px-4 py-3 font-normal">{c.hospital}</th>
-            <th className="px-4 py-3 font-normal">{c.type}</th>
-            <th className="px-4 py-3 font-normal">{c.harm}</th>
-            <th className="px-4 py-3 font-normal">{c.nearMiss}</th>
-            <th className="py-3 pl-4 font-normal">{c.status}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => {
-            const attention = r.harm === "severe" || r.harm === "death";
-            return (
-              <tr
-                key={r.id}
-                className="border-b border-rule transition-colors hover:bg-ground"
-              >
-                <td className="py-4 pr-4 whitespace-nowrap text-ink-muted">
-                  {formatDateRu(r.date).slice(0, 5)}
-                </td>
-                <td className="px-4 py-4 whitespace-nowrap">
-                  {t.hospitals[r.hospital].region}
-                </td>
-                <td className="px-4 py-4">
-                  <Link
-                    href={`/incident/${r.id}`}
-                    className="text-ink underline decoration-rule-strong decoration-1 underline-offset-4 hover:decoration-ink focus-visible:rounded-sm focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none"
-                  >
-                    {t.incidentType[r.type]}
-                  </Link>
-                </td>
-                <td
-                  className={`px-4 py-4 whitespace-nowrap ${attention ? "font-medium text-margin-red" : ""}`}
-                >
-                  {t.harm[r.harm]}
-                </td>
-                <td className="px-4 py-4 text-ink-muted">
-                  {r.nearMiss ? t.fields.yes : "—"}
-                </td>
-                <td className="py-4 pl-4 whitespace-nowrap text-ink-muted">
-                  {t.status[r.status as keyof typeof t.status] ?? r.status}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <p className="pt-4 text-sm text-ink-muted">
-        {t.dashboard.shownOf(rows.length, total)}
-      </p>
+    <div className="mt-6">
+      <RegisterTable rows={rows} />
     </div>
   );
 }
