@@ -46,11 +46,25 @@ const SEEDS: Seed[] = [
   {
     h: "A",
     headline: "Главное за неделю — путаница инсулинов ночью, ошибку ловили перед уколом",
-    items: [INSULIN("Два случая, когда медсестра едва не ввела инсулин длительного действия вместо короткого")],
+    items: [
+      INSULIN("Два случая, когда медсестра едва не ввела инсулин длительного действия вместо короткого"),
+      {
+        key: "handover",
+        title: "Неразборчивые листы назначений",
+        what: "Назначения пишут от руки: ночью дозу и название препарата трудно прочитать",
+        why: "Нет печатного шаблона листа назначений",
+        actions: [
+          { text: "Перейти на печатный лист назначений из шаблона", strength: "strong", rationale: "Убирает почерк из цепочки" },
+          { text: "Шаблон с обязательными полями: препарат, доза, время", strength: "medium", rationale: "Стандартизирует запись" },
+          { text: "Напомнить врачам писать разборчиво", strength: "weak", rationale: "Полагается на внимание человека" },
+        ],
+      },
+    ],
     stats: { reports: 4, near_miss_share: 0.75, severe: 0 },
     sentDay: 1,
     ackHours: 5,
-    decisions: [{ item: 0, accept: { action: 0, dueInDays: 10 } }, { item: 0, accept: { action: 1, dueInDays: -1, done: true } }],
+    // item 1 is left undecided on purpose: /hospital/A always has a decision to make
+    decisions: [{ item: 0, accept: { action: 0, dueInDays: 10 } }],
   },
   {
     h: "B",

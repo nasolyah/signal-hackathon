@@ -6,22 +6,6 @@
  "status": "open",
  "history": [
   {
-   "at": "2026-11-18T03:49:26.536Z",
-   "mode": "hook",
-   "host": "claude",
-   "decision": "allow",
-   "reason": "no build is active here",
-   "stopHookActive": false
-  },
-  {
-   "at": "2026-11-18T03:52:10.788Z",
-   "mode": "hook",
-   "host": "claude",
-   "decision": "allow",
-   "reason": "no build is active here",
-   "stopHookActive": false
-  },
-  {
    "at": "2026-11-18T03:53:53.796Z",
    "mode": "hook",
    "host": "claude",
@@ -159,6 +143,22 @@
   },
   {
    "at": "2026-11-18T07:54:14.526Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T08:02:33.201Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T08:06:14.621Z",
    "mode": "hook",
    "host": "claude",
    "decision": "allow",
