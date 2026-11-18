@@ -2,9 +2,8 @@
 html { background: #8a8a86 }
 body > section { width: 1920px; height: 1080px; overflow: hidden; position: relative; margin: 0 auto 40px; }
 aside { display: none }
-h1 { font-size: 96px; font-weight: 600 } h2 { font-size: 64px; font-weight: 600 } h3 { font-size: 44px; font-weight: 600 }
 x-shape { display: block } x-shape[kind=ellipse] { border-radius: 50% }
-.tbl { border-collapse: collapse } .tbl th, .tbl td { padding: .35em .6em; text-align: left; border-bottom: 2px solid #D9D3C5 } .tbl th { font-weight: 600 }
+.tbl, .tbl-s { border-collapse: collapse } .tbl th, .tbl td, .tbl-s th, .tbl-s td { padding: .35em .6em; text-align: left; border-bottom: 2px solid #D9D3C5 } th { font-weight: 600 }
 .forest .tbl th, .forest .tbl td { border-bottom-color: rgba(246,243,236,.25) }
 @page { size: 1920px 1080px; margin: 0 }
 @media print { html { background: none } body > section { margin: 0; break-after: page } * { animation: none !important } }
@@ -133,7 +132,7 @@ section.cover { padding: 120px 128px; justify-content: space-between; }
 <h1 class="hero rise">Как сделать больницу лучше</h1>
 <p class="lead rise" style="--i:1">Анонимные сигналы от персонала, пациентов и родственников — и меры, которые больница действительно выполняет.</p>
 </div>
-<p class="tag">Трек Минздрава · задача №7</p>
+<p class="tag">Трек №7</p>
 <aside>Представься одной фразой: «Мы — команда Сигнала». Прочитай вопрос на слайде: как сделать больницу лучше. Ответ знают те, кто в ней каждый день, — медсёстры, врачи, санитары, пациенты и их родственники. Сигнал даёт им простой и безопасный способ подсказать, что улучшить.</aside>
 </section>
 
@@ -144,7 +143,7 @@ section.cover { padding: 120px 128px; justify-content: space-between; }
 </div>
 <p class="lead rise" style="--i:1">Ночью в коридоре не горит свет. Медсестра это знает, но не скажет: спросят, почему сама не досмотрела. Через неделю в этом коридоре снова падает пациент.</p>
 <div class="col rise" style="--i:2">
-<p class="t">Из задачи Минздрава</p>
+<p class="t">Из задачи трека №7</p>
 <p class="d">О проблемах молчат из страха наказания — поэтому они повторяются.</p>
 </div>
 <div class="foot"><p class="fl">Сигнал</p><p class="fl pn"></p></div>
@@ -432,8 +431,7 @@ section.cover { padding: 120px 128px; justify-content: space-between; }
 </div>
 <table class="tbl rise" style="--i:1">
 <tr><th style="width:40%">Что уже есть</th><th style="width:60%">Чем мы отличаемся</th></tr>
-<tr><td>Колл-центр Минздрава 1003</td><td>Там обращения граждан, у нас — анонимно и про условия</td></tr>
-<tr><td>Бот Минздрава, 2023</td><td>Там коррупция и виноватые, у нас — меры</td></tr>
+<tr><td>Колл-центр 1003 и бот Минздрава</td><td>Там обращения граждан, у нас — анонимно, про условия и с мерой</td></tr>
 <tr><td>«Тайный пациент», 2026</td><td>Видит один визит снаружи, мы — каждую смену изнутри</td></tr>
 <tr><td>RLDatix и аналоги</td><td>Без локализации и DMED, насколько мы видим</td></tr>
 <tr><td>Бумажный журнал</td><td>Пишется под именем, никто не сводит данные</td></tr>

@@ -1,0 +1,363 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Сигнал — техническая часть</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"><style>* { margin: 0; box-sizing: border-box }
+html { background: #8a8a86 }
+body > section { width: 1920px; height: 1080px; overflow: hidden; position: relative; margin: 0 auto 40px; }
+aside { display: none }
+x-shape { display: block } x-shape[kind=ellipse] { border-radius: 50% }
+.tbl, .tbl-s { border-collapse: collapse } .tbl th, .tbl td, .tbl-s th, .tbl-s td { padding: .35em .6em; text-align: left; border-bottom: 2px solid #D9D3C5 } th { font-weight: 600 }
+.forest .tbl th, .forest .tbl td { border-bottom-color: rgba(246,243,236,.25) }
+@page { size: 1920px 1080px; margin: 0 }
+@media print { html { background: none } body > section { margin: 0; break-after: page } * { animation: none !important } }
+:root {
+  --cream: #F6F3EC;
+  --paper: #FFFDF7;
+  --forest: #0F3B2E;
+  --ink: #17201C;
+  --muted: #56605B;
+  --rule: #D9D3C5;
+  --mint: #A1FFCB;
+  --mint-deep: #1F7A4D;
+  --on-forest: #F6F3EC;
+  --on-forest-muted: #A9C2B6;
+  --on-mint: #1E4A39;
+}
+
+body { font-family: 'Onest', Arial, sans-serif; color: var(--ink); }
+
+section {
+  counter-increment: page;
+  background: var(--cream);
+  color: var(--ink);
+  padding: 120px 128px 150px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+section.forest { background: var(--forest); color: var(--on-forest); }
+section.mint { background: var(--mint); color: var(--ink); }
+
+/* Heading block */
+.head { display: flex; flex-direction: column; gap: 24px; }
+.kicker { font-size: 24px; font-weight: 600; line-height: 1.3; color: var(--mint-deep); }
+.forest .kicker { color: var(--mint); }
+.mint .kicker { color: var(--forest); }
+.h { font-family: 'Unbounded', 'Arial Black', sans-serif; font-size: 64px; line-height: 1.12; font-weight: 500; letter-spacing: -1px; max-width: 1560px; }
+.hero { font-family: 'Unbounded', 'Arial Black', sans-serif; font-size: 120px; line-height: 1.02; font-weight: 500; letter-spacing: -3px; max-width: 1600px; }
+.hero-m { font-family: 'Unbounded', 'Arial Black', sans-serif; font-size: 96px; line-height: 1.05; font-weight: 500; letter-spacing: -2px; max-width: 1600px; }
+.lead { font-size: 32px; line-height: 1.45; color: var(--muted); max-width: 1440px; }
+.forest .lead { color: var(--on-forest-muted); }
+.mint .lead { color: var(--on-mint); }
+.note { font-size: 24px; line-height: 1.4; color: var(--muted); }
+.forest .note { color: var(--on-forest-muted); }
+.mint .note { color: var(--on-mint); }
+
+/* Footer band */
+.foot { position: absolute; left: 128px; bottom: 56px; width: 1664px; display: flex; justify-content: space-between; }
+.fl { font-size: 24px; line-height: 1.3; font-weight: 500; color: var(--muted); }
+.forest .fl { color: var(--on-forest-muted); }
+.mint .fl { color: var(--on-mint); }
+.pn::after { content: counter(page); }
+
+/* Cover */
+section.cover { padding: 120px 128px; justify-content: space-between; }
+.brand-row { display: flex; align-items: center; gap: 18px; }
+.brand-dot { width: 28px; height: 28px; background: var(--mint); }
+.brand { font-size: 32px; font-weight: 600; line-height: 1.2; color: var(--on-forest); }
+.tag { font-size: 24px; font-weight: 600; line-height: 1.3; color: var(--mint); }
+
+/* Columns with a rule on top */
+.c2 { display: grid; grid-template-columns: 1fr 1fr; gap: 56px 64px; }
+.c3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 56px; }
+.c4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 40px; }
+.col { display: flex; flex-direction: column; gap: 16px; border-top: 3px solid var(--ink); padding-top: 28px; }
+.forest .col { border-top: 3px solid var(--mint); }
+.num { font-family: 'Unbounded', 'Arial Black', sans-serif; font-size: 96px; line-height: 1; font-weight: 500; letter-spacing: -2px; white-space: nowrap; color: var(--forest); }
+.forest .num { color: var(--mint); }
+.t { font-size: 32px; line-height: 1.3; font-weight: 600; }
+.d { font-size: 32px; line-height: 1.4; color: var(--muted); }
+.forest .d { color: var(--on-forest-muted); }
+.code { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 24px; line-height: 1.4; color: var(--mint-deep); }
+.forest .code { color: var(--mint); }
+
+/* Architecture flow */
+.flow { display: flex; align-items: stretch; gap: 16px; }
+.node { flex: 1; border: 2px solid var(--rule); background: var(--paper); padding: 24px 28px; display: flex; flex-direction: column; gap: 10px; }
+.node-hi { background: var(--forest); color: var(--on-forest); border: 2px solid var(--forest); }
+.nd { font-size: 24px; line-height: 1.4; color: var(--muted); }
+.node-hi .nd { color: var(--on-forest-muted); }
+.arrow { font-family: 'Unbounded', 'Arial Black', sans-serif; font-size: 44px; line-height: 1; color: var(--mint-deep); align-self: center; }
+.down { font-size: 24px; font-weight: 600; line-height: 1.3; color: var(--mint-deep); align-self: flex-end; }
+
+/* Tables */
+.tbl { font-size: 32px; color: var(--ink); width: 100%; }
+.tbl-s { font-size: 28px; color: var(--ink); width: 100%; }
+.forest .tbl { color: var(--on-forest); }
+
+.stack { display: flex; flex-direction: column; gap: 16px; }
+
+/* Ask */
+.link { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 32px; font-weight: 500; line-height: 1.4; color: var(--forest); }
+
+/* Arrival: the plain rule is the finished look */
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } }
+.rise { animation: rise 700ms cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: calc(var(--i, 0) * 120ms); }
+</style></head><body>
+<section id="cover" class="cover forest" data-transition="fade">
+<div class="brand-row">
+<x-shape kind="ellipse" class="brand-dot"></x-shape>
+<p class="brand">Сигнал</p>
+</div>
+<div class="head">
+<h1 class="hero rise">Как это устроено</h1>
+<p class="lead rise" style="--i:1">Техническая часть: архитектура, конвейер ИИ, точность, приватность и безопасность.</p>
+</div>
+<p class="tag">Трек №7 · signal-hackathon.vercel.app</p>
+<aside>Ведёт Марк. Ментор оценивает техническую реализацию, готовность кода, инновационность, знания команды и стек. Главное — показать, что всё работает вживую, и честно назвать, что сделано специально просто.</aside>
+</section>
+
+<section id="live" data-transition="fade">
+<div class="head">
+<p class="kicker">01 · Что работает</p>
+<h2 class="h">Весь путь работает вживую, на&#160;синтетике</h2>
+</div>
+<div class="c3">
+<div class="col rise" style="--i:1">
+<p class="t">Прод</p>
+<p class="code">signal-hackathon.vercel.app</p>
+<p class="d">Без входа: экраны ролей открыты для демо</p>
+</div>
+<div class="col rise" style="--i:2">
+<p class="t">Код</p>
+<p class="code">github.com/nasolyah/<br>signal-hackathon</p>
+<p class="d">Публичный репозиторий</p>
+</div>
+<div class="col rise" style="--i:3">
+<p class="t">Данные</p>
+<p class="code">npm run demo:reset</p>
+<p class="d">Синтетический набор, сброс одной командой</p>
+</div>
+</div>
+<p class="lead">QR-код → обезличивание → повторы между больницами → сводка аналитика → решение главврача → реакция района.</p>
+<div class="foot"><p class="fl">Сигнал · техническая часть</p><p class="fl pn"></p></div>
+<aside>T1 и T2. Сразу скажи: весь сквозной путь работает на проде, по ссылке, на синтетических данных. Код открыт на GitHub. Перед демо данные сбрасываются одной командой, поэтому демо всегда начинается с одного состояния.</aside>
+</section>
+
+<section id="stack" class="forest" data-transition="fade">
+<div class="head">
+<p class="kicker">02 · Стек</p>
+<h2 class="h">Скучные и надёжные инструменты</h2>
+</div>
+<div class="c4">
+<div class="col rise" style="--i:1">
+<p class="t">Next.js 16</p>
+<p class="d">App Router, server actions, TypeScript</p>
+</div>
+<div class="col rise" style="--i:2">
+<p class="t">Supabase</p>
+<p class="d">Postgres и pgvector, индекс HNSW, RLS</p>
+</div>
+<div class="col rise" style="--i:3">
+<p class="t">Gemini</p>
+<p class="d">Быстрая и умная модели, эмбеддинги; имена моделей в env</p>
+</div>
+<div class="col rise" style="--i:4">
+<p class="t">Vercel</p>
+<p class="d">Функции в Сеуле (icn1), рядом с базой</p>
+</div>
+</div>
+<p class="lead">Разработчик один, поэтому брал проверенное. Ответы ИИ проверяются схемой zod на каждой границе.</p>
+<div class="foot"><p class="fl">Сигнал · техническая часть</p><p class="fl pn"></p></div>
+<aside>T5. Next.js 16 на App Router с server actions — форма отправляется без отдельного API. Supabase — это Postgres с pgvector для поиска похожих сигналов. Gemini через @google/genai: быстрая модель для разметки, умная для сводки, отдельная модель эмбеддингов; названия моделей в переменных окружения, замена без правки кода. Функции Vercel в Сеуле, рядом с базой.</aside>
+</section>
+
+<section id="arch" data-transition="fade">
+<div class="head">
+<p class="kicker">03 · Архитектура</p>
+<h2 class="h">Исходный текст живёт только в&#160;памяти</h2>
+</div>
+<div class="flow rise" style="--i:1">
+<div class="node"><p class="t">Телефон</p><p class="nd">QR-код и форма, без входа</p></div>
+<p class="arrow">→</p>
+<div class="node node-hi"><p class="t">Сервер Next.js</p><p class="nd">Исходный текст только в памяти запроса</p></div>
+<p class="arrow">→</p>
+<div class="node"><p class="t">Gemini</p><p class="nd">Обезличивание и разметка по рамке ВОЗ</p></div>
+<p class="arrow">→</p>
+<div class="node"><p class="t">Supabase</p><p class="nd">Обезличенный текст и вектор 768</p></div>
+</div>
+<p class="down">↓ дальше — только обезличенные данные</p>
+<div class="flow rise" style="--i:2">
+<div class="node"><p class="t">Повторы</p><p class="nd">pgvector: 5 соседей, 3 голоса от 0,85</p></div>
+<p class="arrow">→</p>
+<div class="node"><p class="t">Аналитик</p><p class="nd">ИИ-черновик сводки, правка и отправка</p></div>
+<p class="arrow">→</p>
+<div class="node"><p class="t">Главврач</p><p class="nd">Мера и срок или отказ с причиной</p></div>
+<p class="arrow">→</p>
+<div class="node"><p class="t">Райздрав</p><p class="nd">Скорость реакции, без рейтинга</p></div>
+</div>
+<div class="foot"><p class="fl">Сигнал · техническая часть</p><p class="fl pn"></p></div>
+<aside>Покажи пальцем на тёмный блок: это единственное место, где существует исходный текст, — память запроса на сервере. В базу попадают только обезличенный текст, разметка и вектор. Нижний ряд работает уже только с обезличенными данными: поиск повторов, сводка аналитика, решение главврача и экран района.</aside>
+</section>
+
+<section id="pipeline" data-transition="fade">
+<div class="head">
+<p class="kicker">04 · Конвейер ИИ</p>
+<h2 class="h">Семь шагов от текста до сводки</h2>
+</div>
+<table class="tbl-s rise" style="--i:1">
+<tr><th style="width:24%">Шаг</th><th style="width:48%">Что делает</th><th style="width:28%">Где в коде</th></tr>
+<tr><td>0 · Предочистка</td><td>Регулярки в памяти: телефоны, номера, даты</td><td>lib/ai/scrub.ts</td></tr>
+<tr><td>1 · Анализ</td><td>Быстрая модель, JSON по схеме и zod</td><td>lib/ai/analyze.ts</td></tr>
+<tr><td>2 · Вектор</td><td>Эмбеддинг 768, режим CLUSTERING</td><td>lib/ai/analyze.ts</td></tr>
+<tr><td>3 · Привязка</td><td>pgvector: 3 из 5 соседей от 0,85</td><td>lib/patterns.ts</td></tr>
+<tr><td>4 · Поиск повторов</td><td>Кластеризация: 0,89 страна, 0,86 больница</td><td>npm run patterns</td></tr>
+<tr><td>5 · Разбор RCA²</td><td>Причины и сила каждой меры</td><td>lib/ai/rca.ts</td></tr>
+<tr><td>6 · Сводка</td><td>Умная модель; id сигналов фильтрует код</td><td>lib/ai/digest.ts</td></tr>
+</table>
+<div class="foot"><p class="fl">Сигнал · техническая часть</p><p class="fl pn"></p></div>
+<aside>Пройди по шагам быстро. Шаг 0 — регулярки ещё до ИИ. Шаг 1 — быстрая модель возвращает строгий JSON, который мы проверяем zod: обезличенный текст, тип, последствия, near miss, факторы. Шаг 3 — привязка вживую, поэтому счётчик на экране меняется при менторе. Шаг 5 — разбор первопричин, где каждая мера получает силу по RCA². Шаг 6 — сводка для главврача, где модель не может сослаться на чужую больницу: id фильтрует код.</aside>
+</section>
+
+<section id="patterns" class="forest" data-transition="fade">
+<div class="head">
+<p class="kicker">05 · Поиск повторов</p>
+<h2 class="h">Похожие сигналы находим по смыслу, а не по словам</h2>
+</div>
+<div class="c4">
+<div class="col rise" style="--i:1">
+<p class="num">768</p>
+<p class="d">размерность вектора, режим CLUSTERING</p>
+</div>
+<div class="col rise" style="--i:2">
+<p class="num">5</p>
+<p class="d">ближайших соседей в pgvector</p>
+</div>
+<div class="col rise" style="--i:3">
+<p class="num">3</p>
+<p class="d">голоса за одну закономерность</p>
+</div>
+<div class="col rise" style="--i:4">
+<p class="num">0,85</p>
+<p class="d">минимальное сходство</p>
+</div>
+</div>
+<p class="lead">Цифры закономерности считает код, а не ИИ. Пакетный поиск — кластеризация со средней связью: 0,89 по стране и 0,86 внутри больницы.</p>
+<div class="foot"><p class="fl">Сигнал · техническая часть</p><p class="fl pn"></p></div>
+<aside>T3, инновационность. Сигнал превращается в вектор по краткому описанию и обезличенному тексту. Если три из пяти ближайших соседей принадлежат одной закономерности и похожи сильнее 0,85, сигнал встаёт в неё. Голосование защищает от одного случайного соседа. Порог подобран на синтетике: сигналы одной закономерности дают 0,88–0,95; порог в переменной окружения. Счётчики считает код — ИИ не придумывает цифры.</aside>
+</section>
+
+<section id="quality" data-transition="fade">
+<div class="head">
+<p class="kicker">06 · Точность</p>
+<h2 class="h">Мы измерили, а не предположили</h2>
+</div>
+<div class="c4">
+<div class="col rise" style="--i:1">
+<p class="num">89%</p>
+<p class="d">тип события</p>
+</div>
+<div class="col rise" style="--i:2">
+<p class="num">85%</p>
+<p class="d">последствия; 100% с точностью до ступени</p>
+</div>
+<div class="col rise" style="--i:3">
+<p class="num">97%</p>
+<p class="d">дошло ли до пациента (near miss)</p>
+</div>
+<div class="col rise" style="--i:4">
+<p class="num">11/11</p>
+<p class="d">заложенный повтор найден целиком; 7/7 и 5/5 тоже</p>
+</div>
+</div>
+<p class="note">Синтетический набор. Кластеризация нашла и один повтор, который мы не закладывали, — 5 сигналов про ампулы. Проверка: npm run eval. На реальных данных измерим на пилоте.</p>
+<div class="foot"><p class="fl">Сигнал · техническая часть</p><p class="fl pn"></p></div>
+<aside>Мы не говорим «ИИ работает хорошо» — мы показываем цифры на размеченном синтетическом наборе. Тип события 89%, последствия 85% и все 100% с точностью до соседней ступени, near miss 97%. Все три заложенные закономерности найдены полностью, и нашлась одна, которую мы не закладывали. Сразу оговорись: на реальных данных цифры будут ниже, измерим их на пилоте.</aside>
+</section>
+
+<section id="privacy" data-transition="fade">
+<div class="head">
+<p class="kicker">07 · Приватность</p>
+<h2 class="h">Анонимность — свойство кода, а&#160;не&#160;обещание</h2>
+</div>
+<div class="c2">
+<div class="col rise" style="--i:1">
+<p class="t">Исходного текста нет нигде</p>
+<p class="d">Ни в колонках, ни в логах, ни в текстах ошибок</p>
+</div>
+<div class="col rise" style="--i:2">
+<p class="t">Нет входа, cookie, IP и user-agent</p>
+<p class="d">В потоке сигнала их просто не собираем</p>
+</div>
+<div class="col rise" style="--i:3">
+<p class="t">Дата и смена вместо времени</p>
+<p class="d">По точному времени можно вычислить автора</p>
+</div>
+<div class="col rise" style="--i:4">
+<p class="t">Отделение — от 5 сигналов</p>
+<p class="d">Меньше пяти — разрез не показываем</p>
+</div>
+</div>
+<p class="note">Полей для имён нет, только необязательная роль. Ключи Gemini и Supabase — только на сервере.</p>
+<div class="foot"><p class="fl">Сигнал · техническая часть</p><p class="fl pn"></p></div>
+<aside>Ключевая фраза: «Мы не можем нарушить анонимность, потому что нужных данных просто нет». Исходный текст не хранится ни в базе, ни в логах. В форме нет входа, cookie, IP и user-agent. Время — только дата и смена. Разрез по отделению показываем только от пяти сигналов. Полей для имён нет. Не говори «полная анонимизация»: на свободном тексте гарантии нет.</aside>
+</section>
+
+<section id="security" class="forest" data-transition="fade">
+<div class="head">
+<p class="kicker">08 · Безопасность</p>
+<h2 class="h">Закрыли то, что ломается за минуту</h2>
+</div>
+<div class="c2">
+<div class="col rise" style="--i:1">
+<p class="t">База закрыта из браузера</p>
+<p class="d">RLS включён без политик, ключ сервиса только на сервере</p>
+</div>
+<div class="col rise" style="--i:2">
+<p class="t">Лимиты запросов</p>
+<p class="d">30 в минуту без IP + фаервол Vercel: на 31-м — 429</p>
+</div>
+<div class="col rise" style="--i:3">
+<p class="t">Расходы под контролем</p>
+<p class="d">Лимит трат на Gemini, сигнал до 4000 знаков</p>
+</div>
+<div class="col rise" style="--i:4">
+<p class="t">Инъекции в промпт</p>
+<p class="d">Модель без инструментов, JSON по схеме и zod</p>
+</div>
+</div>
+<p class="note">Перед сдачей: ревью безопасности API и стресс-тест экранов — длинные тексты, пустые состояния, узбекский текст.</p>
+<div class="foot"><p class="fl">Сигнал · техническая часть</p><p class="fl pn"></p></div>
+<aside>T2. Из браузера к базе не достучаться: RLS включён, политик нет, ключ сервисной роли только на сервере. Лимит в приложении не использует IP, а фаервол Vercel режет POST-запросы: проверили — на 31-м запросе за минуту приходит 429. Расходы на Gemini ограничены. Текст сигнала — это данные, а не инструкции: у модели нет инструментов, ответ проверяется схемой, а id в сводке фильтрует код.</aside>
+</section>
+
+<section id="next" data-transition="fade">
+<div class="head">
+<p class="kicker">09 · Честно</p>
+<h2 class="h">Что сделано просто — и что будет в&#160;пилоте</h2>
+</div>
+<table class="tbl-s rise" style="--i:1">
+<tr><th style="width:44%">Сейчас</th><th style="width:56%">В пилоте</th></tr>
+<tr><td>Экраны ролей открыты для демо</td><td>Вход по приглашению для каждой роли</td></tr>
+<tr><td>Gemini недоступен — сигнал не сохранится</td><td>Очередь с повтором и коротким сроком хранения</td></tr>
+<tr><td>Обезличивание в облаке</td><td>Первый слой на локальной модели</td></tr>
+<tr><td>Интерфейс на русском</td><td>Узбекский: строки уже в одном словаре</td></tr>
+<tr><td>QR-код без метки места</td><td>Подписанный токен места: «из больницы», но не «кто»</td></tr>
+<tr><td>Нет связи с DMED</td><td>Интеграция с DMED</td></tr>
+</table>
+<div class="foot"><p class="fl">Сигнал · техническая часть</p><p class="fl pn"></p></div>
+<aside>T4 — знания команды. Тех-ментор ценит честное «здесь сделано просто, и вот почему». В демо экраны ролей открыты сознательно — данные синтетические. Если Gemini недоступен, сигнал не сохраняется сырым: человек видит ошибку и текст остаётся у него в форме; очередь с повтором — следующий шаг. Метка места в QR докажет, что человек видел плакат в больнице, но не скажет, кто он.</aside>
+</section>
+
+<section id="ask" class="mint" data-transition="fade">
+<div class="head">
+<p class="kicker">Вопрос ментору</p>
+<h2 class="hero-m rise">Что бы вы проверили первым перед реальными данными?</h2>
+</div>
+<div class="stack rise" style="--i:1">
+<p class="link">signal-hackathon.vercel.app</p>
+<p class="link">github.com/nasolyah/signal-hackathon</p>
+</div>
+<div class="foot"><p class="fl">Сигнал · техническая часть</p><p class="fl pn"></p></div>
+<aside>Закончи вопросом — так разговор пойдёт о сильных местах, а не о слабых. Если ментор хочет посмотреть код, открой lib/patterns.ts (привязка в 20 строк) и app/report/actions.ts (где исходный текст появляется и где исчезает).</aside>
+</section>
+
+</body></html>

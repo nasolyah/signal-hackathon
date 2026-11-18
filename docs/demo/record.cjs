@@ -98,7 +98,7 @@ async function go(page, url, ready) {
   await page.evaluate(() => { const f = document.getElementById('demo-fade'); if (f) f.style.opacity = '1'; });
   await page.waitForTimeout(550);
   cut.begin();
-  await page.goto(url, { waitUntil: 'load' });
+  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await recast();
   if (ready) await ready.waitFor({ timeout: 60000 });
   await page.waitForTimeout(300);
@@ -173,7 +173,7 @@ async function ensure(locator, label) {
     // The stage is served on the app's own origin (intercepted, never hits the server), so later
     // full-window navigations stay in one renderer process and the screencast keeps running.
     await context.route(BASE + '/__stage', (route) => route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: STAGE }));
-    await page.goto(BASE + '/__stage', { waitUntil: 'load' });
+    await page.goto(BASE + '/__stage', { waitUntil: 'domcontentloaded', timeout: 60000 });
     await overlays(page);
     const phone = page.frameLocator('#phone');
     const laptop = page.frameLocator('#laptop');
@@ -187,15 +187,15 @@ async function ensure(locator, label) {
       ok = (await ensure(phone.locator('select[name="involved_role"]'), 'phone role select')) && ok;
       ok = (await ensure(phone.getByRole('button', { name: 'Сообщить' }), 'phone submit')) && ok;
       ok = (await ensure(laptop.locator('#cross-h'), 'district cross patterns')) && ok;
-      await page.goto(BASE + '/analyst?h=A', { waitUntil: 'load' });
+      await page.goto(BASE + '/analyst?h=A', { waitUntil: 'domcontentloaded', timeout: 60000 });
       ok = (await ensure(page.getByRole('button', { name: 'Собрать сводку' }), 'analyst build')) && ok;
       ok = (await ensure(page.locator('nav[aria-label="Роль"] a[href="/district/SAM-1"]'), 'role nav (district)')) && ok;
       const ministryHidden = !(await page.locator('nav[aria-label="Роль"] a[href="/dashboard"]').isVisible());
       console.log(`${ministryHidden ? 'REHEARSAL OK' : 'REHEARSAL FAIL'}: ministry link hidden`);
       ok = ministryHidden && ok;
-      await page.goto(BASE + '/hospital/A', { waitUntil: 'load' });
+      await page.goto(BASE + '/hospital/A', { waitUntil: 'domcontentloaded', timeout: 60000 });
       ok = (await ensure(page.locator('main h1'), 'hospital title')) && ok;
-      await page.goto(BASE + '/district/SAM-1', { waitUntil: 'load' });
+      await page.goto(BASE + '/district/SAM-1', { waitUntil: 'domcontentloaded', timeout: 60000 });
       ok = (await ensure(page.locator('table'), 'district table')) && ok;
       console.log(ok ? 'REHEARSAL PASSED' : 'REHEARSAL FAILED');
       failed = !ok;
@@ -206,7 +206,7 @@ async function ensure(locator, label) {
     await page.waitForTimeout(800);
 
     // Scene 1 — anyone reports a condition, from the phone
-    await say(page, 'Сигнал: анонимно сообщить, что в больнице может навредить пациенту', 2400);
+    await say(page, 'Сигнал: анонимно подсказать, как сделать больницу лучше', 2400);
     await moveTo(page, phone.locator('h1'), 'phone title');
     await say(page, 'Медсестра сканирует QR-код в больнице. Без входа и без приложения', 1800);
     await moveTo(page, phone.locator('select[name="involved_role"]'), 'role');
@@ -229,14 +229,14 @@ async function ensure(locator, label) {
     await say(page, 'Сохранён только текст без имён — зелёным то, что убрано', 2800);
     const phoneFrame = page.frames().find((f) => f.url().includes('/report'));
     await scrollBy(phoneFrame, 300, 1800);
-    await say(page, 'Разметка по рамке ВОЗ: падение, лёгкий вред, ночь, освещение', 2600);
+    await say(page, 'Разметка по рамке ВОЗ: падение, лёгкие последствия, ночь, освещение', 2600);
     await scrollBy(phoneFrame, 280, 1600);
     await say(page, 'Райздрав обновляет страницу района…');
     await page.evaluate(() => { document.getElementById('laptop').style.opacity = '0'; });
     await page.waitForTimeout(400);
     const laptopFrame = page.frames().find((f) => f.url().includes('/district'));
     cutBegin();
-    await laptopFrame.goto(BASE + '/district/SAM-1', { waitUntil: 'load' });
+    await laptopFrame.goto(BASE + '/district/SAM-1', { waitUntil: 'domcontentloaded', timeout: 60000 });
     await laptopFrame.locator('#cross-h').waitFor({ timeout: 60000 });
     cutEnd(300);
     await page.evaluate(() => { document.getElementById('laptop').style.opacity = '1'; });
