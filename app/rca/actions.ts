@@ -5,11 +5,14 @@ import { classifyAction, draftRca, type RcaAction } from "@/lib/ai/rca";
 import { db } from "@/lib/db";
 import { caseText, getRca, insertRca, setStatus, updateRca, type RcaRow, type RcaTarget } from "@/lib/rca-store";
 import { FACTORS, HARMS, INCIDENT_TYPES, STAGES } from "@/lib/taxonomy";
+import { allow, LIMITS } from "@/lib/rate-limit";
 
 // HACK: no auth for the hackathon (SPEC §2: roles are a demo switcher). In production every
 // action here must check that the caller is the hospital's quality lead or a Ministry analyst.
 
 const Target = z.object({ kind: z.enum(["pattern", "incident"]), id: z.string().uuid() });
+/** Position in a whys/actions list (≤ 5 whys, ≤ 6 drafted actions plus a few added). */
+const Index = z.number().int().min(0).max(30);
 const STRENGTH_ORDER = { strong: 0, medium: 1, weak: 2 } as const;
 const ranked = (a: RcaAction[]) => [...a].sort((x, y) => STRENGTH_ORDER[x.strength] - STRENGTH_ORDER[y.strength]);
 
@@ -29,6 +32,7 @@ export async function startRca(target: RcaTarget): Promise<Result<RcaRow>> {
     const t = Target.parse(target);
     const existing = await getRca(t);
     if (existing) return existing;
+    if (!allow("rca-ai", LIMITS.rcaAi)) throw new Error("RATE_LIMITED");
     const draft = await draftRca(await caseText(t));
     const row = await insertRca(t, { ...draft, actions: ranked(draft.actions) });
     await setStatus(t, "in_review");
@@ -39,11 +43,12 @@ export async function startRca(target: RcaTarget): Promise<Result<RcaRow>> {
 export async function editWhy(rcaId: string, index: number, text: string): Promise<Result<RcaRow>> {
   return attempt(async () => {
     const id = z.string().uuid().parse(rcaId);
+    const i = Index.parse(index);
     const clean = z.string().trim().min(1).max(500).parse(text);
     const { data } = await db().from("rca").select("whys").eq("id", id).single();
     const whys = [...((data?.whys as string[]) ?? [])];
-    if (index < 0 || index >= whys.length) throw new Error("BAD_INDEX");
-    whys[index] = clean;
+    if (i >= whys.length) throw new Error("BAD_INDEX");
+    whys[i] = clean;
     return updateRca(id, { whys });
   });
 }
@@ -53,6 +58,7 @@ export async function addAction(rcaId: string, text: string): Promise<Result<Rca
   return attempt(async () => {
     const id = z.string().uuid().parse(rcaId);
     const clean = z.string().trim().min(3).max(300).parse(text);
+    if (!allow("rca-ai", LIMITS.rcaAi)) throw new Error("RATE_LIMITED");
     const { strength, rationale } = await classifyAction(clean);
     const { data } = await db().from("rca").select("actions").eq("id", id).single();
     const actions = [...((data?.actions as RcaAction[]) ?? []), { text: clean, strength, rationale, userAdded: true }];
@@ -63,9 +69,11 @@ export async function addAction(rcaId: string, text: string): Promise<Result<Rca
 export async function removeAction(rcaId: string, index: number): Promise<Result<RcaRow>> {
   return attempt(async () => {
     const id = z.string().uuid().parse(rcaId);
+    const i = Index.parse(index);
     const { data } = await db().from("rca").select("actions").eq("id", id).single();
     const actions = [...((data?.actions as RcaAction[]) ?? [])];
-    actions.splice(index, 1);
+    if (i >= actions.length) throw new Error("BAD_INDEX");
+    actions.splice(i, 1);
     return updateRca(id, { actions });
   });
 }
@@ -73,11 +81,14 @@ export async function removeAction(rcaId: string, index: number): Promise<Result
 export async function setActionMeta(rcaId: string, index: number, meta: { owner?: string; due?: string }): Promise<Result<RcaRow>> {
   return attempt(async () => {
     const id = z.string().uuid().parse(rcaId);
-    const m = z.object({ owner: z.string().max(120).optional(), due: z.string().max(10).optional() }).parse(meta);
+    const i = Index.parse(index);
+    const m = z
+      .object({ owner: z.string().trim().max(120).optional(), due: z.string().regex(/^(\d{2}\.\d{2}\.\d{4})?$/).optional() })
+      .parse(meta);
     const { data } = await db().from("rca").select("actions").eq("id", id).single();
     const actions = [...((data?.actions as RcaAction[]) ?? [])];
-    if (!actions[index]) throw new Error("BAD_INDEX");
-    actions[index] = { ...actions[index], ...m };
+    if (!actions[i]) throw new Error("BAD_INDEX");
+    actions[i] = { ...actions[i], ...m };
     return updateRca(id, { actions });
   });
 }

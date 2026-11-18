@@ -25,6 +25,7 @@ export default function IncidentPage({ params, searchParams }: PageProps<"/incid
 }
 
 const UUID = /^[0-9a-f-]{36}$/i;
+const MIN_GROUP = 5;
 
 type Row = {
   id: string;
@@ -60,10 +61,19 @@ async function Incident({ params, searchParams }: Pick<PageProps<"/incident/[id]
   ]);
   if (!data) notFound();
   const r = data as Row;
-  const { data: pattern } = r.pattern_id
-    ? await sb.from("patterns").select("id, title").eq("id", r.pattern_id).maybeSingle()
-    : { data: null };
-  return <IncidentView r={r} pattern={pattern} rca={rca} />;
+  const [{ data: pattern }, deptCount] = await Promise.all([
+    r.pattern_id ? sb.from("patterns").select("id, title").eq("id", r.pattern_id).maybeSingle() : Promise.resolve({ data: null }),
+    r.department
+      ? sb
+          .from("incidents")
+          .select("id", { count: "exact", head: true })
+          .eq("hospital_id", r.hospital_id)
+          .eq("department", r.department)
+          .then((res) => res.count ?? 0)
+      : Promise.resolve(0),
+  ]);
+  // Rule 4 (CLAUDE.md): a department is shown only when ≥ 5 reports share it, so one case cannot point to a small team.
+  return <IncidentView r={{ ...r, department: deptCount >= MIN_GROUP ? r.department : null }} pattern={pattern} rca={rca} />;
 }
 
 function IncidentView({ r, pattern, rca }: { r: Row; pattern: { id: string; title: string } | null; rca: Awaited<ReturnType<typeof getRca>> }) {

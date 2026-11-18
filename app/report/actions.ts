@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { attachToPattern } from "@/lib/patterns";
 import { DEPARTMENTS, HOSPITAL_CODES, SHIFTS, type Factor, type Harm, type IncidentType, type Stage } from "@/lib/taxonomy";
 import { tashkentDate } from "@/lib/time";
+import { allow, LIMITS } from "@/lib/rate-limit";
 
 // PRIVACY (CLAUDE.md): the raw text lives only in this request's memory.
 // Never log it, never return it, never put it in an error. No IP / UA / cookies read here.
@@ -54,6 +55,7 @@ export async function submitReport(_prev: ReportState, formData: FormData): Prom
     return { status: "failed" };
   }
   const { hospital, text, department, shiftTouched } = parsed.data;
+  if (!allow("report", LIMITS.report)) return { status: "failed" }; // cost guard: no Gemini call
 
   try {
     const a = await analyzeReport(text);
