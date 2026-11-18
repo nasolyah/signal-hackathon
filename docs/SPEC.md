@@ -2,6 +2,8 @@
 
 Read together with `/CLAUDE.md`. This file is the single source of truth for scope. If something is not here, it is out of scope until Mark says otherwise.
 
+> **v2 (18 Nov):** `docs/SPEC_V2_FLOW.md` overrides the screens (§2), build order (§6) and out-of-scope list of this file. Sections 3–5 (enums, AI pipeline, data) still apply. The local name heuristic in step 0 from the v2 kit was **not** adopted (Mark, 18 Nov: too risky on deadline day).
+
 ---
 
 ## 1. Stack
