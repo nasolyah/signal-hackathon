@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { ChevronDown } from "lucide-react";
 import { AppBar } from "@/components/app-bar";
@@ -49,6 +50,7 @@ function DigestCell({ r }: { r: DistrictRow }) {
 async function District({ params }: Pick<PageProps<"/district/[id]">, "params">) {
   const { id } = await params;
   if (!isDistrict(id)) notFound();
+  await connection(); // "today" and reaction times are request-time values
   const { rows, patterns } = await districtView(id);
 
   return (
@@ -56,7 +58,7 @@ async function District({ params }: Pick<PageProps<"/district/[id]">, "params">)
       <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4 pt-10 pb-8 lg:pt-14">
         <div>
           <p className="text-base text-ink-muted">
-            {t.roles.district} · {t.v2.cols.hospital.toLowerCase()}: {t.v2.hospitalsOf(rows.length)}
+            {t.v2.districtDept} · {t.v2.hospitalsOf(rows.length)}
           </p>
           <h1 className="mt-1 text-[2rem] leading-[1.1] font-medium tracking-[-0.025em] text-ink lg:text-[2.75rem]">{t.districts[id]}</h1>
         </div>
@@ -97,7 +99,7 @@ async function District({ params }: Pick<PageProps<"/district/[id]">, "params">)
               <tr>
                 <td className="py-4 pr-4 align-top">
                   <details className="group/d">
-                    <summary className="flex cursor-pointer list-none items-center gap-2 font-medium text-ink [&::-webkit-details-marker]:hidden">
+                    <summary className="flex cursor-pointer list-none items-center gap-2 font-medium whitespace-nowrap text-ink [&::-webkit-details-marker]:hidden">
                       <ChevronDown className="size-4 text-ink-muted transition-transform group-open/d:rotate-180" aria-hidden />
                       {t.hospitals[r.hospital].name}
                     </summary>

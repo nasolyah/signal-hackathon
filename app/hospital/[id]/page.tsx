@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { AppBar } from "@/components/app-bar";
 import { StrengthBadge } from "@/components/strength-badge";
@@ -24,6 +25,7 @@ export default function HospitalPage({ params }: PageProps<"/hospital/[id]">) {
 async function Hospital({ params }: Pick<PageProps<"/hospital/[id]">, "params">) {
   const { id } = await params;
   if (!isHospital(id)) notFound();
+  await connection(); // "today" (overdue) is a request-time value
   const [digest, actions] = await Promise.all([latestReceivedDigest(id), actionsOfHospital(id)]);
   const patterns = await patternsFor((digest?.items ?? []).map((i) => i.pattern_id).filter((x): x is string => Boolean(x)));
   const today = tashkentDate();
