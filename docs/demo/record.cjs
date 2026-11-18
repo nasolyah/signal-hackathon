@@ -85,7 +85,7 @@ async function endCard(page) {
     const c = document.createElement('div');
     c.style.cssText = 'position:fixed;inset:0;z-index:999995;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;opacity:0;transition:opacity .8s ease;font-family:"IBM Plex Sans",-apple-system,sans-serif;color:#232323';
     c.innerHTML = '<div style="display:flex;align-items:center;gap:14px"><span style="width:26px;height:26px;border-radius:50%;background:#1f7a4d;display:inline-block"></span><span style="font-size:44px;font-weight:500;letter-spacing:-.02em">Сигнал</span></div>' +
-      '<div style="font-size:26px;color:#686868">Анонимные сигналы о рисках для пациентов</div>' +
+      '<div style="font-size:26px;color:#686868">Анонимные подсказки: как сделать больницу лучше</div>' +
       '<div style="margin-top:18px;padding:10px 22px;border-radius:999px;background:#a1ffcb;font:500 20px/1.3 \'IBM Plex Mono\',ui-monospace,monospace">signal-hackathon.vercel.app</div>';
     document.body.appendChild(c);
     requestAnimationFrame(() => requestAnimationFrame(() => (c.style.opacity = '1')));
@@ -256,7 +256,20 @@ async function ensure(locator, label) {
     await click(page, page.getByRole('button', { name: 'Собрать сводку' }), 'build digest', 300);
     await say(page, 'ИИ готовит черновик: что повторяется и 1–3 меры');
     cutBegin();
-    await page.getByRole('button', { name: 'Отправить главврачу' }).waitFor({ timeout: 120000 });
+    // The AI call can fail once in a while: log what the page says and press «Собрать сводку» again.
+    const buildError = page.getByText(/Не получилось собрать|Слишком много запросов|Новых отчётов за эту неделю нет/);
+    let built = false;
+    for (let attempt = 1; attempt <= 3 && !built; attempt++) {
+      if (attempt > 1) await page.getByRole('button', { name: 'Собрать сводку' }).click();
+      const r = await Promise.race([
+        page.getByRole('button', { name: 'Отправить главврачу' }).waitFor({ timeout: 90000 }).then(() => 'ok'),
+        buildError.first().waitFor({ timeout: 90000 }).then(async () => 'error: ' + (await buildError.first().innerText())),
+      ]).catch(() => 'timeout');
+      console.log(`build attempt ${attempt}: ${r}`);
+      built = r === 'ok';
+      if (!built && /Слишком много/.test(r)) await page.waitForTimeout(60000);
+    }
+    if (!built) throw new Error('digest build failed three times');
     await page.waitForTimeout(400);
     cutEnd(3500);
     await say(page, 'Аналитик проверяет текст: меры отсортированы по силе', 600);
