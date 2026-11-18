@@ -18,6 +18,8 @@ export type PatternCard = {
   status: string;
   /** Hospitals the pattern spans, in code order (А…Е). */
   hospitals: HospitalCode[];
+  /** cases of the pattern that reached the patient (harm ≠ none) — picks the journal's focal card */
+  harmedCount: number;
 };
 
 export type FeedRow = {
@@ -92,11 +94,15 @@ export async function patternCards(hospital?: HospitalCode): Promise<PatternCard
       .from("patterns")
       .select("id, title, description, incident_count, hospital_count, night_share, top_factors, status")
       .order("incident_count", { ascending: false }),
-    db().from("incidents").select("pattern_id, hospital_id").not("pattern_id", "is", null),
+    db().from("incidents").select("pattern_id, hospital_id, harm").not("pattern_id", "is", null),
   ]);
   if (error || mErr) throw new Error("PATTERNS_QUERY_FAILED");
   const spans = new Map<string, Set<HospitalCode>>();
-  for (const m of members ?? []) spans.set(m.pattern_id, (spans.get(m.pattern_id) ?? new Set()).add(m.hospital_id));
+  const harmed = new Map<string, number>();
+  for (const m of members ?? []) {
+    spans.set(m.pattern_id, (spans.get(m.pattern_id) ?? new Set()).add(m.hospital_id));
+    if (m.harm !== "none") harmed.set(m.pattern_id, (harmed.get(m.pattern_id) ?? 0) + 1);
+  }
   return (data ?? [])
     .filter((p) => !hospital || spans.get(p.id)?.has(hospital))
     .map((p) => ({
@@ -109,6 +115,7 @@ export async function patternCards(hospital?: HospitalCode): Promise<PatternCard
     topFactors: p.top_factors ?? [],
     status: p.status,
     hospitals: [...(spans.get(p.id) ?? [])].sort(),
+    harmedCount: harmed.get(p.id) ?? 0,
   }));
 }
 

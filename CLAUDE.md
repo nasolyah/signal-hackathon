@@ -11,7 +11,7 @@ National AI Hackathon, Tashkent, Ministry of Health track, task №7: "Medical e
 - AI provider: **Google Gemini only** (`@google/genai`). Model names live in env vars, never hardcoded.
 
 ## Product in one paragraph
-A medical worker scans a QR code in the staff room, opens a mobile web page (no login, no app), and describes an error or near miss in free text. Gemini de-identifies the text, classifies it using the WHO ICPS conceptual framework (never call ICPS a «taxonomy» or «classification» in UI text — WHO says it is not one; say «разметка по рамке ВОЗ»), and stores only the de-identified version. A Ministry dashboard finds recurring patterns across hospitals (e.g. "11 insulin mix-ups in 4 hospitals, 9 at night") and an RCA assistant helps the quality lead find root causes and pick strong corrective actions (RCA² hierarchy), warning when only weak actions like "retrain staff" are proposed.
+A medical worker scans a QR code in the staff room, opens a mobile web page (no login, no app), and describes an error or near miss in free text. Gemini de-identifies the text, classifies it using the WHO ICPS conceptual framework (never call ICPS a «taxonomy» or «classification» in UI text — WHO says it is not one; say «разметка по рамке ВОЗ»), and stores only the de-identified version. A Ministry dashboard finds recurring patterns across hospitals (e.g. "7 falls in a dark corridor, all at night") and an RCA assistant helps the quality lead find root causes and pick strong corrective actions (RCA² hierarchy), warning when only weak actions like "retrain staff" are proposed.
 
 **v2 operating model (18 Nov, after the business mentor):** chief doctors do not study dashboards. Our analyst reviews the week's reports and sends each hospital a short AI-drafted digest with 1–3 actions; the chief doctor only accepts/rejects and marks actions done; the district health department sees reaction speed per hospital. Hospitals A–F sit in two districts of Samarkand region (SAM-1: A, B, C; SAM-2: D, E, F). **Built today = v2-lite:** /analyst → /hospital/[id] → /district/[id] + role field on the form. Not built (explain in words): follow-up codes, questions to the author, contacts, «что изменилось», check-ins.
 
@@ -28,11 +28,11 @@ A medical worker scans a QR code in the staff room, opens a mobile web page (no 
 9. District screens measure reaction (time to acknowledge, actions done/overdue), never rank hospitals by number of errors.
 
 ## The demo path (everything serves this) — v2-lite
-1. Phone: `/report?h=A` → insulin mix-up, role «Медсестра» → result: scrubbed text + ICPS fields.
-2. Laptop `/analyst` → the new report is in Больница А's inbox → «Собрать сводку» → AI digest with the insulin pattern (12 cases / 4 hospitals) → edit → «Отправить главврачу».
+1. Phone: `/report?h=A` → a patient fell at night in a dark corridor (names + ward in the text), role «Медсестра» → result: scrubbed text + ICPS fields. **Not insulin** (Mark, 18 Nov: a doctor said insulin mix-ups get staff fired — scary example for an anonymity pitch).
+2. Laptop `/analyst` → the new report is in Больница А's inbox → «Собрать сводку» → AI digest with the falls pattern (now 8 cases / 2 hospitals) → edit → «Отправить главврачу».
 3. `/hospital/A` → digest marked as read → accept the strong action with a due date (or reject with a reason).
 4. `/district/SAM-1` → Больница А reacted in minutes; Больница В is red «не просмотрена».
-5. `/dashboard` → the Ministry view: insulin counter 11 → 12 across districts; open the pattern → RCA, "retrain staff" flagged as weak.
+5. `/dashboard` → the Ministry view: the focal card is «Больше всего вреда пациентам» = falls, counter 7 → 8, 1 → 2 hospitals; open the pattern → RCA, "retrain staff" flagged as weak.
 
 ## Code map
 - **Next.js 16.4** (App Router, `cacheComponents` on) — APIs differ from older versions; read `AGENTS.md` and `node_modules/next/dist/docs/` before using a Next API.

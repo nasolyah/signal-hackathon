@@ -41,10 +41,11 @@ const LEAD: PatternCard = {
   topFactors: ["similar_packaging", "illegible_prescription", "missing_protocol"],
   status: "open",
   hospitals: ["A", "B", "C", "D", "E", "F"],
+  harmedCount: 40,
 };
 
 const OTHERS: PatternCard[] = [
-  { id: "dev-worst-2", title: "Падения", description: null, incidentCount: 21, hospitalCount: 1, nightShare: 0, topFactors: [], status: "open", hospitals: ["A"] },
+  { id: "dev-worst-2", title: "Падения", description: null, incidentCount: 21, hospitalCount: 1, nightShare: 0, topFactors: [], status: "open", hospitals: ["A"], harmedCount: 1 },
   {
     id: "dev-worst-3",
     title: "Ошибки идентификации пациентов-однофамильцев при переводе между отделениями, выписке и заборе крови в процедурном кабинете",
@@ -55,8 +56,9 @@ const OTHERS: PatternCard[] = [
     topFactors: ["handover_failure"],
     status: "in_review",
     hospitals: ["B", "E", "F"],
+    harmedCount: 3,
   },
-  { id: "dev-worst-4", title: "Инфузомат Perfusor®Space/Infusomat®Space-P: сбой дозирования", description: null, incidentCount: 5, hospitalCount: 2, nightShare: 0.6, topFactors: [], status: "closed", hospitals: ["C", "D"] },
+  { id: "dev-worst-4", title: "Инфузомат Perfusor®Space/Infusomat®Space-P: сбой дозирования", description: null, incidentCount: 5, hospitalCount: 2, nightShare: 0.6, topFactors: [], status: "closed", hospitals: ["C", "D"], harmedCount: 1 },
 ];
 
 const TYPES: IncidentType[] = ["communication_handover", "medication", "fall", "patient_identification", "equipment", "infection", "discharge", "diagnosis", "surgery", "other"];

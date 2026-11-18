@@ -22,32 +22,41 @@ type Act = { text: string; strength: ActionStrength; rationale: string };
 type Seed = {
   h: HospitalCode;
   headline: string;
-  items: { key: "insulin" | "falls" | "surname" | "handover"; title: string; what: string; why: string; actions: Act[] }[];
+  items: { key: "pack" | "falls" | "surname" | "handover"; title: string; what: string; why: string; actions: Act[] }[];
   stats: { reports: number; near_miss_share: number; severe: number };
   sentDay: number; // days after last week's Sunday (1 = Monday of this week)
   ackHours: number | null;
   decisions: { item: number; accept?: { action: number; dueInDays: number; done?: boolean }; reject?: string }[];
 };
 
-const INSULIN_ACTS: Act[] = [
-  { text: "Хранить инсулины короткого и длительного действия на разных полках с цветной маркировкой", strength: "strong", rationale: "Физически убирает возможность взять не тот препарат" },
-  { text: "Подписывать шприц-ручки крупно сразу после вскрытия", strength: "medium", rationale: "Снижает риск, но зависит от дисциплины смены" },
-  { text: "Провести инструктаж персонала", strength: "weak", rationale: "Не меняет систему: при усталости ошибка повторится" },
-];
-const INSULIN = (what: string) => ({
-  key: "insulin" as const,
-  title: "Путаница инсулинов на ночной смене",
+const PACK = (what: string) => ({
+  key: "pack" as const,
+  title: "Похожие упаковки лекарств рядом",
   what,
-  why: "Похожие упаковки, хранение в одном лотке, приглушённый свет ночью",
-  actions: INSULIN_ACTS,
+  why: "Препараты с похожими упаковками стоят вплотную, этикетки трудно различить ночью",
+  actions: [
+    { text: "Разнести препараты с похожими упаковками по разным ячейкам и выделить их цветом", strength: "strong", rationale: "Физически убирает возможность взять не тот препарат" },
+    { text: "Отдельная метка «похожая упаковка» на ячейке", strength: "medium", rationale: "Снижает риск, но зависит от дисциплины смены" },
+    { text: "Провести инструктаж персонала", strength: "weak", rationale: "Не меняет систему: при усталости ошибка повторится" },
+  ] as Act[],
 });
 
 const SEEDS: Seed[] = [
   {
     h: "A",
-    headline: "Главное за неделю — путаница инсулинов ночью, ошибку ловили перед уколом",
+    headline: "Главное за неделю — при пересменке теряется информация об аллергии",
     items: [
-      INSULIN("Два случая, когда медсестра едва не ввела инсулин длительного действия вместо короткого"),
+      {
+        key: "handover",
+        title: "Аллергию не передали при пересменке",
+        what: "Пациенту с аллергией едва не ввели антибиотик: отметка была только в истории, на посту о ней не знали",
+        why: "Нет единого места для отметки об аллергии и шаблона передачи смены",
+        actions: [
+          { text: "Отметка об аллергии на браслете пациента и в шапке листа назначений", strength: "strong", rationale: "Информация видна в момент назначения, не зависит от памяти" },
+          { text: "Короткий шаблон передачи смены (SBAR) с пунктом «аллергии»", strength: "medium", rationale: "Стандартизирует коммуникацию" },
+          { text: "Напоминать об аллергиях на пятиминутке", strength: "weak", rationale: "Полагается на память и внимание" },
+        ],
+      },
       {
         key: "handover",
         title: "Неразборчивые листы назначений",
@@ -68,9 +77,9 @@ const SEEDS: Seed[] = [
   },
   {
     h: "B",
-    headline: "Повторяется путаница инсулинов; есть замечание по передаче смены",
+    headline: "Похожие упаковки лекарств стоят рядом; есть замечание по передаче смены",
     items: [
-      INSULIN("Случай с перепутанными флаконами в холодильнике поста"),
+      PACK("Флаконы с похожими этикетками стоят вплотную в холодильнике поста"),
       {
         key: "handover",
         title: "Неполная передача смены",
@@ -106,8 +115,8 @@ const SEEDS: Seed[] = [
   },
   {
     h: "D",
-    headline: "Путаница инсулинов повторяется — нужна мера хранения",
-    items: [INSULIN("Случай, когда инсулин длительного действия набрали вместо короткого")],
+    headline: "Похожие упаковки повторяются — нужна мера хранения",
+    items: [PACK("Ампулы двух препаратов в одинаковых коробках лежат в одной ячейке")],
     stats: { reports: 2, near_miss_share: 0.5, severe: 0 },
     sentDay: 1,
     ackHours: 8,
@@ -115,8 +124,8 @@ const SEEDS: Seed[] = [
   },
   {
     h: "E",
-    headline: "Путаница инсулинов и похожие ампулы рядом",
-    items: [INSULIN("Ампулы и шприц-ручки похожих препаратов хранятся вплотную")],
+    headline: "Похожие ампулы хранятся вплотную",
+    items: [PACK("Ампулы похожих препаратов хранятся вплотную")],
     stats: { reports: 3, near_miss_share: 0.67, severe: 0 },
     sentDay: 1,
     ackHours: 3,
@@ -161,7 +170,7 @@ export async function seedV2(log: (s: string) => void = () => {}) {
   // 3. Pattern ids by meaning, for the item links.
   const { data: pats } = await sb.from("patterns").select("id, title");
   const pid = (re: RegExp) => (pats ?? []).find((p) => re.test(p.title))?.id ?? null;
-  const patternOf = { insulin: pid(/инсулин/i), falls: pid(/паден/i), surname: pid(/однофамил/i), handover: null } as const;
+  const patternOf = { pack: pid(/упаков/i), falls: pid(/паден/i), surname: pid(/однофамил/i), handover: null } as const;
 
   for (const s of SEEDS) {
     const items: DigestItem[] = s.items.map((it) => {

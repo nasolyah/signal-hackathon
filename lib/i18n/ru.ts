@@ -213,7 +213,7 @@ export const ru = {
     shownOf: (shown: number, total: number) => (shown < total ? `Показаны последние ${shown} из ${total}` : `${total}`),
     staffLink: "Сотрудник",
     staffForm: "Форма для персонала",
-    leadKicker: "Повторяется чаще всего",
+    leadKicker: "Больше всего вреда пациентам",
     openRca: "Открыть разбор",
     otherPatterns: "Другие закономерности",
     inNumbers: "В цифрах",

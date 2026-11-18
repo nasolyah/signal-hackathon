@@ -81,7 +81,10 @@ async function Dashboard({
   const scope = filters.hospital
     ? `${t.hospitals[filters.hospital].name} · ${t.hospitals[filters.hospital].region}`
     : t.dashboard.allHospitals;
-  const [lead, ...rest] = data.patterns;
+  // The focal card is the pattern that hurt patients most, not the most frequent one:
+  // near misses matter, but harm that already happened comes first.
+  const lead = [...data.patterns].sort((a, b) => b.harmedCount - a.harmedCount || b.incidentCount - a.incidentCount)[0];
+  const rest = data.patterns.filter((p) => p !== lead);
 
   return (
     <LiveCountsProvider
