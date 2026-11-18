@@ -54,7 +54,7 @@ export function useLiveCounts() {
 
 /**
  * A number that, when it changes, slides the old value up and the new one in,
- * then draws a red-pencil underline once (the dashboard's signature moment).
+ * then draws a mint underline once (the dashboard's signature moment).
  */
 export function LiveNumber({
   value,
@@ -101,7 +101,7 @@ export function LiveNumber({
         <span
           key={`ul-${bump}`}
           aria-hidden
-          className="absolute right-0 bottom-0 left-0 h-[max(4px,0.08em)] origin-left rounded-full bg-margin-red motion-safe:animate-[pencil-underline_700ms_cubic-bezier(0.22,1,0.36,1)_both]"
+          className="absolute right-0 bottom-0 left-0 h-[max(4px,0.07em)] origin-left rounded-full bg-mint motion-safe:animate-[pencil-underline_700ms_cubic-bezier(0.22,1,0.36,1)_both]"
         />
       )}
     </span>
@@ -135,20 +135,20 @@ export function LivePatternStats({
   const nightPct = Math.round(live.night * 100);
   return (
     <div className={size === "lg" ? "mt-2" : "mt-1"}>
-      <p className={size === "lg" ? "text-base text-ink" : "text-sm text-ink"}>
+      <p className={size === "lg" ? "text-lg text-ink" : "text-sm text-ink-muted"}>
         {live.count} {t.plural.cases(live.count)} · {live.hospitals} {t.plural.hospitals(live.hospitals)} ·{" "}
-        <span className="font-semibold">
+        <span className="font-medium text-ink">
           {nightPct}% {t.dashboard.night}
         </span>
       </p>
       {/* Night share to scale: the whole bar is every case of the pattern */}
       {bar && (
       <div
-        className={`mt-1.5 flex w-full max-w-[22rem] overflow-hidden rounded-[2px] bg-rule ${size === "lg" ? "h-2" : "h-1.5"}`}
+        className={`mt-3 flex w-full max-w-[24rem] overflow-hidden rounded-full bg-page ${size === "lg" ? "h-2" : "h-1.5"}`}
         role="img"
         aria-label={`${nightPct}% ${t.dashboard.night}`}
       >
-        <div className="h-full bg-pen transition-[width] duration-500 ease-out" style={{ width: `${nightPct}%` }} />
+        <div className="h-full rounded-full bg-ink transition-[width] duration-500 ease-out" style={{ width: `${nightPct}%` }} />
       </div>
       )}
     </div>

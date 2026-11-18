@@ -52,7 +52,7 @@ export const ru = {
     stamp: "принято анонимно",
     keptLabel: "Так случай сохранён",
     removedCount: (n: number) => `Удалено персональных данных: ${n}`,
-    removedHint: "Красным отмечено то, что система убрала из текста",
+    removedHint: "Зелёным отмечено то, что система убрала из текста",
     showMine: "Сравнить с моим текстом",
     showKept: "Показать сохранённое",
     mineNote: "Ваш исходный текст виден только на этом экране и нигде не хранится",
@@ -80,6 +80,7 @@ export const ru = {
     icu: "Реанимация",
   } satisfies Record<Department, string>,
   fields: {
+    classification: "Классификация ВОЗ",
     type: "Тип",
     stage: "Этап",
     harm: "Вред пациенту",
@@ -191,6 +192,13 @@ export const ru = {
     columns: { date: "Дата", hospital: "Больница", type: "Тип", harm: "Вред", nearMiss: "Почти-ошибка", status: "Статус" },
     shownOf: (shown: number, total: number) => (shown < total ? `Показаны последние ${shown} из ${total}` : `${total}`),
     staffLink: "Сотрудник",
+    staffForm: "Форма для персонала",
+    leadKicker: "Повторяется чаще всего",
+    openRca: "Открыть разбор",
+    otherPatterns: "Другие закономерности",
+    inNumbers: "В цифрах",
+    distribution: "Где и когда",
+    registerHint: "Последние отчёты без имён. Нажмите на тип, чтобы открыть случай.",
   },
   // Root-cause analysis (quality lead / Ministry). Systems, never people.
   rcaUi: {

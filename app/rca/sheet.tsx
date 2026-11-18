@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { t } from "@/lib/i18n";
+import { AppBar } from "@/components/app-bar";
 
 /**
- * The analysis spread: the case on the left page, the analysis on the right (DESIGN.md journal).
- * On laptops the two pages scroll independently under a fixed running head, so the presenter
+ * The analysis spread in the landing's world: the case on a grey surface on the left, the analysis on
+ * white on the right. On laptops the two sides scroll independently under the app bar, so the presenter
  * scrolls the analysis while the case stays in view.
  */
 export function RcaSheet({
@@ -18,36 +19,24 @@ export function RcaSheet({
   left: React.ReactNode;
   right: React.ReactNode;
 }) {
+  const statusLabel = t.status[status as keyof typeof t.status] ?? (status === "open" ? t.status.new : status);
   return (
-    <main className="flex min-h-dvh flex-1 flex-col bg-ground lg:h-dvh lg:min-h-0 lg:flex-none lg:overflow-hidden lg:px-6 lg:py-6">
-      <div className="mx-auto flex w-full max-w-[92rem] flex-1 flex-col bg-page lg:min-h-0 lg:rounded-[3px] lg:shadow-[0_1px_2px_rgb(0_0_0/0.06),0_18px_40px_-16px_rgb(0_0_0/0.22)]">
-        <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-rule px-5 py-3 text-sm lg:px-8">
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-1.5 text-pen underline decoration-pen/40 underline-offset-4 hover:decoration-pen focus-visible:rounded-sm focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none"
-          >
-            <ArrowLeft className="size-4" aria-hidden /> {t.rcaUi.back}
-          </Link>
-          <p className="text-ink">
-            <span className="font-semibold">{head}</span>
-            <span className="ml-3 text-ink-muted">
-              {t.rcaUi.status}: {t.status[status as keyof typeof t.status] ?? (status === "open" ? t.status.new : status)}
-            </span>
-          </p>
-          <p className="flex items-baseline gap-4">
-            <span className="whitespace-nowrap text-ink-muted">{t.dashboard.synthetic}</span>
-            <span className="font-semibold tracking-tight text-ink-muted">{t.app.name}</span>
-          </p>
-        </header>
-        {/* Spine: the journal's own double rule at the gutter (Flat Page Rule — no shadows) */}
-        <div className="grid flex-1 lg:min-h-0 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-          <section className="relative border-b border-rule lg:overflow-y-auto lg:border-r lg:border-b-0 lg:[scrollbar-gutter:stable]">
-            {left}
-          </section>
-          <section className="relative min-w-0 lg:overflow-y-auto lg:border-l lg:border-rule lg:[margin-left:3px] lg:[scrollbar-gutter:stable]">
-            {right}
-          </section>
-        </div>
+    <main className="flex min-h-dvh flex-1 flex-col bg-page lg:h-dvh lg:min-h-0 lg:flex-none lg:overflow-hidden">
+      <AppBar place={head} wide>
+        <span className="hidden items-center gap-2 rounded-full bg-ground px-3 py-1 text-sm text-ink sm:inline-flex">
+          <span className="size-2 rounded-full bg-mint-deep" aria-hidden />
+          {t.rcaUi.status}: {statusLabel}
+        </span>
+        <Link
+          href="/dashboard"
+          className="inline-flex h-10 items-center gap-2 rounded-lg border border-rule-strong px-4 text-sm font-medium text-ink transition-colors hover:bg-ground focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none"
+        >
+          <ArrowLeft className="size-4" aria-hidden /> {t.rcaUi.back}
+        </Link>
+      </AppBar>
+      <div className="grid flex-1 lg:min-h-0 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+        <section className="relative bg-ground lg:overflow-y-auto lg:[scrollbar-gutter:stable]">{left}</section>
+        <section className="relative min-w-0 lg:overflow-y-auto lg:[scrollbar-gutter:stable]">{right}</section>
       </div>
     </main>
   );
@@ -55,10 +44,11 @@ export function RcaSheet({
 
 export function SheetSkeleton() {
   return (
-    <main className="flex min-h-dvh flex-1 flex-col bg-ground lg:px-6 lg:py-6" aria-hidden>
-      <div className="mx-auto grid w-full max-w-[92rem] flex-1 gap-8 bg-page p-8 lg:flex-none lg:grid-cols-[5fr_7fr] lg:rounded-[3px]">
-        <div className="h-96 rounded-sm bg-muted" />
-        <div className="h-96 rounded-sm bg-muted" />
+    <main className="flex min-h-dvh flex-1 flex-col bg-page" aria-hidden>
+      <div className="h-16 border-b border-rule" />
+      <div className="grid flex-1 lg:grid-cols-[5fr_7fr]">
+        <div className="bg-ground p-10"><div className="h-10 w-2/3 rounded-lg bg-page" /></div>
+        <div className="p-10"><div className="h-64 rounded-[20px] bg-ground" /></div>
       </div>
     </main>
   );

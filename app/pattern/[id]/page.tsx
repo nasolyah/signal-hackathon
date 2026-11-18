@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { ArrowRight } from "lucide-react";
 import { db } from "@/lib/db";
 import { t } from "@/lib/i18n";
 import { getRca } from "@/lib/rca-store";
@@ -55,48 +56,48 @@ async function Pattern({ params }: Pick<PageProps<"/pattern/[id]">, "params">) {
       head={t.rcaUi.patternKicker}
       status={p.status}
       left={
-        <div className="pb-8">
-          <div className="px-5 pt-6 lg:px-8">
-            <h1 className="text-[1.75rem] leading-[1.15] font-semibold text-balance">{p.title}</h1>
-            <p className="mt-3 text-base text-ink">
-              {p.incident_count} {t.plural.cases(p.incident_count)} · {p.hospital_count} {t.plural.hospitals(p.hospital_count)} ·{" "}
-              <span className="font-semibold">
-                {nightPct}% {t.dashboard.night}
-              </span>
-            </p>
-            <div className="mt-1.5 h-2 w-full max-w-[22rem] overflow-hidden rounded-[2px] bg-rule" role="img" aria-label={`${nightPct}% ${t.dashboard.night}`}>
-              <div className="h-full bg-pen" style={{ width: `${nightPct}%` }} />
-            </div>
-            <p className="mt-2 text-sm text-ink-muted">{regions.join(" · ")}</p>
-            {p.description && <p className="mt-3 max-w-[56ch] text-base text-ink">{p.description}</p>}
-            {(p.top_factors ?? []).length > 0 && (
-              <p className="mt-2 text-sm text-ink">
-                <span className="text-ink-muted">{t.dashboard.mostOften}: </span>
-                {(p.top_factors as string[]).map((f) => t.factor[f as keyof typeof t.factor] ?? f).join(" · ")}
-              </p>
-            )}
+        <div className="px-5 pt-10 pb-12 lg:px-10 lg:pt-12">
+          <h1 className="text-[1.75rem] leading-[1.15] font-medium tracking-[-0.02em] text-balance text-ink lg:text-[2.25rem]">{p.title}</h1>
+          <p className="mt-4 text-lg text-ink">
+            {p.incident_count} {t.plural.cases(p.incident_count)} · {p.hospital_count} {t.plural.hospitals(p.hospital_count)} ·{" "}
+            <span className="font-medium">
+              {nightPct}% {t.dashboard.night}
+            </span>
+          </p>
+          <div className="mt-3 h-2 w-full max-w-[24rem] overflow-hidden rounded-full bg-page" role="img" aria-label={`${nightPct}% ${t.dashboard.night}`}>
+            <div className="h-full rounded-full bg-ink" style={{ width: `${nightPct}%` }} />
           </div>
-          <h2 className="mt-6 border-t border-rule px-5 pt-4 pb-1 text-lg font-semibold lg:px-8">{t.rcaUi.cases}</h2>
-          <ol>
+          <p className="mt-3 text-sm text-ink-muted">{regions.join(" · ")}</p>
+          {p.description && <p className="mt-6 max-w-[56ch] text-base leading-relaxed text-ink">{p.description}</p>}
+          {(p.top_factors ?? []).length > 0 && (
+            <p className="mt-3 text-sm text-ink-muted">
+              {t.dashboard.mostOften}: <span className="text-ink">{(p.top_factors as string[]).map((f) => t.factor[f as keyof typeof t.factor] ?? f).join(" · ")}</span>
+            </p>
+          )}
+
+          <h2 className="mt-12 text-xl font-medium tracking-tight text-ink">{t.rcaUi.cases}</h2>
+          <ol className="mt-4 flex flex-col gap-3">
             {rows.map((r) => (
-              <li key={r.id} className="border-b border-rule px-5 py-3 lg:px-8">
-                <p className="flex flex-wrap items-baseline justify-between gap-x-3 text-xs text-ink-muted">
-                  <span>
-                    {formatDateRu(r.incident_date)} · {t.hospitals[r.hospital_id].region} · {t.shift[r.shift]}
-                  </span>
-                  <span className={r.harm === "severe" || r.harm === "death" ? "font-semibold text-margin-red" : ""}>
-                    {t.harm[r.harm]}
-                    {r.near_miss ? ` · ${t.fields.nearMissMinistry.toLowerCase()}` : ""}
-                  </span>
-                </p>
-                <p className="mt-1 text-base leading-relaxed text-ink">
-                  <RedactedText text={r.redacted_text} />
-                </p>
+              <li key={r.id}>
                 <Link
                   href={`/incident/${r.id}`}
-                  className="mt-1 inline-block text-sm text-pen underline decoration-pen/40 underline-offset-4 hover:decoration-pen focus-visible:rounded-sm focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none"
+                  className="group block rounded-xl bg-page px-5 py-4 transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_-12px_rgb(0_0_0/0.18)] focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none"
                 >
-                  {t.rcaUi.openCase}
+                  <span className="flex flex-wrap items-baseline justify-between gap-x-3 text-sm text-ink-muted">
+                    <span>
+                      {formatDateRu(r.incident_date)} · {t.hospitals[r.hospital_id].region} · {t.shift[r.shift]}
+                    </span>
+                    <span className={r.harm === "severe" || r.harm === "death" ? "font-medium text-margin-red" : ""}>
+                      {t.harm[r.harm]}
+                      {r.near_miss ? ` · ${t.fields.nearMissMinistry.toLowerCase()}` : ""}
+                    </span>
+                  </span>
+                  <span className="mt-2 line-clamp-3 block text-[0.9375rem] leading-relaxed text-ink">
+                    <RedactedText text={r.redacted_text} />
+                  </span>
+                  <span className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+                    {t.rcaUi.openCase} <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden />
+                  </span>
                 </Link>
               </li>
             ))}

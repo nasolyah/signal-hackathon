@@ -37,7 +37,7 @@ function NoHospital() {
     <JournalPage>
       <JournalHead />
       <div className="flex flex-1 flex-col gap-6 px-5 py-8">
-        <h1 className="text-[1.75rem] leading-tight font-semibold text-balance">{t.report.title}</h1>
+        <h1 className="text-[1.75rem] leading-tight font-medium tracking-[-0.02em] text-balance">{t.report.title}</h1>
         <p className="max-w-[34ch] text-lg text-ink-muted">{t.report.noHospital}</p>
       </div>
     </JournalPage>
@@ -49,9 +49,9 @@ function JournalSkeleton() {
     <JournalPage>
       <JournalHead />
       <div className="flex flex-1 flex-col gap-5 px-5 py-6" aria-hidden>
-        <div className="h-8 w-4/5 rounded-sm bg-muted" />
-        <div className="h-14 rounded-sm bg-muted" />
-        <div className="ruled h-64 rounded-sm" />
+        <div className="h-8 w-4/5 rounded-lg bg-ground" />
+        <div className="h-10 w-1/2 rounded-full bg-ground" />
+        <div className="h-64 rounded-2xl bg-ground" />
       </div>
     </JournalPage>
   );

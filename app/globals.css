@@ -2,14 +2,15 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (@media (prefers-color-scheme: dark));
+/* light only: dark: variants never match */
+@custom-variant dark (&:where(.never-dark, .never-dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-geist-sans);
+  --font-sans: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
+  --font-heading: var(--font-plex-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -48,6 +49,8 @@
   --color-pen: var(--pen);
   --color-pen-ink: var(--pen-ink);
   --color-margin-red: var(--margin-red);
+  --color-mint: var(--mint);
+  --color-mint-deep: var(--mint-deep);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -58,18 +61,21 @@
 }
 
 :root {
-  /* «Журнал передачи смены» — cool ledger paper, never cream (.impeccable/surfaces/app-report-page-tsx.md) */
-  --page: #eef1ee;
-  --ground: #e1e6e3;
-  --rule: #c9d3d6;
-  --rule-strong: #a9b7bc;
-  --ink: #1d2a4a;
-  --ink-muted: #56627a;
-  --pen: #3557a8;
+  /* The landing's world (public/landing.html, taste-skill): white ward ground, graphite ink, mint signal.
+     Light only — Mark, 17 Nov. Token names kept from the earlier journal so components need no rename. */
+  --page: #ffffff;
+  --ground: #f3f3f3;
+  --rule: #e6e6e6;
+  --rule-strong: #cfcfcf;
+  --ink: #232323;
+  --ink-muted: #686868;
+  --pen: #232323;          /* the one action colour: graphite, as the landing's solid buttons */
   --pen-ink: #ffffff;
-  --margin-red: #c43b2f;
-  --redact-fill: color-mix(in oklch, var(--margin-red) 9%, transparent);
-  --line: 2rem; /* ruled line pitch */
+  --mint: #a1ffcb;         /* the signal accent: counts, "new", the redaction marks */
+  --mint-deep: #1f7a4d;    /* mint as text or a line on white (AA) */
+  --margin-red: #c4382c;   /* warnings only: weak actions, a failed send */
+  --redact-fill: color-mix(in oklch, var(--mint) 55%, transparent);
+  --line: 2rem;
 
   --background: var(--page);
   --foreground: var(--ink);
@@ -79,22 +85,22 @@
   --popover-foreground: var(--ink);
   --primary: var(--pen);
   --primary-foreground: var(--pen-ink);
-  --secondary: color-mix(in oklch, var(--rule) 45%, var(--page));
+  --secondary: var(--ground);
   --secondary-foreground: var(--ink);
-  --muted: color-mix(in oklch, var(--rule) 35%, var(--page));
+  --muted: var(--ground);
   --muted-foreground: var(--ink-muted);
-  --accent: color-mix(in oklch, var(--pen) 10%, var(--page));
+  --accent: color-mix(in oklch, var(--mint) 35%, var(--page));
   --accent-foreground: var(--ink);
   --destructive: var(--margin-red);
   --border: var(--rule);
   --input: var(--rule-strong);
-  --ring: var(--pen);
-  --chart-1: var(--pen);
-  --chart-2: #5f7fc4;
-  --chart-3: #8aa0cf;
-  --chart-4: var(--ink-muted);
+  --ring: var(--mint-deep);
+  --chart-1: var(--ink);
+  --chart-2: #4d4d4d;
+  --chart-3: #9a9a9a;
+  --chart-4: var(--mint-deep);
   --chart-5: var(--margin-red);
-  --radius: 0.375rem;
+  --radius: 0.75rem;
   --sidebar: var(--ground);
   --sidebar-foreground: var(--ink);
   --sidebar-primary: var(--pen);
@@ -102,27 +108,8 @@
   --sidebar-accent: var(--muted);
   --sidebar-accent-foreground: var(--ink);
   --sidebar-border: var(--rule);
-  --sidebar-ring: var(--pen);
+  --sidebar-ring: var(--mint-deep);
   color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Night shift: the same journal, deep blue page, pale ink */
-    --page: #10151f;
-    --ground: #0b0f16;
-    --rule: #24304a;
-    --rule-strong: #3a4866;
-    --ink: #e6ebf2;
-    --ink-muted: #9aa6bb;
-    --pen: #8aa4f2;
-    --pen-ink: #0b0f16;
-    --margin-red: #e0675c;
-    --redact-fill: color-mix(in oklch, var(--margin-red) 16%, transparent);
-    --chart-2: #6f8fe0;
-    --chart-3: #4f68a8;
-    color-scheme: dark;
-  }
 }
 
 @layer base {
@@ -139,12 +126,12 @@
     font-variant-numeric: tabular-nums;
   }
   ::selection {
-    background: color-mix(in oklch, var(--pen) 28%, transparent);
+    background: color-mix(in oklch, var(--mint) 70%, transparent);
     color: var(--ink);
   }
   textarea,
   input {
-    caret-color: var(--pen);
+    caret-color: var(--mint-deep);
   }
   a {
     text-underline-offset: 0.2em;
@@ -191,6 +178,13 @@
 @keyframes pencil-underline {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }
+}
+
+/* The «done» seal pops in once. */
+@keyframes seal-in {
+  0% { opacity: 0; transform: scale(0.6); }
+  70% { opacity: 1; transform: scale(1.06); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 /* RCA: a new action slides into its rank; its strength tag stamps in once. */

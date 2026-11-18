@@ -66,44 +66,43 @@ async function Incident({ params }: Pick<PageProps<"/incident/[id]">, "params">)
       head={t.rcaUi.incidentHead}
       status={r.status}
       left={
-        <div className="pb-8">
-          <div className="grid grid-cols-3 border-b border-rule text-sm">
+        <div className="px-5 pt-10 pb-12 lg:px-10 lg:pt-12">
+          <dl className="flex flex-wrap gap-x-8 gap-y-3 text-sm">
             {[
               [t.report.date, formatDateRu(r.incident_date)],
               [t.dashboard.columns.hospital, `${h.name} · ${h.region}`],
               [t.report.shift, t.shift[r.shift]],
+              ...(r.department ? [[t.report.department, t.departments[r.department]]] : []),
             ].map(([label, value]) => (
-              <div key={label} className="border-r border-rule px-5 py-2.5 last:border-r-0 lg:px-6">
-                <div className="text-xs text-ink-muted">{label}</div>
-                <div className="mt-0.5 text-base text-ink">{value}</div>
+              <div key={label}>
+                <dt className="text-ink-muted">{label}</dt>
+                <dd className="mt-0.5 text-base text-ink">{value}</dd>
               </div>
             ))}
-          </div>
-          {r.department && (
-            <p className="border-b border-rule px-5 py-2.5 text-sm lg:px-8">
-              <span className="text-xs text-ink-muted">{t.report.department}: </span>
-              {t.departments[r.department]}
-            </p>
-          )}
-          <div className="pt-5">
-            <h1 className="px-5 pb-1 text-[1.75rem] leading-tight font-semibold lg:px-8">{t.rcaUi.whatHappened}</h1>
-            <p className="px-5 pb-1 text-sm font-semibold text-margin-red lg:px-8">{t.report.removedCount(r.redaction_count)}</p>
-            <p className="ruled pr-5 pl-12 text-[1.125rem] text-ink lg:pr-8">
-              <RedactedText text={r.redacted_text} />
-            </p>
-          </div>
+          </dl>
+
+          <h1 className="mt-10 text-[1.75rem] leading-[1.15] font-medium tracking-[-0.02em] text-ink lg:text-[2.25rem]">{t.rcaUi.whatHappened}</h1>
+          <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-page px-3 py-1 text-sm text-ink">
+            <span className="size-2 rounded-full bg-mint-deep" aria-hidden />
+            {t.report.removedCount(r.redaction_count)}
+          </p>
+          <p className="mt-5 rounded-[20px] bg-page px-6 py-5 text-[1.125rem] leading-[1.7] text-ink">
+            <RedactedText text={r.redacted_text} />
+          </p>
+
           {pattern && (
-            <p className="mt-4 px-5 text-sm lg:px-8">
-              <span className="text-ink-muted">{t.rcaUi.partOfPattern}: </span>
+            <p className="mt-5 text-sm text-ink-muted">
+              {t.rcaUi.partOfPattern}:{" "}
               <Link
                 href={`/pattern/${pattern.id}`}
-                className="text-pen underline decoration-pen/40 underline-offset-4 hover:decoration-pen focus-visible:rounded-sm focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none"
+                className="font-medium text-ink underline decoration-rule-strong underline-offset-4 hover:decoration-ink focus-visible:rounded-sm focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none"
               >
                 {pattern.title}
               </Link>
             </p>
           )}
-          <div className="mt-5">
+
+          <div className="mt-12">
             <Classification
               id={r.id}
               verified={r.human_verified}

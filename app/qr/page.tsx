@@ -3,6 +3,7 @@ import QRCode from "qrcode";
 import { t } from "@/lib/i18n";
 import { HOSPITAL_CODES, type HospitalCode } from "@/lib/taxonomy";
 import { PrintButton } from "./print-button";
+import { AppBar } from "@/components/app-bar";
 
 export const metadata: Metadata = { title: `${t.qr.title} · ${t.app.name}` };
 
@@ -10,13 +11,13 @@ export const metadata: Metadata = { title: `${t.qr.title} · ${t.app.name}` };
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://signal-hackathon.vercel.app").replace(/\/$/, "");
 const reportUrl = (h: HospitalCode) => `${SITE}/report?h=${h}`;
 
-/** Dark journal ink on light paper — always, even in dark mode: inverted codes fail on some cameras. */
+/** Graphite on white — always: inverted codes fail on some cameras. */
 async function qrSvg(url: string): Promise<string> {
   return QRCode.toString(url, {
     type: "svg",
     margin: 0,
     errorCorrectionLevel: "M",
-    color: { dark: "#1d2a4a", light: "#00000000" },
+    color: { dark: "#232323", light: "#00000000" },
   });
 }
 
@@ -26,28 +27,22 @@ export default async function QrPage() {
   const lead = codes[0];
 
   return (
-    <main className="flex min-h-dvh flex-1 flex-col bg-ground print:bg-white lg:px-6 lg:py-8 print:p-0">
-      <div className="mx-auto w-full max-w-[72rem] bg-page lg:rounded-[3px] lg:shadow-[0_1px_2px_rgb(0_0_0/0.06),0_18px_40px_-16px_rgb(0_0_0/0.22)] print:max-w-none print:bg-white print:shadow-none">
-        <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-rule px-5 py-3 text-sm lg:px-8 print:hidden">
-          <p className="text-ink">
-            <span className="font-semibold">{t.qr.title}</span>
-            <span className="ml-3 text-ink-muted">{t.qr.hint}</span>
-          </p>
-          <div className="flex items-baseline gap-5">
-            <PrintButton label={t.qr.print} />
-            <span className="font-semibold tracking-tight text-ink-muted">{t.app.name}</span>
-          </div>
-        </header>
+    <main className="flex min-h-dvh flex-1 flex-col bg-page print:bg-white">
+      <AppBar place={t.qr.title}>
+        <PrintButton label={t.qr.print} />
+      </AppBar>
+      <div className="mx-auto w-full max-w-[76rem] px-5 pb-20 lg:px-10 print:max-w-none print:p-0">
+        <p className="pt-8 text-base text-ink-muted print:hidden">{t.qr.hint}</p>
 
         {/* The demo sheet: one large code for Hospital A, readable from across a table */}
-        <section className="print:hidden">
+        <section className="mt-6 rounded-[20px] bg-ground print:hidden">
           <Sheet h={lead.h} svg={lead.svg} size="lg" note={t.qr.demo} />
         </section>
 
         {/* Printable sheets: one hospital per page */}
-        <section className="grid border-t border-rule sm:grid-cols-2 lg:grid-cols-3 print:block print:border-0">
+        <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 print:block">
           {codes.map(({ h, svg }) => (
-            <div key={h} className="border-r border-b border-rule print:break-after-page print:border-0 print:last:break-after-auto">
+            <div key={h} className="rounded-[20px] border border-rule print:break-after-page print:rounded-none print:border-0 print:last:break-after-auto">
               <Sheet h={h} svg={svg} size="sm" />
             </div>
           ))}
@@ -66,7 +61,7 @@ function Sheet({ h, svg, size, note }: { h: HospitalCode; svg: string; size: "lg
     >
       {/* Light paper behind the code in every theme */}
       <div
-        className={`shrink-0 rounded-[6px] bg-[#f6f8f6] ${lg ? "p-5" : "p-4 print:p-0"}`}
+        className={`shrink-0 rounded-2xl bg-white ${lg ? "p-5" : "p-4 print:p-0"}`}
         aria-hidden
       >
         <div
@@ -75,8 +70,13 @@ function Sheet({ h, svg, size, note }: { h: HospitalCode; svg: string; size: "lg
         />
       </div>
       <div className={lg ? "max-w-[30rem]" : "max-w-[22rem] print:max-w-[16cm]"}>
-        {note && <p className="pb-2 text-sm font-semibold text-margin-red">{note}</p>}
-        <h2 className={`leading-[1.15] font-semibold text-balance ${lg ? "text-[2rem]" : "text-lg print:text-[2rem]"}`}>
+        {note && (
+          <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-page px-3 py-1 text-sm text-ink">
+            <span className="size-2 rounded-full bg-mint-deep" aria-hidden />
+            {note}
+          </p>
+        )}
+        <h2 className={`leading-[1.15] font-medium tracking-[-0.02em] text-balance ${lg ? "text-[2rem]" : "text-lg print:text-[2rem]"}`}>
           {t.qr.sheetTitle}
         </h2>
         <p className={`mt-2 text-ink ${lg ? "text-lg" : "text-sm print:text-xl"}`}>
