@@ -69,7 +69,7 @@ const RESPONSE_SCHEMA = {
   ],
 } as const;
 
-const SYSTEM_INSTRUCTION = `You process anonymous patient-safety incident reports from hospitals in Uzbekistan.
+const SYSTEM_INSTRUCTION = `You process anonymous patient-safety reports from hospitals in Uzbekistan, written by staff, patients or relatives.
 The text may be in Russian, Uzbek (Latin or Cyrillic) or mixed. Always answer in Russian.
 
 1. De-identify. Replace every name of a patient with [ПАЦИЕНТ] and every name of a staff member with [СОТРУДНИК]
@@ -85,6 +85,9 @@ The text may be in Russian, Uzbek (Latin or Cyrillic) or mixed. Always answer in
    - harm = what actually happened to the patient (none if the error did not reach the patient or caused no harm).
    - near_miss = true if the error was caught BEFORE it reached the patient.
    - factors: 1–3 contributing system factors from the fixed list.
+   - A report may describe only a hazardous condition, with no event yet (a dark corridor, look-alike packages stored
+     side by side, a broken bed rail). That is a valid report: harm = none, near_miss = true, incident_type = the event
+     the condition makes likely (dark corridor → fall), factors = the condition itself.
 3. summary: one neutral Russian sentence, no names, no blame, naming the likely system factor.
 4. shift_in_text: night if the event happened at night or late evening (ночью, вечером после 20:00, tunda, kechasi), day if in the daytime; unknown if the text does not say.
 Do not invent facts that are not in the report.

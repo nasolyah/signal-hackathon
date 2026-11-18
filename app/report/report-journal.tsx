@@ -41,9 +41,10 @@ function JournalRound({ hospital, today, defaultShift, onAnother }: Props & { on
         <input type="hidden" name="hospital" value={hospital} />
         <input type="hidden" name="shift_touched" value={shiftTouched ? "1" : "0"} />
 
-        <h1 className="px-5 pt-8 pb-6 text-[1.875rem] leading-[1.12] font-medium tracking-[-0.025em] text-balance md:text-[2.25rem]">
+        <h1 className="px-5 pt-8 text-[1.875rem] leading-[1.12] font-medium tracking-[-0.025em] text-balance md:text-[2.25rem]">
           {t.report.title}
         </h1>
+        <p className="px-5 pt-2 pb-6 text-base text-pretty text-ink-muted">{t.report.forWhom}</p>
 
         {/* Date is fixed, shift is pre-filled from the clock */}
         <div className="flex flex-wrap items-end gap-x-6 gap-y-4 px-5">

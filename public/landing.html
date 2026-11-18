@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Сигнал: анонимные отчёты о врачебных ошибках для больниц</title>
-<meta name="description" content="Медсестра за минуту сообщает о случае с телефона, ИИ убирает имена до сохранения, а Минздрав видит повторы между больницами.">
-<meta property="og:title" content="Сигнал: анонимные отчёты о врачебных ошибках">
+<title>Сигнал: анонимные сигналы о рисках для пациентов в больницах</title>
+<meta name="description" content="Персонал, пациенты и родственники за минуту сообщают с телефона, что может навредить пациенту. ИИ убирает имена до сохранения, главврач получает сводку с мерами.">
+<meta property="og:title" content="Сигнал: анонимно о том, что может навредить пациенту">
 <meta property="og:description" content="Отчёт без имён за минуту, поиск повторов между больницами и разбор причин с мерами по силе.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://signal-hackathon.vercel.app/share.jpg">
@@ -138,7 +138,7 @@
       <div class="nav__item"><a class="nav__link" href="#questions">Вопросы</a></div>
     </nav>
     <div class="nav__actions">
-      <a class="btn btn--primary" href="/report?h=A">Сообщить о случае</a>
+      <a class="btn btn--primary" href="/report?h=A">Сообщить о риске</a>
     </div>
     <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Открыть меню"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
   </div>
@@ -148,9 +148,9 @@
   <section class="hero hero--centred" data-enter aria-labelledby="hero-h">
     <div class="wrap"><div class="hero-text">
       <div class="hero__c">
-        <h1 id="hero-h"><span class="ly-mark" aria-hidden="true"></span> Анонимные отчёты об ошибках</h1>
-        <p class="hero__lead">Медсестра за минуту описывает случай с телефона. Сигнал убирает имена ещё до сохранения и сравнивает случаи из разных больниц, чтобы найти общую причину.</p>
-        <div class="btn-row"><a class="btn btn--primary" href="/report?h=A">Сообщить о случае</a><a class="btn btn--secondary" href="/dashboard">Открыть журнал Минздрава</a></div>
+        <h1 id="hero-h"><span class="ly-mark" aria-hidden="true"></span> Анонимные сигналы о рисках для пациентов</h1>
+        <p class="hero__lead">Персонал, пациенты и родственники за минуту пишут с телефона, что может навредить пациенту. Сигнал убирает имена ещё до сохранения и находит общую причину по разным больницам.</p>
+        <div class="btn-row"><a class="btn btn--primary" href="/report?h=A">Сообщить о риске</a><a class="btn btn--secondary" href="/dashboard">Открыть журнал Минздрава</a></div>
       </div>
       <div class="hero__window" data-fx="grain-gradient" data-fx-seed="7" role="img" aria-label="Отчёт медсестры с именами и тот же отчёт, сохранённый без имён, с типом случая и числом похожих случаев">
         <div class="ly-piece" aria-hidden="true">
@@ -414,7 +414,7 @@
     <div class="closing__cta close--word">
       <div class="section-head--split">
         <div><h2 id="close-h">Отправьте отчёт с телефона</h2><p class="t-lead">Без регистрации. Отчёт попадёт в журнал Минздрава за секунды.</p></div>
-        <a class="btn btn--primary" href="/report?h=A">Сообщить о случае<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+        <a class="btn btn--primary" href="/report?h=A">Сообщить о риске<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
       </div>
       <p class="close__word" aria-hidden="true">Сигнал</p>
     </div>
