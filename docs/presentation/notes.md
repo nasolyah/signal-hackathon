@@ -1,6 +1,6 @@
 # Сигнал — презентация — заметки докладчика
 
-PDF: `signal-presentation.pdf` (17 слайдов), исходник — `slides.html` (откройте в браузере).
+PDF: [`signal-presentation.pdf`](../../signal-presentation.pdf) в корне репозитория (17 слайдов), исходник — `slides.html` (откройте в браузере).
 
 ## 1. Как сделать больницу лучше
 

@@ -178,6 +178,6 @@ Tomorrow, 18 Nov (before 12:00)
 - [ ] `/incident/[id]` with RCA (step 5) + weak-actions warning
 - [ ] `/pattern/[id]`
 - [ ] Eval script → accuracy number
-- [ ] Polish: `/impeccable polish`, `break-ui`, QR code generation for `/report?h=A`
+- [ ] Polish: UI review, stress-test with worst-case data, QR code generation for `/report?h=A`
 - [ ] Backup demo video
 - Buffer 12:00–17:00 for bugs and mentor meetings. Submit well before 18:00.

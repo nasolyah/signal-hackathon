@@ -61,7 +61,7 @@
 }
 
 :root {
-  /* The landing's world (public/landing.html, taste-skill): white ward ground, graphite ink, mint signal.
+  /* The landing's world (public/landing.html): white ward ground, graphite ink, mint signal.
      Light only — Mark, 17 Nov. Token names kept from the earlier journal so components need no rename. */
   --page: #ffffff;
   --ground: #f3f3f3;
